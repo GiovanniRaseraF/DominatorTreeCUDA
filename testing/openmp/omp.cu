@@ -7,7 +7,7 @@
 #include <math.h>
 
 int main(){
-    std::cout << "omp test" << std::endl;
+    std::cout << "omp test cudaversion: "  << std::endl;
     std::vector<int> vet(99999999, 1); 
     int partialsum = 0;
     int totalsum = 0;
