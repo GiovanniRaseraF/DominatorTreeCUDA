@@ -21,6 +21,8 @@ int main(){
     HANDLE_ERROR(h_error);
 
     // create the kernel
+    // <<< number of blocks, threads per block>>>
+    // thread per block: dim3
     add<<<1, 1>>>(2, 99, dev_c);
 
     // copy the result from GPU to CPU
