@@ -5,18 +5,22 @@
 #include <iomanip>
 #include <limits>
 #include <array>
+#include <ranges>
 
 #include <cstring>
 #include <cmath>
 
 #include <omp.h>
 
-constexpr size_t N = 10;
-constexpr int MAX_THREAD = 2;
+#include "test.hpp"
+
+constexpr size_t N = 200;
+constexpr int MAX_THREAD = 20;
 
 // parallel implementation depending on the fisical thread num 
 int parallelmin(const std::vector<int> &A){
-    std::array<int, MAX_THREAD> array = {std::numeric_limits<int>::max(), std::numeric_limits<int>::max()};
+    std::array<int, MAX_THREAD> array;
+    for(auto &v : array) v = std::numeric_limits<int>::max();
 
     const int maxthreads = MAX_THREAD;
     const int range = std::floor(A.size() / maxthreads);
@@ -30,16 +34,14 @@ int parallelmin(const std::vector<int> &A){
         if(MAX_THREAD == thread_num+1)
             end = A.size();
 
-        for(int i = start; i < end; i++){
-            if(A[i] < array[thread_num]){
+        for(int i = start; i < end; i++)
+            if(A[i] < array[thread_num])
                 array[thread_num] = A[i];
-                //std::cout << array[thread_num] << std::endl;
-            }
-        }
 
     }
+    auto min = std::min_element(array.begin(), array.end());
 
-    return *std::min(array.begin(), array.end());
+    return *min;
 }
 
 int main(){
@@ -59,7 +61,7 @@ int main(){
     // random
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> distrib(40, 60);
+    std::uniform_int_distribution<int> distrib(2, N);
     
     // allocate memory
     std::vector<int> A(N, 0);
@@ -69,13 +71,21 @@ int main(){
     }
 
     // perform min
-    const int min = parallelmin(A);
+    int min, sec_min;
 
-    for(auto v : A) std::cout << v << " ";
-    std::cout << std::endl;
+    CHRONO_TEST(
+        min = parallelmin(A),
+        "find min in parallel"
+    )
 
+    CHRONO_TEST(
+        sec_min = *std::min_element(A.begin(), A.end()),
+        "find min sequential with std::min_element"
+    )
+
+    // output
     std::cout << std::setw(25) << std::left << "parallel min" << ": " << min << std::endl;    
-    std::cout << std::setw(25) << std::left << "sequential min" << ": " << (*std::min(A.begin(), A.end())) << std::endl;
+    std::cout << std::setw(25) << std::left << "sequential min" << ": " << sec_min << std::endl;
 
     return 0;
 }
