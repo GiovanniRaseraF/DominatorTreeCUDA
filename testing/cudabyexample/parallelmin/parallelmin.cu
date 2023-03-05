@@ -6,6 +6,7 @@
 #include <limits>
 #include <array>
 #include <ranges>
+#include <execution>
 
 #include <cstring>
 #include <cmath>
@@ -14,8 +15,8 @@
 
 #include "test.hpp"
 
-constexpr size_t N = 200;
-constexpr int MAX_THREAD = 20;
+constexpr size_t N = 99999999;
+constexpr int MAX_THREAD = 16;
 
 // parallel implementation depending on the fisical thread num 
 int parallelmin(const std::vector<int> &A){
@@ -39,9 +40,21 @@ int parallelmin(const std::vector<int> &A){
                 array[thread_num] = A[i];
 
     }
+
+    //for(auto a : array) std::cout << a << " ";
     auto min = std::min_element(array.begin(), array.end());
 
     return *min;
+}
+
+int mysecmin(const std::vector<int> &A){
+    int min = A[0];
+
+    for(int i = 0; i < A.size(); i++)
+        if(A[i] < min)
+            min = A[i];
+    
+    return min;
 }
 
 int main(){
@@ -61,7 +74,7 @@ int main(){
     // random
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> distrib(2, N);
+    std::uniform_int_distribution<int> distrib(2, N*5);
     
     // allocate memory
     std::vector<int> A(N, 0);
@@ -71,7 +84,7 @@ int main(){
     }
 
     // perform min
-    int min, sec_min;
+    int min, my_sec_min, sec_min, exec_par_min, exec_par_unseq_min;
 
     CHRONO_TEST(
         min = parallelmin(A),
@@ -79,13 +92,30 @@ int main(){
     )
 
     CHRONO_TEST(
+        my_sec_min = mysecmin(A),
+        "find min with for loop"
+    )
+    CHRONO_TEST(
         sec_min = *std::min_element(A.begin(), A.end()),
         "find min sequential with std::min_element"
     )
 
+    CHRONO_TEST(
+	    exec_par_min = *std::min_element(std::execution::par, A.begin(), A.end()),
+	    "find min using std::exec::par"
+    )
+
+    CHRONO_TEST(
+	    exec_par_unseq_min = *std::min_element(std::execution::par_unseq, A.begin(), A.end()),
+	    "find min using std::exec::par_unseq"
+    )
+
     // output
     std::cout << std::setw(25) << std::left << "parallel min" << ": " << min << std::endl;    
+    std::cout << std::setw(25) << std::left << "my sec min min" << ": " << my_sec_min << std::endl;    
     std::cout << std::setw(25) << std::left << "sequential min" << ": " << sec_min << std::endl;
+    std::cout << std::setw(25) << std::left << "std::exec::par min" << ": " << exec_par_min << std::endl;
+    std::cout << std::setw(25) << std::left << "std::exec::par_unseq min" << ": " << exec_par_unseq_min << std::endl;
 
     return 0;
 }
