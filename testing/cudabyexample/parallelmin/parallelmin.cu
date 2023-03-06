@@ -7,6 +7,7 @@
 #include <array>
 #include <ranges>
 #include <execution>
+#include <atomic>
 
 #include <cstring>
 #include <cmath>
@@ -16,35 +17,37 @@
 #include "test.hpp"
 
 constexpr size_t N = 99999999;
-constexpr int MAX_THREAD = 16;
+constexpr int MAX_THREAD = 10;
 
 // parallel implementation depending on the fisical thread num 
 int parallelmin(const std::vector<int> &A){
-    std::array<int, MAX_THREAD> array;
-    for(auto &v : array) v = std::numeric_limits<int>::max();
+        std::array<int, MAX_THREAD> array;
+        for(auto &v : array) v = std::numeric_limits<int>::max();
 
-    const int maxthreads = MAX_THREAD;
-    const int range = std::floor(A.size() / maxthreads);
+        const int maxthreads = MAX_THREAD;
+        const int range = std::floor(A.size() / maxthreads);
+        int min = std::numeric_limits<int>::max();
 
-    #pragma omp parallel 
-    {
-        const int thread_num = omp_get_thread_num();
-        const int start = thread_num * range;
-        int end = start + range;
+        #pragma omp parallel
+        {
+            const int thread_num = omp_get_thread_num();
+            const int start = thread_num * range;
+            int end = start + range;
 
-        if(MAX_THREAD == thread_num+1)
-            end = A.size();
+            if(MAX_THREAD == thread_num+1)
+                end = A.size();
 
-        for(int i = start; i < end; i++)
-            if(A[i] < array[thread_num])
-                array[thread_num] = A[i];
+            for(int i = start; i < end; i++)
+                if(A[i] < array[thread_num])
+                    array[thread_num] = A[i];
+        }
 
-    }
+        #pragma omp barrier
+        {
+            min = *std::min_element(array.begin(), array.end());
+        }
 
-    //for(auto a : array) std::cout << a << " ";
-    auto min = std::min_element(array.begin(), array.end());
-
-    return *min;
+        return min;
 }
 
 int mysecmin(const std::vector<int> &A){
@@ -74,7 +77,7 @@ int main(){
     // random
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> distrib(2, N*5);
+    std::uniform_int_distribution<int> distrib(2, N*1);
     
     // allocate memory
     std::vector<int> A(N, 0);
@@ -84,7 +87,7 @@ int main(){
     }
 
     // perform min
-    int min, my_sec_min, sec_min, exec_par_min, exec_par_unseq_min;
+    int min, my_sec_min, sec_min, exec_par_min, exec_par_unseq_min, exec_seq_min;
 
     CHRONO_TEST(
         min = parallelmin(A),
@@ -110,12 +113,18 @@ int main(){
 	    "find min using std::exec::par_unseq"
     )
 
+    CHRONO_TEST(
+	    exec_seq_min = *std::min_element(std::execution::seq, A.begin(), A.end()),
+	    "find min using std::exec::seq"
+    )
+
     // output
     std::cout << std::setw(25) << std::left << "parallel min" << ": " << min << std::endl;    
     std::cout << std::setw(25) << std::left << "my sec min min" << ": " << my_sec_min << std::endl;    
     std::cout << std::setw(25) << std::left << "sequential min" << ": " << sec_min << std::endl;
     std::cout << std::setw(25) << std::left << "std::exec::par min" << ": " << exec_par_min << std::endl;
     std::cout << std::setw(25) << std::left << "std::exec::par_unseq min" << ": " << exec_par_unseq_min << std::endl;
+    std::cout << std::setw(25) << std::left << "std::exec::seq min" << ": " << exec_seq_min << std::endl;
 
     return 0;
 }
