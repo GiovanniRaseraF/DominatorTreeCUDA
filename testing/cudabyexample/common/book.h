@@ -27,8 +27,11 @@ static void HandleError( cudaError_t err,
         exit( EXIT_FAILURE );
     }
 }
+#ifdef DEBUG
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
-
+#else
+#define HANDLE_ERROR(err) (err)
+#endif
 
 #define HANDLE_NULL( a ) {if (a == NULL) { \
                             printf( "Host memory failed in %s at line %d\n", \

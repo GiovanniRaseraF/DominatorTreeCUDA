@@ -15,8 +15,7 @@ void printinfo(std::ostream &ost, const cudaDeviceProp &prop, int num){
     ost << std::setw(10) << "" << prop.maxThreadsDim << std::endl;
     ost << std::setw(10) << "" << prop.maxGridSize << std::endl;
     ost << std::setw(10) << "" << prop.totalConstMem << std::endl;
-    ost << std::setw(10) << "" << prop.major << std::endl;
-    ost << std::setw(10) << "" << prop.minor << std::endl;
+    ost << std::setw(10) << "" << prop.major << "." << prop.minor << std::endl;
     ost << std::setw(10) << "" << prop.clockRate << std::endl;
     ost << std::setw(10) << "" << prop.textureAlignment << std::endl;
     ost << std::setw(10) << "" << prop.deviceOverlap << std::endl;
