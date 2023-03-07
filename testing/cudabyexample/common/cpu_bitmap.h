@@ -17,7 +17,10 @@
 #ifndef __CPU_BITMAP_H__
 #define __CPU_BITMAP_H__
 
-#include "gl_helper.h"
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <GL/glext.h>
+#include <GL/glx.h>
 
 struct CPUBitmap {
     unsigned char    *pixels;
