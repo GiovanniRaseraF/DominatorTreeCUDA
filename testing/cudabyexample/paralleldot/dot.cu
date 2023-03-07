@@ -3,102 +3,79 @@
 #include <iomanip>
 #include <vector>
 
-constexpr int N = 1024 * 512;
+template<int a, int b>
+struct imin{
+    static const int value = (a < b ? a : b);
+};
 
-__global__ void vetadd(float *A, float *B, float *C){
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
+constexpr int N = 128*254;
+constexpr int threadsPerBlock = 254;
+constexpr int blocksPerGrid = imin< 32, (N+threadsPerBlock-1) / threadsPerBlock >::value;
 
-    while (i < N){
-        C[i] = A[i] + B[i];
-        i += blockDim.x * gridDim.x;
+__global__ void dot(float *A, float *B, float *C){
+    // create shared mamory between thread of the same block
+    __shared__ float cache[threadsPerBlock];
+
+    int tid = threadIdx.x + blockIdx.x * blockDim.x;
+    int cacheIndex = threadIdx.x;
+
+    float temp = 0;
+
+    while(tid < N){
+        temp += A[tid] * B[tid];
+
+        tid += blockDim.x * gridDim.x;
     }
+
+    cache[cacheIndex] = temp;
+    C[cacheIndex] = temp;
+}
+
+float dot_serialized(float *A, float *B, float *C){
+    float sum = 0;
+
+    for(int i = 0; i < N; i++){
+        C[i] = A[i] * B[i];
+        sum += C[i];
+    }
+
+    return sum;
 }
 
 int main(){
-    std::cout << "CUDA: mat add" << std::endl;
-    //on host
-    float h_A[N], h_B[N], h_C[N];
+    std::cout << "CUDA: dot product" << std::endl;
 
-    // on device
-    // device memory cannot be deferenced
-    // so we nell cudaMalloc and cudaMemcpy 
-    // to know result and allocate memory
+    float h_A[N], h_B[N], h_C[threadsPerBlock];
     float *A, *B, *C;
 
-    // init
     for(int i = 0; i < N; i++){
-        h_A[i] = -i;
-        h_B[i] = i*i;
-        h_C[i] = 0;
+        h_A[i] = 2; h_B[i] = 25;
     }
     
-    // malloc mem on device
-    // the memory is STATIC in the sense that
-    // the memory is copied before the kernel 
     // execution
-    HANDLE_ERROR(
-        cudaMalloc(
-            (void**)&A,
-            N*sizeof(float))
-    );
-    HANDLE_ERROR(
-        cudaMalloc(
-            (void**)&B,
-            N*sizeof(float))
-    );
-    HANDLE_ERROR(
-        cudaMalloc(
-            (void**)&C,
-            N*sizeof(float))
-    );
+    HANDLE_ERROR( cudaMalloc((void**)&A, N*sizeof(float)) );
+    HANDLE_ERROR( cudaMalloc((void**)&B, N*sizeof(float)) );
+    HANDLE_ERROR( cudaMalloc((void**)&C, threadsPerBlock*sizeof(float)) );
 
     // copy
-    HANDLE_ERROR(
-        cudaMemcpy(
-            A,
-            h_A,
-            N*sizeof(float),
-            cudaMemcpyHostToDevice
-        )
-    );
-    HANDLE_ERROR(
-        cudaMemcpy(
-            B,
-            h_B,
-            N*sizeof(float),
-            cudaMemcpyHostToDevice
-        )
-    );
-    HANDLE_ERROR(
-        cudaMemcpy(
-            C,
-            h_C,
-            N*sizeof(float),
-            cudaMemcpyHostToDevice
-        )
-    );
-
-    // create blocks of threads
+    HANDLE_ERROR( cudaMemcpy(A, h_A, N*sizeof(float), cudaMemcpyHostToDevice) );
+    HANDLE_ERROR( cudaMemcpy(B, h_B, N*sizeof(float), cudaMemcpyHostToDevice) );
+    HANDLE_ERROR( cudaMemcpy(C, h_C, threadsPerBlock*sizeof(float), cudaMemcpyHostToDevice) );
 
     // execute kernel 
-    vetadd<<<1024, 512>>>(A, B, C);
+    dot<<<128, threadsPerBlock>>>(A, B, C);
+
+    // print from gpu
+    cudaDeviceSynchronize();
 
     // retreve result   
-    HANDLE_ERROR(
-        cudaMemcpy(
-            h_C,
-            C,
-            N*sizeof(float),
-            cudaMemcpyDeviceToHost
-        )
-    );
-    
-    bool same = true;
-    for(int i = 0; i < N; i++){
-        same = same && (h_C[i] == h_A[i] + h_B[i]);
-    }
+    HANDLE_ERROR( cudaMemcpy(h_C, C, threadsPerBlock*sizeof(float), cudaMemcpyDeviceToHost) );
 
-    std::cout << "Calculation are " << (same ? "GOOD" : "BAD!") << std::endl;
+    // print
+    for(int i = 0; i < threadsPerBlock; i++){
+        std::cout << h_C[i] << std::endl;
+    }
+    //cuda
 
     cudaFree(C);
     cudaFree(A);
