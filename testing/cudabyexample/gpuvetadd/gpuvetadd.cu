@@ -2,9 +2,9 @@
 #include <iostream>
 #include <iomanip>
 
-constexpr int N = 100;
 constexpr int NumThPerBlock = 256;
-constexpr int NumBlocks = 1;
+constexpr int NumBlocks = 256;
+constexpr int N = NumBlocks * NumThPerBlock;
 
 __global__ void vetadd(float *A, float *B, float *C){
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -94,9 +94,9 @@ int main(){
         )
     );
 
-    for(int i = 0; i < N; i++){
-        std::cout << std::setw(4) << std::left << h_A[i] << " + " << std::setw(5) << std::right << h_B[i] << ": " << h_C[i] << std::endl;
-    }
+    //for(int i = 0; i < N; i++){
+        //std::cout << std::setw(4) << std::left << h_A[i] << " + " << std::setw(5) << std::right << h_B[i] << ": " << h_C[i] << std::endl;
+    //}
 
     cudaFree(C);
     cudaFree(A);

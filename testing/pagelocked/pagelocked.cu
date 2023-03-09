@@ -2,9 +2,10 @@
 #include <iostream>
 #include <iomanip>
 
-constexpr int N = 100;
 constexpr int NumThPerBlock = 256;
-constexpr int NumBlocks = 1;
+constexpr int NumBlocks = 256;
+constexpr int N = NumBlocks * NumThPerBlock;
+
 
 __global__ void vetadd(float *A, float *B, float *C){
     int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -27,7 +28,7 @@ int main(){
     float *A, *B, *C;
 
 #ifdef MAPPED_ZERO_COPY
-    cudaSetDeviceFlags(cudaDeviceMapHost);
+    //cudaSetDeviceFlags(cudaDeviceMapHost);
     cudaHostAlloc(&h_A, N * sizeof(float), cudaHostAllocMapped);
     cudaHostAlloc(&h_B, N * sizeof(float), cudaHostAllocMapped);
     cudaHostAlloc(&h_C, N * sizeof(float), cudaHostAllocMapped);
