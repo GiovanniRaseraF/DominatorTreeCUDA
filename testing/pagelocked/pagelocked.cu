@@ -28,6 +28,14 @@ int main(){
     float *A, *B, *C;
 
 #ifdef MAPPED_ZERO_COPY
+    cudaDeviceProp prop; 
+    cudaGetDeviceProperties(&prop, 0);
+
+    if(!prop.canMapHostMemory){
+        std::cout << "Cannot map memory" << std::endl;
+        std::exit(1);
+    }
+    
     //cudaSetDeviceFlags(cudaDeviceMapHost);
     cudaHostAlloc(&h_A, N * sizeof(float), cudaHostAllocMapped);
     cudaHostAlloc(&h_B, N * sizeof(float), cudaHostAllocMapped);
