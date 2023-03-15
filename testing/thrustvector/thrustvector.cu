@@ -3,6 +3,7 @@
 #include <vector>
 #include <array>
 #include <thrust/host_vector.h>
+#include <thrust/sort.h>
 #include <thrust/device_vector.h>
 
 // Cuda example implementation
@@ -40,11 +41,23 @@ void saxpy_slow(float A, thrust::device_vector<float>& X, thrust::device_vector<
 
 int main(){
     std::cout << "CUDA: thrust vector testing" << std::endl;
+    {
+        thrust::host_vector<float> host_X{128*1024*1024}; 
+
+        for(int i = 0; i < host_X.size(); i++){
+            host_X[i] = host_X.size() - i;
+        }
+        
+        thrust::device_vector<float> dv_X{host_X.begin(), host_X.end()};
+        thrust::sort(dv_X.begin(), dv_X.end());
+
+        std::cout << "done sorting" << std::endl;
+    }
 
     {
         std::cout << "thrust saxpy" << std::endl;
-        thrust::device_vector<float> dv_X{512*1024*1024};
-        thrust::device_vector<float> dv_Y{512*1024*1024};
+        thrust::device_vector<float> dv_X{1024*1024};
+        thrust::device_vector<float> dv_Y{1024*1024};
 
         saxpy_fast(123, dv_X, dv_Y);
         saxpy_slow(123, dv_X, dv_Y);
