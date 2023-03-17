@@ -61,5 +61,6 @@ int main()
     mark<int> s;
 
     parallel::for_each(test.begin(), test.end(), s);
+
     cudaDeviceSynchronize();
 }

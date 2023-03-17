@@ -46,7 +46,7 @@ namespace parallel{
         if(threadIdx.x == 0)
             results[blockIdx.x] = sdata_workaround[threadIdx.x];
     }
-    
+
     template< class InputIt, class T, class BinaryOp >
     T reduce( InputIt first, InputIt last, T init, BinaryOp binary_op )
     {
