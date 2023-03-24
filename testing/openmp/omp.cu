@@ -70,5 +70,19 @@ int main(){
     }
     std::cout << "sum schedule(dynamic): " << sum << std::endl;
 
+    sum = 0;
+    #pragma omp parallel shared(npoints) reduction(+: sum) num_threads(8)
+    {
+        sum = 0;
+        #pragma omp for schedule(static )
+        for(int i = 0; i < npoints; i++){
+            sum+=values[i];
+        }
+    }
+    std::cout << "sum schedule(static): " << sum << std::endl;
+
+    
+
+
     return 0;
 }
