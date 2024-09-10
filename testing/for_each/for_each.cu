@@ -52,15 +52,17 @@ class mark
     __host__ __device__ void operator()(T x){printf("%d\n", x);}
 };
 
+#define N 100000
+
 int main()
 {
     std::cout << "CUDA: for_each" << std::endl;
-    std::vector<int> hh{10, 11, 12};
+    std::array<int, N> hh = {};
+    for(int i = 0; i < N; i++) hh[i] = i;
+
     thrust::device_vector<int> test{hh.begin(), hh.end()};
-
     mark<int> s;
-
-    parallel::for_each(test.begin(), test.end(), s);
+    //parallel::for_each(test.begin(), test.end(), s);
 
     cudaDeviceSynchronize();
 }
