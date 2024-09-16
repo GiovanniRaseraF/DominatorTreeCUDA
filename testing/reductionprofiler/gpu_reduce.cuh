@@ -7,10 +7,6 @@
 
 #if defined(NAIVE_REDUCE)
 int factor = 1;
-extern "C" {
-    std::string reduce_type{"NAIVE"};
-}
-
 __global__ void reduceGPU(float *A, float *Results){
     __shared__ float shared_mem[threads];
 
