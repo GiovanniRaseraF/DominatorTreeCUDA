@@ -1,3 +1,5 @@
+// Author: Giovanni Rasera
+
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -6,8 +8,6 @@
 #include <algorithm>
 #include <numeric>
 
-#define threads 512
-#define blocks 1024
 #define N threads * blocks
 
 int factor = 1;
@@ -53,8 +53,6 @@ float reduce(float *h_Results, float *A, float *Results){
 }
 
 int main(){
-    //std::cout << "N: " << N << " -" << reduce_type << " reduce"<< std::endl;
-
     //on host
     float h_A[N], h_Results[N];
     float *A, *Results;
@@ -87,7 +85,6 @@ int main(){
         N*sizeof(float),
         cudaMemcpyHostToDevice
     );
-
 
     std::cout << "result= " << sum << ", correct?" << std::boolalpha << " " << (sum == N) << std::endl;
 
