@@ -1,6 +1,10 @@
 // static memory
 #include <iostream>
 #include <stdlib.h>
+#include <iomanip>
+
+// Author: Giovanni Rasera
+// date: 2024 09 17
 
 // comes from outside
 const int N = (threads * blocks);
@@ -15,12 +19,13 @@ static void HandleError(cudaError_t err, const char *file, int line){
 #define HANDLE_ERROR(err) (HandleError(err, __FILE__, __LINE__))
 
 __global__ void staticReverse(int *d, int n){
-    __shared__ int s[64];
-    int t = threadIdx.x;
+    __shared__ int s[threads];
+    int tid = threadIdx.x;
+    int t = (blockIdx.x * blockDim.x) + tid;
     int tr = n-t-1;
-    s[t] = d[t];
+    s[tid] = d[t];
     __syncthreads();
-    d[t] = s[tr];
+    d[tr] = s[tid];
 }
 
 __global__ void dynamicReverse(int *d, int n){
@@ -28,10 +33,20 @@ __global__ void dynamicReverse(int *d, int n){
     int tid = threadIdx.x;
     int t = (blockIdx.x * blockDim.x) + tid;
     int tr = n-t-1;
-    // printf("dix:%d, dm: %d, tid: %d, t: %d, tr: %d\n", blockIdx.x, blockDim.x, tid, t, tr);
-    s[t] = d[t];
+    s[tid] = d[t];
     __syncthreads();
-    d[t] = s[tr];
+    d[tr] = s[tid];
+}
+
+
+bool checkResult(int *h_A){
+    bool isGood = true;
+    for(int i = 1; i < N; i++){
+        if((h_A[i-1] < h_A[i])){
+            isGood = false;
+        }
+    }
+    return isGood;
 }
 
 int main(){
@@ -43,14 +58,7 @@ int main(){
     
     // generate data
     for(int i = 0; i < N; i++) h_A[i] = i;
-    std::cout << "\n";
-    std::cout << "[";
-    for(int i = 0; i < N-1; i++){
-        if((i % blocks) == 0) std::cout << h_A[i] << ", ";
-    }
-    std::cout << h_A[N-1];
-    std::cout << "]";
-
+    
     // create memory on device
     cudaMalloc((void**)&A, N*sizeof(int));
 
@@ -58,17 +66,21 @@ int main(){
     cudaMemcpy(A, h_A, N*(sizeof(int)), cudaMemcpyHostToDevice);
     
     // Compute
-    dynamicReverse<<<blocks, threads, N>>>(A, N);
+#ifdef DYNAMIC
+    // make alloc=DYNAMIC threads=64 blocks=64 && nvprof ./sharedmem.out
+    dynamicReverse<<<blocks, threads, threads>>>(A, N);
     //cudaDeviceSynchronize();
+    std::cout << "\nDynamic Allocation\n";
+#else 
+    // make alloc=STATIC threads=64 blocks=64 && nvprof ./sharedmem.out
+    staticReverse<<<blocks, threads>>>(A, N);
+    //cudaDeviceSynchronize();
+    std::cout << "\nStatic Allocation\n";
+#endif
 
     // retreive result
     HANDLE_ERROR(cudaMemcpy(h_A, A, N*(sizeof(int)), cudaMemcpyDeviceToHost));
-
-    std::cout << "\n";
-    std::cout << "[";
-    for(int i = 0; i < N; i++){
-        if((i % blocks) == 0) std::cout << h_A[i] << ", ";
-    }
-    std::cout << h_A[N-1];
-    std::cout << "]";
+    auto check = checkResult(h_A);
+    std::cout << "Reversed? " << std::boolalpha << check << std::endl;
 }
+
