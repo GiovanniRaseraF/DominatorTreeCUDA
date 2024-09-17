@@ -67,14 +67,18 @@ int main(){
     
     // Compute
 #ifdef DYNAMIC
-    // make alloc=DYNAMIC threads=64 blocks=64 && nvprof ./sharedmem.out
     dynamicReverse<<<blocks, threads, threads>>>(A, N);
-    //cudaDeviceSynchronize();
+#ifdef cudaSync
+    cudaDeviceSynchronize();
+    std::cout << "\nSynched\n";
+#endif
     std::cout << "\nDynamic Allocation\n";
 #else 
-    // make alloc=STATIC threads=64 blocks=64 && nvprof ./sharedmem.out
     staticReverse<<<blocks, threads>>>(A, N);
-    //cudaDeviceSynchronize();
+#ifdef cudaSync
+    cudaDeviceSynchronize();
+    std::cout << "\nSynched\n";
+#endif
     std::cout << "\nStatic Allocation\n";
 #endif
 
