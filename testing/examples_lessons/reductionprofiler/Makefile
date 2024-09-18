@@ -21,5 +21,19 @@ sequentialreduction:
 	if [ -d "./build" ]; then rm -r build; fi
 	mkdir build
 	g++ -o ./build/$@_seq.out ./$@.cpp -Dthreads=$(threads) -Dblocks=$(blocks) -$(OPTIM)
-
+	
 	./build/$@_seq.out
+
+
+test: 
+	make threads=1024 blocks=512 OPTIM=O0 parallelreduction 
+	make threads=1024 blocks=512 OPTIM=O1 parallelreduction
+	make threads=1024 blocks=512 OPTIM=O2 parallelreduction
+	make threads=1024 blocks=512 OPTIM=O3 parallelreduction
+	make threads=1024 blocks=512 OPTIM=Os parallelreduction
+
+	make threads=1024 blocks=512 OPTIM=O0 sequentialreduction
+	make threads=1024 blocks=512 OPTIM=O1 sequentialreduction
+	make threads=1024 blocks=512 OPTIM=O2 sequentialreduction
+	make threads=1024 blocks=512 OPTIM=O3 sequentialreduction
+	make threads=1024 blocks=512 OPTIM=Os sequentialreduction

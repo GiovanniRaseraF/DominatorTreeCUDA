@@ -7,6 +7,9 @@
 #include <array>
 #include <algorithm>
 #include <numeric>
+#include <random>
+#include <ctime>
+#include <chrono>
 
 #define N threads * blocks
 
@@ -35,7 +38,7 @@ __global__ void reduceGPU(float *A, float *Results){
 
 float reduce(float *h_Results, float *A, float *Results);
 float reduce(float *h_Results, float *A, float *Results){
-    reduceGPU<<<blocks, threads / factor>>>(A, Results);
+    reduceGPU<<<dim3(blocks), dim3(threads / factor)>>>(A, Results);
 
     // retreve result   
     cudaMemcpy(
@@ -58,7 +61,7 @@ int main(){
     float *A, *Results;
 
     for(int i = 0; i < N; i++){
-        h_A[i] = 1;
+        h_A[i] = rand();
         h_Results[i] = 0;
     }
 
