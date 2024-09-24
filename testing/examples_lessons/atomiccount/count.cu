@@ -71,7 +71,8 @@ int main(){
     //std::cout << "Difference (countCuda - countStd): " << (countCuda - countStd) << std::endl;
     //std::cout << "Ratio (countCuda / countStd): cuda is " << (((float)countStd / (float)countCuda)) << " times better" << std::endl;
 
-    std::cout << N << ", " << NPerStream << ", " << threads << ", " << blocks << ", " << countCuda << ", " << countStd << "\n";
+    //std::cout << "N, NPerStream , threads , blocks , scalar ,countCuda , countStd \n";
+    std::cout << N << ", " << NPerStream << ", " << threads << ", " << blocks << ", " << scalar << "," << countCuda << ", " << countStd << "\n";
 
     cudaFree(A);
 }
