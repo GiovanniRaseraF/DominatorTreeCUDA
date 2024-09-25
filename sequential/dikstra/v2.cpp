@@ -7,6 +7,7 @@
 #include <iostream>
 #include <thread>
 #include <future>
+#include <memory>
 
 using namespace std::chrono_literals;
 using namespace std::chrono;
@@ -73,19 +74,30 @@ bool isDestinationReachable(std::array<std::array<int, V>, V> &graph, int source
 constexpr int THREADSCOUNT = 16;
 int main()
 {
-    std::array<std::array<int, V>, V> graph;
-    std::array<std::future<void>, THREADSCOUNT> futures;
     srand(0);
+    std::vector<std::shared_ptr<std::array<std::array<int, V>, V>>> graph(THREADSCOUNT);
+    std::array<std::future<void>, THREADSCOUNT> futures;
+    for(int t = 0; t < THREADSCOUNT; t++) graph[t] = (std::make_shared<std::array<std::array<int, V>, V>>());
 
     // populate graph
     for(int i = 0; i < V; i++){
         for(int j = 0; j < V; j++){
-            graph[i][j] = rand() % V;
+            int temp = rand() % V;
+            for(int t = 0; t < THREADSCOUNT; t++){
+                (*graph[t])[i][j] = temp;
+            }
         }
     }
 
+    // now calculate
+    std::cout << "Threads: " << THREADSCOUNT << std::endl;
+    std::cout << "V: " << V << std::endl;
+    std::cout << "V*V: " << V*V << std::endl;
+    std::cout << "Return to Compute>>>"; std::cin.ignore();
+
     // run on each thread
     for(int threadIdx = 0; threadIdx < THREADSCOUNT; threadIdx++){
+
         auto f = std::async(
                     std::launch::async, 
 
@@ -105,7 +117,6 @@ int main()
     }
 
     // calculate
-    //std::cout << "Return to Compute>>>"; std::cin.ignore();
     ////auto solution = dijkstra(graph, 0);
     //for(int i = 0; i < V; i++){
         //for(int j = 0; j < V; j++){
