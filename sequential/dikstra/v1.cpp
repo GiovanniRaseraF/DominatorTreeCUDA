@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 using namespace std::chrono;
  
 // Number of vertices in the graph
-#define V 1024
+#define V 512
  
 int minDistance(std::array<int, V> &dist, bool sptSet[])
 {
@@ -27,7 +27,7 @@ int minDistance(std::array<int, V> &dist, bool sptSet[])
 void printSolution(std::array<int, V> &dist, int n)
 {
     printf("Vertex   Distance from Source\n");
-    for (int i = 0; i < V; i+=32)
+    for (int i = 0; i < V; i+=1)
         printf("\t%d \t\t\t\t %d\n", i, dist[i]);
 }
  
@@ -64,7 +64,7 @@ std::array<int, V> dijkstra(std::array<std::array<int, V>, V> &graph, int src)
 //
 bool isDestinationReachable(std::array<std::array<int, V>, V> &graph, int source, int destination){
     auto solution = dijkstra(graph, 0);
-
+    //printSolution(solution, V);
     return (solution[destination] != INT_MAX);
 }
  
@@ -80,9 +80,17 @@ int main()
         }
     }
 
+    // now calculate
+    std::cout << "Threads: " << THREADSCOUNT << std::endl;
+    std::cout << "V: " << V << std::endl;
+    std::cout << "V*V: " << V*V << std::endl;
+    std::cout << "Sub if you remove: >>>" << std::endl;
+
+    std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+    std::chrono::time_point<std::chrono::steady_clock> end   = std::chrono::steady_clock::now();
+ 
+    start = std::chrono::steady_clock::now();
     // calculate
-    std::cout << "Return to Compute>>>"; std::cin.ignore();
-    //auto solution = dijkstra(graph, 0);
     for(int i = 0; i < V; i++){
         for(int j = 0; j < V; j++){
             {
@@ -90,17 +98,18 @@ int main()
                 int store = graph[i][j];
                 graph[i][j] = 0;
                 
-                auto canReach = isDestinationReachable(graph, 0, 1023);
+                auto canReach = isDestinationReachable(graph, 0, V-1);
                 if(canReach == false){
-                    std::cout << "If you remove arch " << i << ", " << j << " you cannot reach destination";
+                    //std::cout << "If you remove arch " << i << ", " << j << " you cannot reach destination";
                 }
 
                 graph[i][j] = store;
             }
         }
     }
-    // print solution
-    //printSolution(solution, V);
- 
+    end = std::chrono::steady_clock::now();
+    
+    auto countCuda = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "time: " << countCuda << " ms";
     return 0;
 }
