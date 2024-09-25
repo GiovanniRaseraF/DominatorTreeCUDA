@@ -13,6 +13,8 @@ bool none_of( ExecutionPolicy&& policy, ForwardIt first, ForwardIt last,
               UnaryPredicate p );
 */
 
+
+
 int main(){
     std::cout << "TODO: naive solution" << std::endl;
 

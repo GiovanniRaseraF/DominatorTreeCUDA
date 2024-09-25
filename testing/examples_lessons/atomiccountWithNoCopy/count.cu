@@ -24,39 +24,46 @@ int main(){
      //on host
     int *h_A = (int *)malloc(N * sizeof(int));
     int *A;
-    int *res = (int*) malloc(sizeof(int));
-    int *dev_Res;
+    int *res = (int*) malloc(sizeof(int)), *resNoCopy = (int*) malloc(sizeof(int));
+    int *dev_Res, *dev_ResNoCopy;
     *res = 0;
-
+    *resNoCopy = 0;
     int toCount = 0;
-
     srand(0);
 
+    // start copy
     for(int i = 0; i < N; i++){
         h_A[i] = (rand() % 1000);
     }
 
-    cudaMalloc((void**)&A, (NPerStream)*sizeof(int));
-    cudaMalloc((void**)&dev_Res, sizeof(int));
-
+    // Cuda No Copy 
+    cudaMalloc((void**)&A, (N)*sizeof(int));
+    cudaMalloc((void**)&dev_ResNoCopy, sizeof(int));
+    cudaMemcpy(A, h_A, (N)*sizeof(int), cudaMemcpyHostToDevice);
     start = std::chrono::steady_clock::now();
     for(int streamIndex = 0; streamIndex < scalar; streamIndex++){
-        // copy
-        cudaMemcpy(A, h_A+(streamIndex * NPerStream), (NPerStream)*sizeof(int), cudaMemcpyHostToDevice);
-
         //count
-        countNum<<<blocks, threads>>>(A, toCount, dev_Res);
-
-        // get result
-        cudaMemcpy(res, dev_Res, sizeof(int), cudaMemcpyDeviceToHost);
+        countNum<<<blocks, threads>>>(A+(streamIndex * NPerStream), toCount, dev_ResNoCopy);
     }
+    cudaMemcpy(resNoCopy, dev_ResNoCopy, sizeof(int), cudaMemcpyDeviceToHost);
     end = std::chrono::steady_clock::now();
-    
-    // print
-    //std::cout << std::endl << "" << toCount << "" << (*res) << " took ";
-    //std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
-    auto countCuda = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    auto countCudaNoCopy = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    cudaFree(A);
 
+    // Cuda With Copy 
+    start = std::chrono::steady_clock::now();
+    cudaMalloc((void**)&A, (N)*sizeof(int));
+    cudaMalloc((void**)&dev_Res, sizeof(int));
+    cudaMemcpy(A, h_A, (N)*sizeof(int), cudaMemcpyHostToDevice);
+
+    for(int streamIndex = 0; streamIndex < scalar; streamIndex++){
+        //count
+        countNum<<<blocks, threads>>>(A+(streamIndex * NPerStream), toCount, dev_Res);
+    }
+    cudaMemcpy(res, dev_Res, sizeof(int), cudaMemcpyDeviceToHost);
+    end = std::chrono::steady_clock::now();
+    auto countCuda = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    cudaFree(A);
 
     // normal calculation
     std::vector<int> values{};
@@ -65,16 +72,9 @@ int main(){
     start = std::chrono::steady_clock::now();
     auto counts = std::count(values.begin(), values.end(), toCount);
     end = std::chrono::steady_clock::now();
-
-    //std::cout << "StdCount(  " << toCount << " ): " << (counts) << " took ";
-    //std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms" << std::endl;
     auto countStd = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    
+    // print
+    std::cout << *resNoCopy << ", " << *res << ", " << counts << ", " << N << ", " << NPerStream << ", " << threads << ", " << blocks << ", " << scalar << "," << countCudaNoCopy << ", " << countCuda << ", " << countStd << "\n";
 
-    //std::cout << "Difference (countCuda - countStd): " << (countCuda - countStd) << std::endl;
-    //std::cout << "Ratio (countCuda / countStd): cuda is " << (((float)countStd / (float)countCuda)) << " times better" << std::endl;
-
-    //std::cout << "N, NPerStream , threads , blocks , scalar ,countCuda , countStd \n";
-    std::cout << N << ", " << NPerStream << ", " << threads << ", " << blocks << ", " << scalar << "," << countCuda << ", " << countStd << "\n";
-
-    cudaFree(A);
 }
