@@ -6,7 +6,7 @@ v1:
 	mkdir build
 	
 	# from cuda documentation
-	g++ -o ./build/$@.out ./$@.cpp -std=c++23
+	g++ -o ./build/$@.out ./$@.cpp -std=c++17
 
 	./build/$@.out
 
@@ -15,6 +15,6 @@ v2:
 	mkdir build
 	
 	# from cuda documentation
-	g++ -o ./build/$@.out ./$@.cpp -std=c++23
+	g++ -o ./build/$@.out ./$@.cpp -std=c++17
 
 	./build/$@.out
