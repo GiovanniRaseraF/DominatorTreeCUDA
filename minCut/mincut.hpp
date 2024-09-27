@@ -17,9 +17,24 @@ namespace sequential{
     namespace Kalger{
         // Source: Algorithm 2: Initialize(G)
         void Initialize(Graph &G){ // G = (V, E)
-            //std::set<Node> Tau{};
-            //std::set<Edge> F{};
-            std::set<int> aa{};
+            // pre
+            auto &V = G.V;
+            auto &E = G.E;
+            
+            // implementation
+            std::cout << "sequential::Kalger::Initialize(G)" << std::endl;
+            std::set<Supernode> Tau{};  // the set of supernodes
+            std::set<Superedge> F{};    // the set of superedges
+
+            for(auto &v : V){
+                auto v_ = Supernode();
+                // TODO: V(v_) = {v};
+                Tau.insert(v_); // TODO: supernode must be comparable
+            }
+
+            for(auto &e : E){
+                //
+            }
         }
     }
 };
