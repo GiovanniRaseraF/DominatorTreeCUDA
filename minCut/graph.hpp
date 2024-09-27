@@ -8,6 +8,8 @@
 struct Node{
     int id;
 
+    Node(int iid) : id{iid}{}
+
     // TODO: implement compare
     bool operator< (const Node& other) const {
         return (id < other.id);
@@ -33,6 +35,13 @@ struct Graph{
 struct Supernode{
     Node u;
     std::set<Node> V;
+
+    Supernode(Node Nu) : u{Nu}{}
+
+    // V(u_) <- {v};
+    void insert(Node v){
+        V.insert(v);
+    }
 
     // TODO: implement compare
     bool operator< (const Supernode& op2) const {

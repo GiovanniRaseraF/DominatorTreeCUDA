@@ -27,9 +27,9 @@ namespace sequential{
             std::set<Superedge> F{};    // the set of superedges
 
             for(auto &v : V){
-                auto v_ = Supernode();
-                // TODO: V(v_) = {v};
-                Tau.insert(v_); // TODO: supernode must be comparable
+                auto v_ = Supernode(v);     // u_       <- new supernode
+                v_.insert(v);               // V(u_)    <- {v} //TODO: is insertion or assignment in the set of v_ ? 
+                Tau.insert(v_);             // Tau      <- Tau U {v_}
             }
 
             for(auto &e : E){
