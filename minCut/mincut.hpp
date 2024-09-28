@@ -10,13 +10,14 @@
 #include <iostream>
 #include <random>
 #include <set>
+#include <tuple>
 #include "graph.hpp"
 
 namespace sequential{
     // Karger's Algorithm
     namespace Kalger{
         // Source: Algorithm 2: Initialize(G)
-        void Initialize(Graph &G){ // G = (V, E)
+        std::tuple<std::set<Supernode>, std::set<Superedge>> Initialize(Graph &G){ // G = (V, E)
             // pre
             auto &V = G.V;
             auto &E = G.E;
@@ -33,8 +34,12 @@ namespace sequential{
             }
 
             for(auto &e : E){
-                //
+                auto Euv = Superedge(e);    // Euv      <- {(u, v)}
+                Euv.insert(e);              // 
+                F.insert(Euv);              // F        <- F U {(u, v)}
             }
+
+            return {Tau, F};
         }
     }
 };

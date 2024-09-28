@@ -8,9 +8,9 @@
 struct Node{
     int id;
 
-    Node(int iid) : id{iid}{}
+    Node(int i) : id{i}{}
 
-    // TODO: implement compare
+    // Ordere by id
     bool operator< (const Node& other) const {
         return (id < other.id);
     }
@@ -22,13 +22,26 @@ struct Edge{
     Node to;
     int capacity;
 
-    // TODO: implement compare
+    Edge(Node f, Node t, int c) : from{f}, to{t}, capacity{c}{}
+
+    // Ordered by capacity
+    bool operator< (const Edge& other) const {
+        return (from < other.from) || (to < other.to);
+    }
 };
 
 // G = (V, E)
 struct Graph{
     std::set<Node> V = {};
     std::set<Edge> E = {};
+
+    void insertNode(Node n){
+        V.insert(n);
+    }
+
+    void insertEdge(Edge e){
+        E.insert(e);
+    }
 };
 
 // The set of nodes within a supernode u as V (u)
@@ -43,9 +56,9 @@ struct Supernode{
         V.insert(v);
     }
 
-    // TODO: implement compare
-    bool operator< (const Supernode& op2) const {
-        return (u < op2.u);
+    // Ordered by Node
+    bool operator< (const Supernode& other) const {
+        return (u < other.u);
     }
 };
 
@@ -54,5 +67,15 @@ struct Superedge{
     Edge uv;
     std::set<Edge> Euv;
 
-    // TODO: implement compare
+    Superedge(Edge Nuv) : uv{Nuv}{}
+
+    // Euv <- {(u, v)};
+    void insert(Edge Nuv){
+        Euv.insert(Nuv);
+    }
+
+    // Ordered by Edge
+    bool operator< (const Superedge& other) const {
+        return (uv < other.uv);
+    }
 };
