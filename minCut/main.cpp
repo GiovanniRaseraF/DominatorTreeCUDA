@@ -38,10 +38,16 @@ int main(){
     auto F = std::get<1>(resInitialize);
 
     for(auto t : Tau){
-        std::cout << t.u.id << std::endl;
+        //std::cout << t.u.id << std::endl;
     }
 
     for(auto f : F){
-        std::cout << "(" << f.uv.from.id << ", " << f.uv.to.id << ")" << std::endl;
+        auto Euv = f.Euv;
+
+        for(auto e : Euv){
+            std::cout << "(" << e.from.id << ", " << e.to.id << "), ";
+        }
+
+        std::cout << std::endl;
     }
 }

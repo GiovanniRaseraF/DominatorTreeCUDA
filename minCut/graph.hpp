@@ -44,38 +44,50 @@ struct Graph{
     }
 };
 
-// The set of nodes within a supernode u as V (u)
+// The set of nodes within a supernode u as V(u)
 struct Supernode{
-    Node u;
     std::set<Node> V;
 
-    Supernode(Node Nu) : u{Nu}{}
+    Supernode(){}
 
     // V(u_) <- {v};
     void insert(Node v){
         V.insert(v);
     }
 
-    // Ordered by Node
     bool operator< (const Supernode& other) const {
-        return (u < other.u);
+        bool ret = true;
+        
+        for(auto itThis = V.begin(), itOther = other.V.begin(); itThis != V.end() && itOther != other.V.begin(); ++itThis, ++itOther){
+            if ((*itThis) < (*itOther)){
+                return true;
+            }
+        }
+
+        return ret;
     }
 };
 
 // The set of edges between two supernodes u, v as Euv
 struct Superedge{
-    Edge uv;
     std::set<Edge> Euv;
 
-    Superedge(Edge Nuv) : uv{Nuv}{}
+    Superedge(){}
 
     // Euv <- {(u, v)};
     void insert(Edge Nuv){
         Euv.insert(Nuv);
     }
 
-    // Ordered by Edge
     bool operator< (const Superedge& other) const {
-        return (uv < other.uv);
+        bool ret = true;
+        
+        for(auto itThis = Euv.begin(), itOther = other.Euv.begin(); itThis != Euv.end() && itOther != other.Euv.begin(); ++itThis, ++itOther){
+            if ((*itThis) < (*itOther)){
+                return true;
+            }
+        }
+
+        return ret;
     }
 };
