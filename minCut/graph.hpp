@@ -30,20 +30,6 @@ struct Edge{
     }
 };
 
-// G = (V, E)
-struct Graph{
-    std::set<Node> V = {};
-    std::set<Edge> E = {};
-
-    void insertNode(Node n){
-        V.insert(n);
-    }
-
-    void insertEdge(Edge e){
-        E.insert(e);
-    }
-};
-
 // The set of nodes within a supernode u as V(u)
 struct Supernode{
     std::set<Node> V;
@@ -58,7 +44,9 @@ struct Supernode{
     bool operator< (const Supernode& other) const {
         bool ret = true;
         
-        for(auto itThis = V.begin(), itOther = other.V.begin(); itThis != V.end() && itOther != other.V.begin(); ++itThis, ++itOther){
+        for(auto itThis = V.begin(), itOther = other.V.begin(); 
+                itThis != V.end() && itOther != other.V.begin(); 
+                ++itThis, ++itOther){
             if ((*itThis) < (*itOther)){
                 return true;
             }
@@ -79,10 +67,36 @@ struct Superedge{
         Euv.insert(Nuv);
     }
 
+    // to node
+    Superedge to(Node v){
+        std::set<Edge> ret;
+        std::copy_if(Euv.begin(), Euv.end(), std::inserter(ret, std::next(ret.begin())), 
+            [&](Edge e){ return e.to.id == v.id;});
+        
+        Superedge se;
+        se.Euv = ret;
+        return se;
+    }
+
+    Superedge to(Supernode v){
+        std::set<Edge> ret;
+
+        for(auto v : v.V){
+            auto outv = to(v);
+            ret.merge(outv.Euv);
+        }
+        
+        Superedge se;
+        se.Euv = ret;
+        return se;
+    }
+
     bool operator< (const Superedge& other) const {
         bool ret = true;
         
-        for(auto itThis = Euv.begin(), itOther = other.Euv.begin(); itThis != Euv.end() && itOther != other.Euv.begin(); ++itThis, ++itOther){
+        for(auto itThis = Euv.begin(), itOther = other.Euv.begin(); 
+                itThis != Euv.end() && itOther != other.Euv.begin(); 
+                ++itThis, ++itOther){
             if ((*itThis) < (*itOther)){
                 return true;
             }
@@ -91,3 +105,77 @@ struct Superedge{
         return ret;
     }
 };
+
+// G = (V, E)
+struct Graph{
+    std::set<Node> V = {};
+    std::set<Edge> E = {};
+
+    void insertNode(Node n){
+        V.insert(n);
+    }
+
+    void insertEdge(Edge e){
+        E.insert(e);
+    }
+
+    // out edges 
+    Superedge out(Node n){
+        std::set<Edge> ret;
+        std::copy_if(E.begin(), E.end(), std::inserter(ret, std::next(ret.begin())), 
+            [&](Edge e){ return e.from.id == n.id;});
+
+        Superedge se;
+        se.Euv = ret;
+        return se;
+    }
+
+    Superedge out(Supernode n){
+        std::set<Edge> ret;
+
+        for(auto v : n.V){
+            auto outv = out(v);
+            ret.merge(outv.Euv);
+        }
+        
+        Superedge se;
+        se.Euv = ret;
+        return se;
+    }
+
+    Superedge in(Supernode n){
+        std::set<Edge> ret;
+
+        for(auto v : n.V){
+            auto inv = in(v);
+            ret.merge(inv.Euv);
+        }
+        
+        Superedge se;
+        se.Euv = ret;
+        return se;
+    }
+
+    // int edges 
+    Superedge in(Node n){
+        std::set<Edge> ret;
+        std::copy_if(E.begin(), E.end(), std::inserter(ret, std::next(ret.begin())), 
+            [&](Edge e){ return e.to.id == n.id;});
+
+        Superedge se;
+        se.Euv = ret;
+        return se;
+    }
+
+    // all edges
+    Superedge all(Node n){
+        auto retOut = out(n);
+        auto retIn = in(n);
+        retOut.Euv.merge(retIn.Euv);
+
+        Superedge se;
+        se.Euv = retOut.Euv;
+        return se;
+    }
+};
+

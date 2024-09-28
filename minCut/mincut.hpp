@@ -45,21 +45,29 @@ namespace sequential{
         }
 
         // Source: Algorithm 3: Merge(a, b, Tau) // Tau is the set of supernodes with a, b £ Tau
-        void Merge(Supernode &a, Supernode &b, std::set<Supernode> &Tau){
+        Superedge Merge(Supernode a, Supernode b, std::set<Supernode> &Tau, Graph &G){
             // pre
-            std::set<Superedge> toReturn; 
 
             // implementation
-            auto x = Supernode();
+            //auto x = Supernode();
             x.V = a.V;
             x.V.merge(b.V); // V(x) <- V(a) U V(b)
 
-            Tau.extract(a);
-            Tau.extract(b);
+            //// get outs
+            auto outFroma = G.out(a);
+            auto outFromb = G.out(b);
+            Superedge Exd, Ead, Ebd;
 
-            for(auto &d : Tau){
-                Superedge Exd, Ead, Ebd;
-            }
+            Tau.extract(a); Tau.extract(b);
+            //for(auto d : Tau){
+                //Ead = outFroma.to(d);
+                //Ebd = outFromb.to(d);
+                //Exd.Euv.merge(Ead.Euv);
+                //Exd.Euv.merge(Ebd.Euv);
+            //}
+
+            //Tau.insert(x);
+            return Exd;
         }
     }
 };

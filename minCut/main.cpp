@@ -3,6 +3,26 @@
 #include <iostream>
 #include "mincut.hpp"
 
+void print(std::set<Supernode> &Tau, std::set<Superedge> &F){
+for(auto t : Tau){
+        for(auto v : t.V){
+            std::cout << v.id << ", ";
+        }
+
+        std::cout << std::endl;
+    }
+
+    for(auto f : F){
+        auto Euv = f.Euv;
+
+        for(auto e : Euv){
+            std::cout << "(" << e.from.id << ", " << e.to.id << "), ";
+        }
+
+        std::cout << std::endl;
+    }
+}
+
 int main(){
     Graph G;
 
@@ -37,17 +57,20 @@ int main(){
     auto Tau = std::get<0>(resInitialize);
     auto F = std::get<1>(resInitialize);
 
-    for(auto t : Tau){
-        //std::cout << t.u.id << std::endl;
+    print(Tau, F);
+
+    // algo
+    while(Tau.size() > 2){
+        auto uvP = F.begin();
+        auto uv = (*uvP);
+
+
+        auto aP = Tau.begin();
+        auto a = *aP;
+        auto Eu = sequential::Kalger::Merge(a, a, Tau, G);
+
+        print(Tau, F);
+        std::cin.ignore();
     }
 
-    for(auto f : F){
-        auto Euv = f.Euv;
-
-        for(auto e : Euv){
-            std::cout << "(" << e.from.id << ", " << e.to.id << "), ";
-        }
-
-        std::cout << std::endl;
-    }
 }
