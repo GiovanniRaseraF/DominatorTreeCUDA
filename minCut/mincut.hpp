@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <iostream>
 #include <random>
-#include <set>
+#include <unordered_set>
 #include <tuple>
 #include "graph.hpp"
 
@@ -19,15 +19,15 @@ namespace sequential{
     // Karger's Algorithm
     namespace Kalger{
         // Source: Algorithm 2: Initialize(G)
-        std::tuple<std::set<Supernode>, std::set<Superedge>> Initialize(Graph &G){ // G = (V, E)
+        std::tuple<std::unordered_set<Supernode>, std::unordered_set<Superedge>> Initialize(Graph &G){ // G = (V, E)
             // pre
             auto &V = G.V;
             auto &E = G.E;
             
             // implementation
             std::cout << "sequential::Kalger::Initialize(G)" << std::endl;
-            std::set<Supernode> Tau{};      // the set of supernodes
-            std::set<Superedge> F{};        // the set of superedges
+            std::unordered_set<Supernode> Tau{};      // the set of supernodes
+            std::unordered_set<Superedge> F{};        // the set of superedges
 
             for(auto &v : V){
                 auto v_ = Supernode();      // u_       <- new supernode
@@ -45,7 +45,7 @@ namespace sequential{
         }
 
         // Source: Algorithm 3: Merge(a, b, Tau) // Tau is the set of supernodes with a, b £ Tau
-        Superedge Merge(Supernode a, Supernode b, std::set<Supernode> &Tau, Graph &G){
+        Superedge Merge(Supernode a, Supernode b, std::unordered_set<Supernode> &Tau, Graph &G){
             // pre
 
             // implementation
@@ -59,14 +59,14 @@ namespace sequential{
             Superedge Exd, Ead, Ebd;
 
             Tau.extract(a); Tau.extract(b);
-            //for(auto d : Tau){
-                //Ead = outFroma.to(d);
-                //Ebd = outFromb.to(d);
-                //Exd.Euv.merge(Ead.Euv);
-                //Exd.Euv.merge(Ebd.Euv);
-            //}
+            for(auto d : Tau){
+                Ead = outFroma.to(d);
+                Ebd = outFromb.to(d);
+                Exd.Euv.merge(Ead.Euv);
+                Exd.Euv.merge(Ebd.Euv);
+            }
 
-            //Tau.insert(x);
+            Tau.insert(x);
             return Exd;
         }
     }

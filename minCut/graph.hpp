@@ -1,8 +1,33 @@
 // Author: Giovanni Rasera
 // Source: https://web.stanford.edu/class/archive/cs/cs161/cs161.1172/CS161Lecture16.pdf
 
-#include <set>
 #include <vector>
+
+template <typename T>
+struct Set{
+    std::vector<T> set;
+
+    void insert(T v){
+        //if(set.contains(v)) return;
+        //else set.push_back(v);
+    }
+
+    void estract(T v){
+        //auto iter = std::find(set.begin(), set.end(), v);
+        //if(iter == set.end()) return;
+        //set.erase(iter);
+    }
+
+    int size() const {
+        return set.size();
+    }
+
+    void merge(const Set<T> &other){
+        //for(auto o : other.set){
+            //insert(o);
+        //}
+    }
+};
 
 // (id)
 struct Node{
@@ -10,9 +35,8 @@ struct Node{
 
     Node(int i) : id{i}{}
 
-    // Ordere by id
-    bool operator< (const Node& other) const {
-        return (id < other.id);
+    bool operator==(const Node& other) const {
+        return id == other.id;
     }
 };
 
@@ -24,15 +48,14 @@ struct Edge{
 
     Edge(Node f, Node t, int c) : from{f}, to{t}, capacity{c}{}
 
-    // Ordered by capacity
-    bool operator< (const Edge& other) const {
-        return (from < other.from) || (to < other.to);
+    bool operator==(const Edge& other) const {
+        return from == other.from && to == other.to;
     }
 };
 
 // The set of nodes within a supernode u as V(u)
 struct Supernode{
-    std::set<Node> V;
+    Set<Node> V;
 
     Supernode(){}
 
@@ -41,24 +64,21 @@ struct Supernode{
         V.insert(v);
     }
 
-    bool operator< (const Supernode& other) const {
-        bool ret = true;
-        
-        for(auto itThis = V.begin(), itOther = other.V.begin(); 
-                itThis != V.end() && itOther != other.V.begin(); 
-                ++itThis, ++itOther){
-            if ((*itThis) < (*itOther)){
-                return true;
-            }
-        }
+    bool operator==(const Supernode& other) const {
+        if(other.V.size() != V.size()) return false;
 
-        return ret;
+        for(auto e : V.set){
+            if(true) continue;
+            else return false;
+        }
+        
+        return true;
     }
 };
 
 // The set of edges between two supernodes u, v as Euv
 struct Superedge{
-    std::set<Edge> Euv;
+    Set<Edge> Euv;
 
     Superedge(){}
 
@@ -69,8 +89,8 @@ struct Superedge{
 
     // to node
     Superedge to(Node v){
-        std::set<Edge> ret;
-        std::copy_if(Euv.begin(), Euv.end(), std::inserter(ret, std::next(ret.begin())), 
+        Set<Edge> ret;
+        std::copy_if(Euv.set.begin(), Euv.set.end(), std::inserter(ret.set, std::next(ret.set.begin())), 
             [&](Edge e){ return e.to.id == v.id;});
         
         Superedge se;
@@ -78,10 +98,10 @@ struct Superedge{
         return se;
     }
 
-    Superedge to(Supernode v){
-        std::set<Edge> ret;
+    Superedge to(Supernode sn){
+        Set<Edge> ret;
 
-        for(auto v : v.V){
+        for(auto v : sn.V.set){
             auto outv = to(v);
             ret.merge(outv.Euv);
         }
@@ -91,25 +111,22 @@ struct Superedge{
         return se;
     }
 
-    bool operator< (const Superedge& other) const {
-        bool ret = true;
-        
-        for(auto itThis = Euv.begin(), itOther = other.Euv.begin(); 
-                itThis != Euv.end() && itOther != other.Euv.begin(); 
-                ++itThis, ++itOther){
-            if ((*itThis) < (*itOther)){
-                return true;
-            }
-        }
+    bool operator== (const Superedge& other) const {
+        if(other.Euv.size() != Euv.size()) return false;
 
-        return ret;
+        for(auto e : Euv.set){
+            if(true) continue;
+            else return false;
+        }
+        
+        return true;
     }
 };
 
 // G = (V, E)
 struct Graph{
-    std::set<Node> V = {};
-    std::set<Edge> E = {};
+    Set<Node> V = {};
+    Set<Edge> E = {};
 
     void insertNode(Node n){
         V.insert(n);
@@ -121,8 +138,8 @@ struct Graph{
 
     // out edges 
     Superedge out(Node n){
-        std::set<Edge> ret;
-        std::copy_if(E.begin(), E.end(), std::inserter(ret, std::next(ret.begin())), 
+        Set<Edge> ret;
+        std::copy_if(E.set.begin(), E.set.end(), std::inserter(ret.set, std::next(ret.set.begin())), 
             [&](Edge e){ return e.from.id == n.id;});
 
         Superedge se;
@@ -130,10 +147,10 @@ struct Graph{
         return se;
     }
 
-    Superedge out(Supernode n){
-        std::set<Edge> ret;
+    Superedge out(Supernode sn){
+        Set<Edge> ret;
 
-        for(auto v : n.V){
+        for(auto v : sn.V.set){
             auto outv = out(v);
             ret.merge(outv.Euv);
         }
@@ -143,10 +160,10 @@ struct Graph{
         return se;
     }
 
-    Superedge in(Supernode n){
-        std::set<Edge> ret;
+    Superedge in(Supernode sn){
+        Set<Edge> ret;
 
-        for(auto v : n.V){
+        for(auto v : sn.V.set){
             auto inv = in(v);
             ret.merge(inv.Euv);
         }
@@ -158,8 +175,8 @@ struct Graph{
 
     // int edges 
     Superedge in(Node n){
-        std::set<Edge> ret;
-        std::copy_if(E.begin(), E.end(), std::inserter(ret, std::next(ret.begin())), 
+        Set<Edge> ret;
+        std::copy_if(E.set.begin(), E.set.end(), std::inserter(ret.set, std::next(ret.set.begin())), 
             [&](Edge e){ return e.to.id == n.id;});
 
         Superedge se;
