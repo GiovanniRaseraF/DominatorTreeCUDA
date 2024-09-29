@@ -49,7 +49,7 @@ namespace sequential{
             // pre
 
             // implementation
-            //auto x = Supernode();
+            auto x = Supernode();
             x.V = a.V;
             x.V.merge(b.V); // V(x) <- V(a) U V(b)
 
