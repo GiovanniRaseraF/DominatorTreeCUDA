@@ -4,10 +4,13 @@
 #include <string.h>
 #include <array>
 #include <queue>
+#include <chrono>
+#include <thread>
+#include <future>
 using namespace std;
  
 // Number of vertices in given graph
-#define V 7
+#define V 800
  
 /* Returns true if there is a path from source 's' to sink 't' in
   residual graph. Also fills parent[] to store the path */
@@ -95,14 +98,16 @@ void minCut(std::array<std::array<int, V>, V> &graph, int s, int t, std::array<s
         }
     }
  
-    
-    
- 
     return;
 }
 
 void printResidual( std::array<std::array<int, V>, V> &graph, int s, int t, std::array<std::array<int, V>, V> &rGraph ){
+    std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
+    std::chrono::time_point<std::chrono::steady_clock> end   = std::chrono::steady_clock::now();
+
+    start = std::chrono::steady_clock::now();
     minCut(graph, s, t, rGraph);
+    end = std::chrono::steady_clock::now();
     
     // Flow is maximum now, find vertices reachable from s
     bool visited[V];
@@ -115,11 +120,13 @@ void printResidual( std::array<std::array<int, V>, V> &graph, int s, int t, std:
       for (int j = 0; j < V; j++)
          if (visited[i] && !visited[j] && graph[i][j])
               cout << i << " - " << j << endl;
+
+    auto countMinCutCPU= std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "time: " << countMinCutCPU<< " ms";
 }
  
 // Driver program to test above functions
-int main()
-{
+int main(){
     // Let us create a graph shown in the above example
     //int graph[V][V] = { {0, 16, 13, 0, 0, 0 , 0},
                     //     {0, 0, 10, 12, 0, 0, 0},
@@ -132,29 +139,67 @@ int main()
  
     //minCut(graph, 0, 6);
 
-    std::array<std::array<int, V>, V> graph = {{ 
-    //   0  1  2  3  4  5  6
-        {0, 1, 0, 1, 1, 1, 0}, // 0
-        {0, 0, 1, 0, 0, 0, 0}, // 1
-        {0, 0, 0, 0, 0, 0, 1}, // 2
-        {0, 0, 1, 0, 0, 0, 0}, // 3
-        {0, 0, 1, 0, 0, 0, 10}, // 4
-        {0, 0, 1, 0, 0, 0, 0}, // 5
-        {0, 0, 0, 0, 0, 0, 0}, // 6
-    }};
+    // std::array<std::array<int, V>, V> graph = {{ 
+    // //   0  1  2  3  4  5  6
+    //     {0, 1, 0, 1, 1, 1, 0}, // 0
+    //     {0, 0, 1, 0, 0, 0, 0}, // 1
+    //     {0, 0, 0, 0, 0, 0, 1}, // 2
+    //     {0, 0, 1, 0, 0, 0, 0}, // 3
+    //     {0, 0, 1, 0, 0, 0, 10}, // 4
+    //     {0, 0, 1, 0, 0, 0, 0}, // 5
+    //     {0, 0, 0, 0, 0, 0, 0}, // 6
+    // }};
 
-    std::array<std::array<int, V>, V> rgraph = {{ 
-    //   0  1  2  3  4  5  6
-        {0, 1, 0, 1, 1, 1, 0}, // 0
-        {0, 0, 1, 0, 0, 0, 0}, // 1
-        {0, 0, 0, 0, 0, 0, 1}, // 2
-        {0, 0, 1, 0, 0, 0, 0}, // 3
-        {0, 0, 1, 0, 0, 0, 10}, // 4
-        {0, 0, 1, 0, 0, 0, 0}, // 5
-        {0, 0, 0, 0, 0, 0, 0}, // 6
-    }};
+    // std::array<std::array<int, V>, V> rgraph = {{ 
+    // //   0  1  2  3  4  5  6
+    //     {0, 1, 0, 1, 1, 1, 0}, // 0
+    //     {0, 0, 1, 0, 0, 0, 0}, // 1
+    //     {0, 0, 0, 0, 0, 0, 1}, // 2
+    //     {0, 0, 1, 0, 0, 0, 0}, // 3
+    //     {0, 0, 1, 0, 0, 0, 10}, // 4
+    //     {0, 0, 1, 0, 0, 0, 0}, // 5
+    //     {0, 0, 0, 0, 0, 0, 0}, // 6
+    // }};
 
-    printResidual(graph, 0, 6, rgraph);
+    //printResidual(graph, 0, 6, rgraph);
+
+    std::cout << "MinCutCPU: V=" << V << std::endl;
+
+    std::array<std::array<int, V>, V> rgraph;
+    std::array<std::array<int, V>, V> graph;
+    for(int i = 0; i < V; i ++){
+        for(int j = 0; j < V; j++){
+            graph[i][j] = 0;
+        }
+    }
+
+    // generate a connection form start to finish
+    for(int i = 0; i < V-1; i ++){
+        graph[i][i+1] = 1;
+    }
+    std::cout << "min cut will be one of the edges" << std::endl;
+    printResidual(graph, 0, V-1, rgraph);
+    std::cout << std::endl;
+
+
+    // Example 2
+    for(int i = 0; i < V; i ++){
+        for(int j = 0; j < V; j++){
+            graph[i][j] = 0;
+        }
+    }
+
+    // generate a connection form start to finish
+    for(int i = 0; i < V-1; i ++){
+        graph[i][i+1] = 1;
+    }
+    // add adge 0 -> 300
+    graph[0][300] = 100;
+    std::cout <<  "min cut will be after 300" << std::endl;
+    printResidual(graph, 0, V-1, rgraph);
+    std::cout << std::endl;
+
+
  
     return 0;
 }
