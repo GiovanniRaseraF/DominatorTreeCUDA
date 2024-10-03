@@ -8,13 +8,22 @@
 #include <thread>
 #include <future>
 using namespace std;
- 
+
 // Number of vertices in given graph
-#define V 800
- 
+//#define V 1024
+
+
+#ifdef USEARRAY
+    typedef std::array<std::array<int, V>, V> Graph;
+#endif
+
+#ifdef USEVECTOR
+    typedef std::vector<std::vector<int>> Graph;
+#endif
+
 /* Returns true if there is a path from source 's' to sink 't' in
   residual graph. Also fills parent[] to store the path */
-int bfs(std::array<std::array<int, V>, V> &rGraph, int s, int t, int parent[])
+int bfs(Graph &rGraph, int s, int t, int parent[])
 {
     // Create a visited array and mark all vertices as not visited
     bool visited[V];
@@ -52,7 +61,7 @@ int bfs(std::array<std::array<int, V>, V> &rGraph, int s, int t, int parent[])
 // A DFS based function to find all reachable vertices from s.  The function
 // marks visited[i] as true if i is reachable from s.  The initial values in
 // visited[] must be false. We can also use BFS to find reachable vertices
-void dfs(std::array<std::array<int, V>, V> &rGraph, int s, bool visited[])
+void dfs(Graph &rGraph, int s, bool visited[])
 {
     visited[s] = true;
     for (int i = 0; i < V; i++)
@@ -61,7 +70,7 @@ void dfs(std::array<std::array<int, V>, V> &rGraph, int s, bool visited[])
 }
  
 // Prints the minimum s-t cut
-void minCut(std::array<std::array<int, V>, V> &graph, int s, int t, std::array<std::array<int, V>, V> &rGraph)
+void minCut(Graph &graph, int s, int t, Graph &rGraph)
 {
     int u, v;
  
@@ -101,7 +110,7 @@ void minCut(std::array<std::array<int, V>, V> &graph, int s, int t, std::array<s
     return;
 }
 
-void printResidual( std::array<std::array<int, V>, V> &graph, int s, int t, std::array<std::array<int, V>, V> &rGraph ){
+void printResidual( Graph &graph, int s, int t, Graph &rGraph ){
     std::chrono::time_point<std::chrono::steady_clock> start = std::chrono::steady_clock::now();
     std::chrono::time_point<std::chrono::steady_clock> end   = std::chrono::steady_clock::now();
 
@@ -139,7 +148,7 @@ int main(){
  
     //minCut(graph, 0, 6);
 
-    // std::array<std::array<int, V>, V> graph = {{ 
+    // Graph graph = {{ 
     // //   0  1  2  3  4  5  6
     //     {0, 1, 0, 1, 1, 1, 0}, // 0
     //     {0, 0, 1, 0, 0, 0, 0}, // 1
@@ -150,7 +159,7 @@ int main(){
     //     {0, 0, 0, 0, 0, 0, 0}, // 6
     // }};
 
-    // std::array<std::array<int, V>, V> rgraph = {{ 
+    // Graph rgraph = {{ 
     // //   0  1  2  3  4  5  6
     //     {0, 1, 0, 1, 1, 1, 0}, // 0
     //     {0, 0, 1, 0, 0, 0, 0}, // 1
@@ -165,8 +174,21 @@ int main(){
 
     std::cout << "MinCutCPU: V=" << V << std::endl;
 
-    std::array<std::array<int, V>, V> rgraph;
-    std::array<std::array<int, V>, V> graph;
+#ifdef USEARRAY
+    Graph rgraph;
+    Graph graph;
+#endif
+
+#ifdef USEVECTOR
+    Graph rgraph(V);
+    Graph graph(V);
+    for(int i = 0; i < V; i ++){
+        for(int j = 0; j < V; j++){
+            graph[i].push_back(0);
+            rgraph[i].push_back(0);
+        }
+    }
+#endif
     for(int i = 0; i < V; i ++){
         for(int j = 0; j < V; j++){
             graph[i][j] = 0;
@@ -198,8 +220,6 @@ int main(){
     std::cout <<  "min cut will be after 300" << std::endl;
     printResidual(graph, 0, V-1, rgraph);
     std::cout << std::endl;
-
-
  
     return 0;
 }
