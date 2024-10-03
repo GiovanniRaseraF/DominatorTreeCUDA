@@ -3,7 +3,7 @@
 #include <iostream>
 #include "mincut.hpp"
 
-void print(std::unordered_set<Supernode> &Tau, std::unordered_set<Superedge> &F){
+void print(std::vector<Supernode> &Tau, std::vector<Superedge> &F){
 for(auto t : Tau){
         for(auto v : t.V){
             std::cout << v.id << ", ";
@@ -55,40 +55,20 @@ int main(){
     // Initialize
     auto resInitialize = sequential::Kalger::Initialize(G);
 
-    auto Tau = std::get<0>(resInitialize);
+    std::vector<Supernode> Tau = std::get<0>(resInitialize);
     auto F = std::get<1>(resInitialize);
 
     print(Tau, F);
 
     // algo
-    // while(Tau.size() > 2){
-    //     auto a = Supernode();
-    //     auto b = Supernode();
-    //     a.V.insert(Node(0));
-    //     b.V.insert(Node(1));
-    //     auto Eu = sequential::Kalger::Merge(a, b, Tau, G);
+    while(Tau.size() > 2){
+        auto a = Supernode();
+        auto b = Supernode();
+        a.insert(Node(0));
+        b.insert(Node(1));
+        sequential::Kalger::Merge(a, b, Tau, G);
 
-    //     print(Tau, F);
-    //     std::cin.ignore();
-    // }
-
-
-    //std::unordered_set<Supernode> FakeTau;
-    //std::unordered_set<Superedge> FakeF;
-    //auto a = Supernode();
-    //auto b = Supernode();
-    //a.insert(Node(1));
-    //a.insert(Node(5));
-    //a.insert(Node(3));
-    //a.insert(Node(0));
-    //b.insert(Node(0));
-    //b.insert(Node(3));
-
-    //FakeTau.insert(a);
-    //FakeTau.insert(b);
-
-    //print(FakeTau, FakeF);
-    //FakeTau.extract(a);
-
-    //print(FakeTau, FakeF);
+        print(Tau, F);
+        std::cin.ignore();
+    }
 }

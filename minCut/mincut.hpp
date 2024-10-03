@@ -18,56 +18,97 @@
 namespace sequential{
     // Karger's Algorithm
     namespace Kalger{
+        // Source: Algorithm 1: IntuitiveKarger(G)
+        std::vector<Edge> IntuitiveKarger(Graph &G){
+
+        }
+
         // Source: Algorithm 2: Initialize(G)
-        std::tuple<std::unordered_set<Supernode>, std::unordered_set<Superedge>> Initialize(Graph &G){ // G = (V, E)
+        std::tuple<std::vector<Supernode>, std::vector<Superedge>> Initialize(Graph &G){ // G = (V, E)
             // pre
             auto &V = G.V;
             auto &E = G.E;
-            
-            // implementation
-            std::cout << "sequential::Kalger::Initialize(G)" << std::endl;
-            std::unordered_set<Supernode> Tau{};      // the set of supernodes
-            std::unordered_set<Superedge> F{};        // the set of superedges
+
+            std::vector<Supernode> Tau;
+            std::vector<Superedge> F;
 
             for(auto &v : V){
-                auto v_ = Supernode();      // u_       <- new supernode
-                v_.insert(v);               // V(u_)    <- {v} //TODO: is insertion or assignment in the set of v_ ? 
-                Tau.insert(v_);             // Tau      <- Tau U {v_}
+                auto v_ = Supernode();
+                v_.insert(v);
+                Tau.push_back(v_);
             }
 
-            for(auto &e : E){
-                auto Euv = Superedge();     // Euv      <- {(u, v)}
-                Euv.insert(e);              // 
-                F.insert(Euv);              // F        <- F U {(u, v)}
+            for(auto &uv : E){
+                auto Euv = Superedge();
+                Euv.insert(uv);
+                F.push_back(Euv);
             }
 
             return {Tau, F};
         }
 
         // Source: Algorithm 3: Merge(a, b, Tau) // Tau is the set of supernodes with a, b £ Tau
-        Superedge Merge(Supernode a, Supernode b, std::unordered_set<Supernode> &Tau, Graph &G){
+        void Merge(Supernode a, Supernode b, std::vector<Supernode> &Tau, Graph &G){
             // pre
 
             // implementation
             auto x = Supernode();
             x.V = a.V;
-            x.V.merge(b.V); // V(x) <- V(a) U V(b)
+            x.insert(b); // V(x) <- V(a) U V(b)
+            Tau.push_back(x);
+            
+        }                
 
-            //// get outs
-            auto outFroma = G.out(a);
-            auto outFromb = G.out(b);
-            Superedge Exd, Ead, Ebd;
+        // Source: Algorithm 2: Initialize(G)
+        //std::tuple<std::unordered_set<Supernode>, std::unordered_set<Superedge>> Initialize(Graph &G){ // G = (V, E)
+            //// pre
+            //auto &V = G.V;
+            //auto &E = G.E;
+            
+            //// implementation
+            //std::cout << "sequential::Kalger::Initialize(G)" << std::endl;
+            //std::unordered_set<Supernode> Tau{};      // the set of supernodes
+            //std::unordered_set<Superedge> F{};        // the set of superedges
 
-            Tau.extract(a); Tau.extract(b);
-            for(auto d : Tau){
-                Ead = outFroma.to(d);
-                Ebd = outFromb.to(d);
-                Exd.Euv.merge(Ead.Euv);
-                Exd.Euv.merge(Ebd.Euv);
-            }
+            //for(auto &v : V){
+                //auto v_ = Supernode();      // u_       <- new supernode
+                //v_.insert(v);               // V(u_)    <- {v} //TODO: is insertion or assignment in the set of v_ ? 
+                //Tau.insert(v_);             // Tau      <- Tau U {v_}
+            //}
 
-            Tau.insert(x);
-            return Exd;
-        }
+            //for(auto &e : E){
+                //auto Euv = Superedge();     // Euv      <- {(u, v)}
+                //Euv.insert(e);              // 
+                //F.insert(Euv);              // F        <- F U {(u, v)}
+            //}
+
+            //return {Tau, F};
+        //}
+
+        // Source: Algorithm 3: Merge(a, b, Tau) // Tau is the set of supernodes with a, b £ Tau
+        //Superedge Merge(Supernode a, Supernode b, std::unordered_set<Supernode> &Tau, Graph &G){
+            //// pre
+
+            //// implementation
+            //auto x = Supernode();
+            //x.V = a.V;
+            //x.V.merge(b.V); // V(x) <- V(a) U V(b)
+
+            ////// get outs
+            //auto outFroma = G.out(a);
+            //auto outFromb = G.out(b);
+            //Superedge Exd, Ead, Ebd;
+
+            //Tau.extract(a); Tau.extract(b);
+            //for(auto d : Tau){
+                //Ead = outFroma.to(d);
+                //Ebd = outFromb.to(d);
+                //Exd.Euv.merge(Ead.Euv);
+                //Exd.Euv.merge(Ebd.Euv);
+            //}
+
+            //Tau.insert(x);
+            //return Exd;
+        //}
     }
 };
