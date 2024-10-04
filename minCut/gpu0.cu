@@ -21,6 +21,7 @@ using namespace std;
     typedef std::vector<std::vector<int>> Graph;
 #endif
 
+
 /* Returns true if there is a path from source 's' to sink 't' in
   residual graph. Also fills parent[] to store the path */
 int bfs(Graph &rGraph, int s, int t, int parent[])
@@ -119,9 +120,6 @@ void printResidual( Graph &graph, int s, int t, Graph &rGraph ){
 
     start = std::chrono::steady_clock::now();
     minCut(graph, s, t, rGraph);
-    end = std::chrono::steady_clock::now();
-    auto countMinCutCPU= std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "time: " << countMinCutCPU<< " ms";
     dfs(rGraph, s, visited);
 
     // Print all edges that are from a reachable vertex to
@@ -132,7 +130,9 @@ void printResidual( Graph &graph, int s, int t, Graph &rGraph ){
               //cout << i << " - " << j << endl;
               continue;
 
-    
+    end = std::chrono::steady_clock::now();
+    auto countMinCutCPU= std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "time: " << countMinCutCPU<< " ms";
 }
  
 // Driver program to test above functions
