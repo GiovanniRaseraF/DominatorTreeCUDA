@@ -14,23 +14,43 @@ using namespace std;
 
 
 #ifdef USEARRAY
-    typedef std::array<std::array<int, V>, V> Graph;
+    typedef std::array<std::array<int, V>, V> Graph; // impossible to use for big data
 #endif
 
 #ifdef USEVECTOR
     typedef std::vector<std::vector<int>> Graph;
 #endif
 
-/* Returns true if there is a path from source 's' to sink 't' in
-  residual graph. Also fills parent[] to store the path */
-int bfs(Graph &rGraph, int s, int t, int parent[])
-{
-    // Create a visited array and mark all vertices as not visited
+std::chrono::time_point<std::chrono::steady_clock> start_bfs = std::chrono::steady_clock::now();
+std::chrono::time_point<std::chrono::steady_clock> end_bfs   = std::chrono::steady_clock::now();
+int callcount_bfs = 0;
+uint64_t countms_bfs = 0;
+
+void resetBfsTimes(){
+    start_bfs = std::chrono::steady_clock::now();
+    end_bfs   = std::chrono::steady_clock::now();
+    callcount_bfs = 0;
+    countms_bfs = 0;
+}
+
+std::chrono::time_point<std::chrono::steady_clock> start_dfs = std::chrono::steady_clock::now();
+std::chrono::time_point<std::chrono::steady_clock> end_dfs   = std::chrono::steady_clock::now();
+int callcount_dfs = 0;
+uint64_t countms_dfs = 0;
+
+void resetDfsTimes(){
+    start_dfs = std::chrono::steady_clock::now();
+    end_dfs   = std::chrono::steady_clock::now();
+    callcount_dfs = 0;
+    countms_dfs = 0;
+}
+
+int bfs(Graph &rGraph, int s, int t, int parent[]){
+    callcount_bfs +=1;
+    start_bfs = std::chrono::steady_clock::now();
     bool visited[V];
     memset(visited, 0, sizeof(visited));
  
-    // Create a queue, enqueue source vertex and mark source vertex
-    // as visited
     queue <int> q;
     q.push(s);
     visited[s] = true;
@@ -52,15 +72,15 @@ int bfs(Graph &rGraph, int s, int t, int parent[])
             }
         }
     }
- 
-    // If we reached sink in BFS starting from source, then return
-    // true, else false
+    
+    end_bfs = std::chrono::steady_clock::now();
+    auto countMinCutCPU = std::chrono::duration_cast<std::chrono::milliseconds>(end_bfs - start_bfs).count();
+    countms_bfs += countMinCutCPU;
+
+    // arrived to end ? 
     return (visited[t] == true);
 }
  
-// A DFS based function to find all reachable vertices from s.  The function
-// marks visited[i] as true if i is reachable from s.  The initial values in
-// visited[] must be false. We can also use BFS to find reachable vertices
 void dfs(Graph &rGraph, int s, bool visited[])
 {
     visited[s] = true;
@@ -68,28 +88,22 @@ void dfs(Graph &rGraph, int s, bool visited[])
        if (rGraph[s][i] && !visited[i])
            dfs(rGraph, i, visited);
 }
- 
-// Prints the minimum s-t cut
-void minCut(Graph &graph, int s, int t, Graph &rGraph)
-{
-    int u, v;
- 
-    // Create a residual graph and fill the residual graph with
-    // given capacities in the original graph as residual capacities
-    // in residual graph
-    // rGraph[i][j] indicates residual capacity of edge i-j
-    for (u = 0; u < V; u++)
-        for (v = 0; v < V; v++)
+
+void initResidual(Graph &graph, Graph &rGraph){
+    for (int u = 0; u < V; u++)
+        for (int v = 0; v < V; v++)
              rGraph[u][v] = graph[u][v];
+}
+
+void minCut(Graph &graph, int s, int t, Graph &rGraph){
+    initResidual(graph, rGraph); 
  
     int parent[V];  // This array is filled by BFS and to store path
  
+    int v, u;
     // Augment the flow while there is a path from source to sink
     while (bfs(rGraph, s, t, parent))
     {
-        // Find minimum residual capacity of the edges along the
-        // path filled by BFS. Or we can say find the maximum flow
-        // through the path found.
         int path_flow = INT_MAX;
         for (v=t; v!=s; v=parent[v])
         {
@@ -97,8 +111,6 @@ void minCut(Graph &graph, int s, int t, Graph &rGraph)
             path_flow = min(path_flow, rGraph[u][v]);
         }
  
-        // update residual capacities of the edges and reverse edges
-        // along the path
         for (v=t; v != s; v=parent[v])
         {
             u = parent[v];
@@ -121,8 +133,14 @@ void printResidual( Graph &graph, int s, int t, Graph &rGraph ){
     minCut(graph, s, t, rGraph);
     end = std::chrono::steady_clock::now();
     auto countMinCutCPU= std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    std::cout << "time: " << countMinCutCPU<< " ms";
+    std::cout << "minCut time: " << countMinCutCPU<< " ms";
+
+    start_dfs = std::chrono::steady_clock::now();
     dfs(rGraph, s, visited);
+    end_dfs = std::chrono::steady_clock::now();
+    auto countMinCutDFSCPU= std::chrono::duration_cast<std::chrono::milliseconds>(end_dfs - start_dfs).count();
+    std::cout << std::endl;
+    std::cout << "DFS time: " << countMinCutDFSCPU<< " ms";
 
     // Print all edges that are from a reachable vertex to
     // non-reachable vertex in the original graph
@@ -131,8 +149,6 @@ void printResidual( Graph &graph, int s, int t, Graph &rGraph ){
          if (visited[i] && !visited[j] && graph[i][j])
               //cout << i << " - " << j << endl;
               continue;
-
-    
 }
  
 // Driver program to test above functions
@@ -190,6 +206,8 @@ int main(){
         }
     }
 #endif
+
+    resetBfsTimes();
     for(int i = 0; i < V; i ++){
         for(int j = 0; j < V; j++){
             graph[i][j] = 0;
@@ -206,6 +224,7 @@ int main(){
 
 
     // Example 2
+    resetBfsTimes();
     for(int i = 0; i < V; i ++){
         for(int j = 0; j < V; j++){
             graph[i][j] = 0;
@@ -220,7 +239,40 @@ int main(){
     graph[0][300] = 100;
     std::cout <<  "min cut will be after 300" << std::endl;
     printResidual(graph, 0, V-1, rgraph);
+
+    std::cout << std::endl;
+    std::cout << "bfs total time: " << countms_bfs << " ms" << std::endl;
+    std::cout << "bfs calls: " << callcount_bfs << " times called" << std::endl;
+    std::cout << "bfs avg time: " << countms_bfs / callcount_bfs << " ms" << std::endl;
     std::cout << std::endl;
  
+    // Example 3
+    resetBfsTimes();
+    for(int i = 0; i < V; i ++){
+        for(int j = 0; j < V; j++){
+            graph[i][j] = 0;
+        }
+    }
+
+    // generate a connection form start to finish
+    for(int i = 0; i < V-1; i ++){
+        graph[i][i+1] = 1;
+    }
+    // add adge 0 -> 300
+    graph[0][300] = 100;
+    for(int i = 0; i < 300; i ++){
+        graph[0][i+1] = 100;
+        graph[i][i+100] = 100;
+    }
+    std::cout <<  "More lines" << std::endl;
+    printResidual(graph, 0, V-1, rgraph);
+
+    std::cout << std::endl;
+    std::cout << "bfs total time: " << countms_bfs << " ms" << std::endl;
+    std::cout << "bfs calls: " << callcount_bfs << " times called" << std::endl;
+    std::cout << "bfs avg time: " << countms_bfs / callcount_bfs << " ms" << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
     return 0;
 }
