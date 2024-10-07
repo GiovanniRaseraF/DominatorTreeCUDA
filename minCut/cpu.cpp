@@ -45,6 +45,18 @@ void resetDfsTimes(){
     countms_dfs = 0;
 }
 
+std::chrono::time_point<std::chrono::steady_clock> start_while_mincut = std::chrono::steady_clock::now();
+std::chrono::time_point<std::chrono::steady_clock> end_while_mincut   = std::chrono::steady_clock::now();
+int callcount_while_mincut = 0;
+uint64_t countms_while_mincut = 0;
+
+void resetWhileMinCut(){
+    start_while_mincut = std::chrono::steady_clock::now();
+    end_while_mincut   = std::chrono::steady_clock::now();
+    callcount_while_mincut = 0;
+    countms_while_mincut = 0;
+}
+
 int bfs(Graph &rGraph, int s, int t, int parent[]){
     callcount_bfs +=1;
     start_bfs = std::chrono::steady_clock::now();
@@ -95,6 +107,7 @@ void initResidual(Graph &graph, Graph &rGraph){
              rGraph[u][v] = graph[u][v];
 }
 
+// the slowest part of the algorithm in bfs
 void minCut(Graph &graph, int s, int t, Graph &rGraph){
     initResidual(graph, rGraph); 
  
@@ -102,8 +115,8 @@ void minCut(Graph &graph, int s, int t, Graph &rGraph){
  
     int v, u;
     // Augment the flow while there is a path from source to sink
-    while (bfs(rGraph, s, t, parent))
-    {
+    while (bfs(rGraph, s, t, parent)){
+        start_while_mincut = std::chrono::steady_clock::now();
         int path_flow = INT_MAX;
         for (v=t; v!=s; v=parent[v])
         {
@@ -117,6 +130,9 @@ void minCut(Graph &graph, int s, int t, Graph &rGraph){
             rGraph[u][v] -= path_flow;
             rGraph[v][u] += path_flow;
         }
+        end_while_mincut = std::chrono::steady_clock::now();
+        auto countWhile= std::chrono::duration_cast<std::chrono::microseconds>(end_while_mincut - start_while_mincut).count();
+        countms_while_mincut += countWhile;
     }
  
     return;
@@ -147,8 +163,8 @@ void printResidual( Graph &graph, int s, int t, Graph &rGraph ){
     for (int i = 0; i < V; i++)
       for (int j = 0; j < V; j++)
          if (visited[i] && !visited[j] && graph[i][j])
-              //cout << i << " - " << j << endl;
-              continue;
+              cout << i << " - " << j << endl;
+              //continue;
 }
  
 // Driver program to test above functions
@@ -208,6 +224,7 @@ int main(){
 #endif
 
     resetBfsTimes();
+    resetWhileMinCut();
     for(int i = 0; i < V; i ++){
         for(int j = 0; j < V; j++){
             graph[i][j] = 0;
@@ -225,6 +242,7 @@ int main(){
 
     // Example 2
     resetBfsTimes();
+    resetWhileMinCut();
     for(int i = 0; i < V; i ++){
         for(int j = 0; j < V; j++){
             graph[i][j] = 0;
@@ -244,10 +262,12 @@ int main(){
     std::cout << "bfs total time: " << countms_bfs << " ms" << std::endl;
     std::cout << "bfs calls: " << callcount_bfs << " times called" << std::endl;
     std::cout << "bfs avg time: " << countms_bfs / callcount_bfs << " ms" << std::endl;
+    std::cout << "while mincut total time: " << countms_while_mincut << " ms" << std::endl;
     std::cout << std::endl;
  
     // Example 3
     resetBfsTimes();
+    resetWhileMinCut();
     for(int i = 0; i < V; i ++){
         for(int j = 0; j < V; j++){
             graph[i][j] = 0;
@@ -271,6 +291,7 @@ int main(){
     std::cout << "bfs total time: " << countms_bfs << " ms" << std::endl;
     std::cout << "bfs calls: " << callcount_bfs << " times called" << std::endl;
     std::cout << "bfs avg time: " << countms_bfs / callcount_bfs << " ms" << std::endl;
+    std::cout << "while mincut total time: " << countms_while_mincut << " ms" << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;
     std::cout << std::endl;

@@ -1,6 +1,7 @@
 // Author: Giovanni Rasera
 // Source: https://web.stanford.edu/class/archive/cs/cs161/cs161.1172/CS161Lecture16.pdf
 // Help From: https://www.tutorialspoint.com/data_structures_algorithms/dsa_kargers_minimum_cut_algorithm.htm
+// Help From: https://www.baeldung.com/cs/minimum-cut-graphs
 // 
 
 #include <deque>
