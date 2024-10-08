@@ -3,6 +3,13 @@
 #include <iostream>
 #include "mincut.hpp"
 
+// artifichal
+void generateFromStartToFinish(Graph &graph){
+    for(int i = 0; i < V-1; i++){
+        graph[i][i+1] = 1;
+    }
+}
+
 void justInitGraph(Graph &graph, Graph &rGraph) {
     std::cout << "Init G and rG with V: " << V << std::endl;
     for(int i = 0; i < V; i ++){
@@ -18,6 +25,7 @@ int main(){
     Graph graph(V);
 
     justInitGraph(graph, rGraph);
+    generateFromStartToFinish(graph);
 
     auto result = sequential::Default::minCutMaxFlow(graph, rGraph, 0, V-1);
 
