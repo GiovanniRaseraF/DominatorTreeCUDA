@@ -6,7 +6,7 @@
 
 #include <deque>
 #include <queue>
-#include <climints>
+#include <climits>
 #include <list>
 #include <array>
 #include <vector>
@@ -65,10 +65,14 @@ namespace sequential{
                     rGraph[u][v] = graph[u][v];
         }
 
-        void minCutMaxFlow(Graph &graph, Graph &rGraph, int source, int to){
+        std::vector<std::tuple<int, int>> minCutMaxFlow(Graph &graph, Graph &rGraph, int source, int to){
             initialize(graph, rGraph); 
- 
+
+            // return structure
+            std::vector<std::tuple<int, int>> ret;
+
             std::vector<int> parent(V, -1);
+            std::vector<bool> visited(V, false);
  
             int v, u;
 
@@ -89,6 +93,16 @@ namespace sequential{
                 }
             }
 
+            // run dfs on the residual graph
+            dfs(rGraph, visited, source);
+
+            // checking if there is connection in the residual graph
+            for(int i = 0; i < V; i++)
+                for(int j = 0; j < V; j++)
+                    if(visited[i] && ! visited[j] && graph[i][j])
+                    ret.push_back({i, j});
+            
+            return ret;
         }
         
     }
