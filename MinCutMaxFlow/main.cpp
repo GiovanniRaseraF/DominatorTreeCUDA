@@ -3,7 +3,7 @@
 #include <iostream>
 #include "mincut.hpp"
 
-
+constexpr int V = 1024;
 
 void justInitGraph(Graph &graph, Graph &rGraph) {
     std::cout << "Init G and rG with V: " << V << std::endl;
@@ -47,6 +47,8 @@ void test2(){
     const int numberOfNodes = 7;
     Graph rGraph(numberOfNodes);
     Graph graph(numberOfNodes);
+    justInitGraph(graph, rGraph);
+
     int source = 0;
     int to = 6;
     //
@@ -63,9 +65,7 @@ void test2(){
     graph[2][to] = 1;
     //
 
-    justInitGraph(graph, rGraph);
-
-    auto result = sequential::Default::minCutMaxFlow(graph, rGraph, 0, 6);
+    auto result = sequential::Default::minCutMaxFlow(graph, rGraph, source, to);
 
     // print result
     std::cout << "Edges to remove are: " << std::endl;
@@ -78,6 +78,6 @@ void test2(){
 }
 
 int main(){
-    test1();
+    //test1();
     test2();
 }
