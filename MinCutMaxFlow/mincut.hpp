@@ -21,6 +21,21 @@ typedef std::vector<std::vector<int>> Graph;
 
 namespace sequential{
     namespace Default{
+
+        /*
+        A node v in G becames v' composed of (v'odd -> v'even).
+        - All the original in(v) edges than were coming to v are now 
+        connected to v'odd with infinite cost.
+        - All the original out(v) edges than were originating from v are now 
+        originating from v'even with infinite cost
+        - The cost from v'odd to v'even is 1
+        */
+        void buildGPrimeFromG(const Graph& graph, Graph& graphPrime){
+            for (int u = 0; u < graph.size(); u++)
+                for (int v = 0; v < graph.size(); v++)
+                    graphPrime[u][v] = graph[u][v];
+        }
+
         bool bfs(Graph &rGraph, std::vector<int> &parent, int source, int to){
             // Init
             std::vector<bool> visited(rGraph.size(), false);
@@ -30,15 +45,12 @@ namespace sequential{
             parent[source] = -1; 
 
             // bfs loop
-            while (!q.empty())
-            {
+            while (!q.empty()){
                 int u = q.front();
                 q.pop();
  
-                for (int v=0; v<rGraph.size(); v++)
-                {
-                    if (visited[v]==false && rGraph[u][v] > 0)
-                    {
+                for (int v=0; v<rGraph.size(); v++){
+                    if (visited[v]==false && rGraph[u][v] > 0){
                         q.push(v);
                         parent[v] = u;
                         visited[v] = true;
@@ -75,16 +87,13 @@ namespace sequential{
             int v, u;
 
             while(bfs(rGraph, parent, source, to)){
-                std::cout << "Done bfs!" << std::endl;
                 int path_flow = INT_MAX;
-                for (v=to; v!=source; v=parent[v])
-                {
+                for (v=to; v!=source; v=parent[v]){
                     u = parent[v];
                     path_flow = std::min(path_flow, rGraph[u][v]);
                 }
  
-                for (v=to; v != source; v=parent[v])
-                {
+                for (v=to; v != source; v=parent[v]){
                     u = parent[v];
                     rGraph[u][v] -= path_flow;
                     rGraph[v][u] += path_flow;
