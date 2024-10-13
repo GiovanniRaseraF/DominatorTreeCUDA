@@ -4,7 +4,9 @@
 #include <iostream>
 #include "mincut.hpp"
 
-constexpr int V = 1024;
+#ifndef V
+#define V 1024
+#endif
 
 void justInitGraph(Graph &graph, Graph &rGraph) {
     std::cout << "Init G and rG with V: " << graph.size() << std::endl;

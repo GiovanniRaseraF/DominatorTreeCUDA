@@ -1,18 +1,11 @@
 # Author: Giovanni Rasera
+V=1024
 
 main:
 	if [ -d "./build" ]; then rm -r build; fi
 	mkdir build
 	
-	g++ -o ./build/$@.out ./$@.cpp -std=c++17
-
-	./build/$@.out
-
-cpu: 
-	if [ -d "./build" ]; then rm -r build; fi
-	mkdir build
-	
-	g++ -o ./build/$@.out ./$@.cpp -std=c++17 -D$(STRUCT) -DV=$(V)
+	g++ -o ./build/$@.out ./$@.cpp -DV=$V -std=c++17
 
 	./build/$@.out
 
