@@ -21,19 +21,37 @@ typedef std::vector<std::vector<int>> Graph;
 
 namespace sequential{
     namespace Default{
-
         /*
-        A node v in G becames v' composed of (v'odd -> v'even).
+        A node v in G becames v' composed of (v'even -> v'odd).
         - All the original in(v) edges than were coming to v are now 
-        connected to v'odd with infinite cost.
+        connected to v'even with infinite cost.
         - All the original out(v) edges than were originating from v are now 
-        originating from v'even with infinite cost
+        originating from v'odd with infinite cost
         - The cost from v'odd to v'even is 1
+        example:
+        G
+        0 -> 1 -> 2 -> 3  /   0 -> 2
+        G'
+        (0 -> 1) -> (2 -> 3) -> (4 -> 5) -> (6 -> 7)  /    1 -> 4
         */
         void buildGPrimeFromG(const Graph& graph, Graph& graphPrime){
-            for (int u = 0; u < graph.size(); u++)
-                for (int v = 0; v < graph.size(); v++)
-                    graphPrime[u][v] = graph[u][v];
+            // in and out edges
+            for (int u = 0; u < graph.size(); u++){
+                for (int v = 0; v < graph.size(); v++){
+                    if(graph[u][v] > 0){
+                        int uPodd = u*2 +1;
+                        int vPeven = v*2;
+                        graphPrime[uPodd][vPeven] = INT_MAX;
+                    }
+                }
+            }
+
+            // all internal to 1
+            for (int v = 0; v < graph.size(); v++){
+                int vPodd = v*2+1;
+                int vPeven = v*2;
+                graphPrime[vPeven][vPodd] = 1;
+            }
         }
 
         bool bfs(Graph &rGraph, std::vector<int> &parent, int source, int to){

@@ -124,7 +124,7 @@ void test4(){
     Graph graph(numberOfNodes);
     justInitGraph(graph, rGraph);
     int source = 0;
-    int to = 6;
+    int to = numberOfNodes-1;
 
     // G'
     Graph rGraphPrime(numberOfNodes*2);
@@ -148,8 +148,8 @@ void test4(){
 
     // build G'
     sequential::Default::buildGPrimeFromG(graph, graphPrime);
-
-    auto result = sequential::Default::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime, toPrime);
+    // we need to pay attention to the start, because the cut must start form v'odd
+    auto result = sequential::Default::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
 
     // print result
     std::cout << "Edges to remove are: " << std::endl;
