@@ -1,9 +1,11 @@
 // Author: Giovanni Rasera
-// Source: https://web.stanford.edu/class/archive/cs/cs161/cs161.1172/CS161Lecture16.pdf
+// Help From: Professor Andrea Formisano
+// Help From: https://web.stanford.edu/class/archive/cs/cs161/cs161.1172/CS161Lecture16.pdf
 // Help From: https://www.tutorialspoint.com/data_structures_algorithms/dsa_kargers_minimum_cut_algorithm.htm
 // Help From: https://www.baeldung.com/cs/minimum-cut-graphs
-// 
+// Help From: https://it.wikipedia.org/wiki/Algoritmo_di_Ford-Fulkerson
 
+#pragma once
 #include <deque>
 #include <queue>
 #include <climits>
@@ -20,14 +22,15 @@
 typedef std::vector<std::vector<int>> Graph;
 
 namespace sequential{
-    namespace Default{
+    namespace FordFulkerson{
         /*
+        As suggested by: Professor Andrea Formisano 
         A node v in G becames v' composed of (v'even -> v'odd).
-        - All the original in(v) edges than were coming to v are now 
-        connected to v'even with infinite cost.
-        - All the original out(v) edges than were originating from v are now 
-        originating from v'odd with infinite cost
-        - The cost from v'odd to v'even is 1
+            - All the original in(v) edges than were coming to v are now 
+            connected to v'even with infinite cost.
+            - All the original out(v) edges than were originating from v are now 
+            originating from v'odd with infinite cost
+            - The cost from v'odd to v'even is 1
         example:
         G
         0 -> 1 -> 2 -> 3  /   0 -> 2
@@ -87,6 +90,9 @@ namespace sequential{
                 dfs(rGraph, visited, i);
         }
 
+        /*
+        Prepare the rGraph
+        */ 
         void initialize(Graph &graph, Graph &rGraph){ // G = (graph.size(), E)
             for (int u = 0; u < graph.size(); u++)
                 for (int v = 0; v < graph.size(); v++)
