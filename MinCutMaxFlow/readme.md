@@ -6,6 +6,7 @@
 - Help From: https://www.baeldung.com/cs/minimum-cut-graphs
 - Help From: https://it.wikipedia.org/wiki/Algoritmo_di_Ford-Fulkerson
 - Help From: https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf
+- Help From: https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm
 
 ## Problem Description
 - Write a program that, given a node x in V (different from s), determines a subset D of nodes such that: 
@@ -26,6 +27,7 @@
     - It'a a Monte Carlo algorithm that uses super nodes and super adges and random choises to subdivide the graph
 
 ### Parallel
+- (Goldberg-Tarjan) Push–relabel maximum flow algorithm
 - TODO: implement parallel algo
 
 
