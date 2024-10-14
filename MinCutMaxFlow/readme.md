@@ -5,6 +5,7 @@
 - Help From: https://www.tutorialspoint.com/data_structures_algorithms/dsa_kargers_minimum_cut_algorithm.htm
 - Help From: https://www.baeldung.com/cs/minimum-cut-graphs
 - Help From: https://it.wikipedia.org/wiki/Algoritmo_di_Ford-Fulkerson
+- Help From: https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf
 
 ## Problem Description
 - Write a program that, given a node x in V (different from s), determines a subset D of nodes such that: 
