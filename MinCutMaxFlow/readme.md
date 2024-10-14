@@ -7,6 +7,9 @@
 - Help From: https://it.wikipedia.org/wiki/Algoritmo_di_Ford-Fulkerson
 - Help From: https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf
 - Help From: https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm
+- Help From: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4563095
+- Help From: https://arxiv.org/pdf/2404.00270
+- Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
 
 ## Problem Description
 - Write a program that, given a node x in V (different from s), determines a subset D of nodes such that: 
