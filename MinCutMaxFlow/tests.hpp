@@ -212,3 +212,37 @@ void test5(){
         std::cout << from / 2 << std::endl; 
     }
 }
+
+void test6(){
+    std::cout << "\nTest with V elements and a connection from 0 to V-1 using G'" << std::endl;
+    Graph rGraph(V);
+    Graph graph(V);
+    int source = 0;
+    int to = V-1;
+
+    Graph rGraphPrime(V*2);
+    Graph graphPrime(V*2);
+
+    int sourcePrime = source; 
+    int toPrime = to*2;
+
+    justInitGraph(graph, rGraph);
+    justInitGraph(graphPrime, rGraphPrime);
+    generateFromStartToFinish(graph);
+    // connect node to 300
+    graph[0][300] = 100;
+
+    // build G'
+    sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
+    // we need to pay attention to the start, because the cut must start form v'odd
+    auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
+
+    // print result
+    std::cout << "Nodes to remove in G are: " << std::endl;
+    for(auto r : result){
+        int from = std::get<0>(r);
+        int to = std::get<1>(r);
+
+        std::cout << from / 2 << std::endl; 
+    }
+}

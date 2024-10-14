@@ -13,4 +13,5 @@ int main(){
     std::cout << "\n\n-----Tests usign G'-----" << std::endl;
     test4();
     test5();
+    test6();
 }
