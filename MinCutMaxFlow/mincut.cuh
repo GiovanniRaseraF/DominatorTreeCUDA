@@ -11,7 +11,6 @@
 
 namespace parallel {
     /*
-
     From: https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf
     Definitions: page 11
         - each node x:
@@ -23,11 +22,28 @@ namespace parallel {
             - is relabled: if for all c(x, *) > 0, h(*) >= h(x)
     */
     namespace GoldbergTarjan{
-        __global__ void push(){}
-        __global__ void relable(){}       
+        __global__ void push(){
+            printf("TODO: GPU push");
+        }
+
+        __global__ void relable(){
+            printf("TODO: GPU relable");
+        }       
+
+        void preflow(/* ?? */){
+            std::cout << "TODO: preflow" << std::endl;
+        }
 
         void MinCutMaxFlow(/* ?? */){
-            std::cout << "MinCutFaxFlow CUDA" << std::endl;
+            std::cout << "TODO: MinCutFaxFlow" << std::endl;
+
+            preflow();            
+
+            int iter = 0;
+            while(iter < 1){
+                push<<<1, 1>>>();
+                relable<<<1, 1>>>();
+            }
         }
     };
 };
