@@ -6,6 +6,9 @@
 // Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
 #pragma once
 
+#include <iostream>
+#include <iomanip>
+
 namespace parallel {
     /*
 
