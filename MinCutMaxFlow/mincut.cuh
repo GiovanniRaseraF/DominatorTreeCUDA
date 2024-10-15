@@ -7,6 +7,7 @@
 #pragma once
 
 #include <iostream>
+#include <stdio.h>
 #include <iomanip>
 
 namespace parallel {
@@ -44,6 +45,7 @@ namespace parallel {
                 iter++;
                 push<<<1, 1>>>();
                 relable<<<1, 1>>>();
+                cudaDeviceSynchronize();
             }
         }
     };
