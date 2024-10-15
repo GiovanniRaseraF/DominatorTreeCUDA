@@ -10,8 +10,11 @@ cpu:
 
 gpu:
 	# from cuda documentation
-	nvcc -c -I/usr/local/cuda/include $@.cu -std=c++11 -Dthreads=$(threads) -Dblocks=$(blocks) -D$(REDUCTION) -o ./build/nvcc_$@.o
-	g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -Dthreads=$(threads) -Dblocks=$(blocks) -lcusparse -lcudart
+	# nvcc -c -I/usr/local/cuda/include $@.cu -std=c++11 -Dthreads=$(threads) -Dblocks=$(blocks) -D$(REDUCTION) -o ./build/nvcc_$@.o
+	# g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -Dthreads=$(threads) -Dblocks=$(blocks) -lcusparse -lcudart
+
+	nvcc -c -I/usr/local/cuda/include $@.cu -std=c++11 -o ./build/nvcc_$@.o
+	g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
 	./build/$@_parallel.out
 	nvprof ./build/$@_parallel.out --benchmark
