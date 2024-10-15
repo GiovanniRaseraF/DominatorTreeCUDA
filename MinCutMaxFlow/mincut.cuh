@@ -23,8 +23,8 @@ namespace parallel {
         __global__ void push(){}
         __global__ void relable(){}       
 
-        void MinCutFaxFlow(/* ?? */){
-
+        void MinCutMaxFlow(/* ?? */){
+            std::cout << "MinCutFaxFlow CUDA" << std::endl;
         }
     };
 };
