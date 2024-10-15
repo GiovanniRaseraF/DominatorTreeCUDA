@@ -41,6 +41,7 @@ namespace parallel {
 
             int iter = 0;
             while(iter < 1){
+                iter++;
                 push<<<1, 1>>>();
                 relable<<<1, 1>>>();
             }
