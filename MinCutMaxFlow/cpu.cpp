@@ -5,6 +5,7 @@
 #include "tests.hpp"
 
 int main(){
+    std::cout << "Sequential" << std::endl;
     std::cout << "-----Tests usign G-----" << std::endl;
     test1();
     test2();
