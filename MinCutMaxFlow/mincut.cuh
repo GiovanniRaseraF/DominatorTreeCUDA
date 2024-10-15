@@ -7,8 +7,15 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <stdio.h>
 #include <iomanip>
+
+typedef std::vector<std::vector<int>> Graph;
+typedef std::vector<std::vector<int>> ResidualFlow;
+typedef std::vector<int> ExcessFlow;
+typedef std::vector<int> Height;
+typedef int Excess_total;
 
 namespace parallel {
     /*
@@ -31,14 +38,39 @@ namespace parallel {
             printf("TODO: GPU relable");
         }       
 
-        void preflow(/* ?? */){
-            std::cout << "TODO: preflow" << std::endl;
+        void preflow(const Graph &G, Graph &Gf, ExcessFlow &e, Excess_total &excessTotal){
+            // maybe i can parallelize this
+            for(int s = 0; s < G.size(); s++){
+                for(int v = 0; v < G.size(); v++){
+                    Gf[s][v] = 0;
+                    Gf[v][s] = G[s][v];
+                    e[v] = G[s][v];
+                    excessTotal += G[s][v];
+                }
+            }
         }
 
-        void MinCutMaxFlow(/* ?? */){
+        /*
+        Given: 
+            G : G(V,E) the directed graph
+            Gf : Gf(V, Ef) the residual graph
+            cf : cf(v,u) residual flow on (u, v) 
+            e : e(v) the access flow of vertex v
+            h : the height of vertex v
+            excessTotal : Excess_total the sum of excess flow
+        Outputs:
+            e(t) : the maximum flow value
+            TODO: i need the vertex cut or the edge cut 
+            and i can use it to vertex cut the graph
+        */ 
+        void MinCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
+            
+            // Initialize
+            Excess_total excessTotal = 0;
 
-            preflow();            
+            // Step 0: Preflow
+            preflow(G, Gf, e, excessTotal);            
 
             int iter = 0;
             while(iter < 1){
