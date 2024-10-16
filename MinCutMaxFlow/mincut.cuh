@@ -72,9 +72,9 @@ namespace parallel {
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
 
-            while(e(source) + e(to) < excessTotal){
+            while(e[source] + e[to] < excessTotal){
                 // Step 1: Push-relabel kernel (GPU)
-                int cicle = graph.size(); // = |V|
+                int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
                     // push<<<1, 1>>>();
