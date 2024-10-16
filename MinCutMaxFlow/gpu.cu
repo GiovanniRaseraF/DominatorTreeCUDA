@@ -12,11 +12,14 @@ void justInitGraph(Graph &graph, Graph &rGraph) {
 }
 
 int main(){
-    Graph G(10);
-    Graph Gf(10);
-    ExcessFlow e(10);
-    Height h(10);
+    int V = 10;
+    Graph G(V);
+    Graph Gf(V);
+    ExcessFlow e(V);
+    Height h(V);
     justInitGraph(G, Gf);
+    int source = 0;
+    int to = V-1;
 
-    parallel::GoldbergTarjan::MinCutMaxFlow(G, Gf, e, h); 
+    parallel::GoldbergTarjan::MinCutMaxFlow(G, Gf, e, h, source, to); 
 }
