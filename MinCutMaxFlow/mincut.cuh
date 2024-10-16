@@ -69,6 +69,7 @@ namespace parallel {
         }       
 
         void preflow(const Graph &G, Graph &Gf, ExcessFlow &e, Excess_total &excessTotal){
+            std::cout << "called Preflow" << std::endl;
             // maybe i can parallelize this
             for(int s = 0; s < G.size(); s++){
                 for(int v = 0; v < G.size(); v++){
@@ -95,7 +96,7 @@ namespace parallel {
         */ 
         void MinCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
-            int N = 7; 
+            int N = G.size(); 
             // Initialize
             Excess_total excessTotal = 0;
             // prepare GPU data
@@ -105,7 +106,7 @@ namespace parallel {
             // static memory allocation
             cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
             for(int i=0; i<N; i++){
-                 cudaMalloc((void**)&(host_Gf[i]), N*sizeof(int));
+                cudaMalloc((void**)&(host_Gf[i]), N*sizeof(int));
             }
             cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
             cudaMalloc((void**)&dev_e, N*sizeof(int));
@@ -114,13 +115,14 @@ namespace parallel {
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
 
+		    push<<<2,2>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+
             while(e[source] + e[to] < excessTotal){
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
                    	
-		            push<<<1,1>>>(dev_Gf, dev_Gf, V, 0, dev_e, dev_h, V);	
                     // copy memory to gpu
                     //cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice);
                     //cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice);

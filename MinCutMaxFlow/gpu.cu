@@ -12,7 +12,7 @@ void justInitGraph(Graph &graph, Graph &rGraph) {
 }
 
 int main(){
-    int V = 10;
+    int V = 7;
     Graph G(V);
     Graph Gf(V);
     ExcessFlow e(V);
