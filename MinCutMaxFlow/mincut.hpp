@@ -71,6 +71,7 @@ namespace sequential{
                 q.pop();
  
                 for (int v=0; v<rGraph.size(); v++){
+                    // if i did not visit this node and the node is a neighbor then
                     if (visited[v]==false && rGraph[u][v] > 0){
                         q.push(v);
                         parent[v] = u;
@@ -112,11 +113,13 @@ namespace sequential{
 
             while(bfs(rGraph, parent, source, to)){
                 int path_flow = INT_MAX;
+                // a path from to -> source
                 for (v=to; v!=source; v=parent[v]){
                     u = parent[v];
                     path_flow = std::min(path_flow, rGraph[u][v]);
                 }
- 
+                
+                // update the flow in the residual graph
                 for (v=to; v != source; v=parent[v]){
                     u = parent[v];
                     rGraph[u][v] -= path_flow;
