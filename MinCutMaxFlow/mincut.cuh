@@ -103,13 +103,13 @@ namespace parallel {
             int **dev_Gf, *dev_e, *dev_h;
 
             // static memory allocation
-            // cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
-            // for(int i=0; i<N; i++){
-            //     cudaMalloc(&dev_Gf[i], N*sizeof(int));
-            // }
-            //cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
-            // cudaMalloc((void**)&dev_e, N*sizeof(int));
-            // cudaMalloc((void**)&dev_h, N*sizeof(int));
+            cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
+            for(int i=0; i<N; i++){
+                 cudaMalloc((void**)&(host_Gf[i]), N*sizeof(int));
+            }
+            cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
+            cudaMalloc((void**)&dev_e, N*sizeof(int));
+            cudaMalloc((void**)&dev_h, N*sizeof(int));
 
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
@@ -119,7 +119,8 @@ namespace parallel {
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
-                    
+                   	
+		            //push(dev_Gf, dev_Gf, );	
                     // copy memory to gpu
                     //cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice);
                     //cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice);
