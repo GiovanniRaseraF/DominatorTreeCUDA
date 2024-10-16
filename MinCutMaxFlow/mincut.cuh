@@ -106,7 +106,7 @@ namespace parallel {
             std::cout << "\n";
 
             // prepare GPU data
-            int host_Gf[N][N], hest_e[N], host_h[N];
+            int host_Gf[N][N], host_e[N], host_h[N];
             for(int i = 0; i < N; i++){
                 for(int j = 0; j < N; j++){
                     host_Gf[i][j] = Gf[i][j];
@@ -130,10 +130,9 @@ namespace parallel {
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
-                   	
-		            push<<<N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+		            push<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+		            relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
 
-                    // read result from gpu to cpu
                     //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
 
                     cudaDeviceSynchronize();
