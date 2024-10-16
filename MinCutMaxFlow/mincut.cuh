@@ -63,7 +63,7 @@ namespace parallel {
             TODO: i need the vertex cut or the edge cut 
             and i can use it to vertex cut the graph
         */ 
-        void MinCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h){
+        void MinCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             
             // Initialize
@@ -72,12 +72,17 @@ namespace parallel {
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
 
-            int iter = 0;
-            while(iter < 1){
-                iter++;
-                push<<<1, 1>>>();
-                relable<<<1, 1>>>();
-                cudaDeviceSynchronize();
+            while(e(source) + e(to) < excessTotal){
+                // Step 1: Push-relabel kernel (GPU)
+                int cicle = graph.size(); // = |V|
+                while(cicle > 0){
+                    // TODO: implement this page 5 of 2404.00270v1.pdf
+                    // push<<<1, 1>>>();
+                    // relable<<<1, 1>>>();
+                    // cudaDeviceSynchronize();
+
+                    cicle--;
+                }
             }
         }
     };
