@@ -13,6 +13,7 @@
 #include <iomanip>
 
 // CPU data
+// TODO: use CSR rappresentation
 typedef std::vector<std::vector<int>> Graph;
 typedef std::vector<std::vector<int>> ResidualFlow;
 typedef std::vector<int> ExcessFlow;
@@ -102,13 +103,13 @@ namespace parallel {
             int **dev_Gf, *dev_e, *dev_h;
 
             // static memory allocation
-            cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
-            for(int i=0; i<N; i++){
-                cudaMalloc(&host_Gf[i], N*sizeof(int));
-            }
-            cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
-            cudaMalloc((void**)&dev_e, N*sizeof(int));
-            cudaMalloc((void**)&dev_h, N*sizeof(int));
+            // cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
+            // for(int i=0; i<N; i++){
+            //     cudaMalloc(&dev_Gf[i], N*sizeof(int));
+            // }
+            //cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
+            // cudaMalloc((void**)&dev_e, N*sizeof(int));
+            // cudaMalloc((void**)&dev_h, N*sizeof(int));
 
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
@@ -129,7 +130,7 @@ namespace parallel {
                     // read result from gpu to cpu
                     //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
 
-                    cudaDeviceSynchronize();
+                    //cudaDeviceSynchronize();
 
                     cicle--;
                 }
