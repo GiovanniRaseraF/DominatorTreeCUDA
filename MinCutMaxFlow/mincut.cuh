@@ -39,9 +39,7 @@ namespace parallel {
     */
     namespace GoldbergTarjan{
         __global__ void push(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
-            printf("TODO: GPU push");
             // calcualte x with thread id instead of passing int
-
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
                     if(height[y] == height[x]+1){
@@ -55,8 +53,6 @@ namespace parallel {
         }
 
         __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
-            printf("TODO: GPU relable");
-
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 int my_height = HEIGHT_MAX;
                 for(int y = 0; y < V; y++){
@@ -99,8 +95,24 @@ namespace parallel {
             int N = G.size(); 
             // Initialize
             Excess_total excessTotal = 0;
+
+            // Step 0: Preflow
+            preflow(G, Gf, e, excessTotal);            
+
+            std::cout << "ExcessFlow e: ";
+            for(int i = 0; i < N; i++){
+                std::cout << e[i] << ", ";
+            }
+            std::cout << "\n";
+
             // prepare GPU data
             int host_Gf[N][N], hest_e[N], host_h[N];
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < N; j++){
+                    host_Gf[i][j] = Gf[i][j];
+                }
+            }
+
             int **dev_Gf, *dev_e, *dev_h;
 
             // static memory allocation
@@ -112,28 +124,19 @@ namespace parallel {
             cudaMalloc((void**)&dev_e, N*sizeof(int));
             cudaMalloc((void**)&dev_h, N*sizeof(int));
 
-            // Step 0: Preflow
-            preflow(G, Gf, e, excessTotal);            
-
-		    push<<<2,2>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
-
+            // start while
             while(e[source] + e[to] < excessTotal){
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
                    	
-                    // copy memory to gpu
-                    //cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice);
-                    //cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice);
-
-                    // run code on gpu
-                    //vector_sum<<<NumBlocks, NumThPerBlock>>>(dev_a, dev_b, dev_c);
+		            push<<<N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
 
                     // read result from gpu to cpu
                     //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
 
-                    //cudaDeviceSynchronize();
+                    cudaDeviceSynchronize();
 
                     cicle--;
                 }
