@@ -39,21 +39,32 @@ namespace parallel {
     namespace GoldbergTarjan{
         __global__ void push(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             printf("TODO: GPU push");
+            // calcualte x with thread id instead of passing int
 
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
                     if(height[y] == height[x]+1){
                         int flow = min(Gf[x][y], e[x]);
-                        e[x] -= flow; e[y] += flow;
-                        Gf[x][y] -= flow;
-                        Gf[y][x] += flow;
+                        e[x] -= flow; e[y] += flow; // atomic ?
+                        Gf[x][y] -= flow; // atomic ? 
+                        Gf[y][x] += flow; // atomic ?
                     }
                 }
             }
         }
 
-        __global__ void relable(){
+        __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             printf("TODO: GPU relable");
+
+            if(e[x] > 0 && height[x] < HEIGHT_MAX){
+                int my_height = HEIGHT_MAX;
+                for(int y = 0; y < V; y++){
+                    if(G[x][y] > 0){
+                        my_height = min(my_height, height[y]+1);
+                    }
+                }
+                height[x] = my_height;
+            }
         }       
 
         void preflow(const Graph &G, Graph &Gf, ExcessFlow &e, Excess_total &excessTotal){
@@ -83,9 +94,21 @@ namespace parallel {
         */ 
         void MinCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
-            
+            int N = 7; 
             // Initialize
             Excess_total excessTotal = 0;
+            // prepare GPU data
+            int host_Gf[N][N], hest_e[N], host_h[N];
+            int **dev_Gf, *dev_e, *dev_h;
+
+            // static memory allocation
+            cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
+            for(int i=0; i<N; i++){
+                cudaMalloc(&host_Gf[i], N*sizeof(int));
+            }
+            cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
+            cudaMalloc((void**)&dev_e, N*sizeof(int));
+            cudaMalloc((void**)&dev_h, N*sizeof(int));
 
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
@@ -95,9 +118,18 @@ namespace parallel {
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
-                    // push<<<1, 1>>>();
-                    // relable<<<1, 1>>>();
-                    // cudaDeviceSynchronize();
+                    
+                    // copy memory to gpu
+                    //cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice);
+                    //cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice);
+
+                    // run code on gpu
+                    //vector_sum<<<NumBlocks, NumThPerBlock>>>(dev_a, dev_b, dev_c);
+
+                    // read result from gpu to cpu
+                    //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
+
+                    cudaDeviceSynchronize();
 
                     cicle--;
                 }
