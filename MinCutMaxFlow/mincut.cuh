@@ -12,11 +12,17 @@
 #include <stdio.h>
 #include <iomanip>
 
+// CPU data
 typedef std::vector<std::vector<int>> Graph;
 typedef std::vector<std::vector<int>> ResidualFlow;
 typedef std::vector<int> ExcessFlow;
 typedef std::vector<int> Height;
 typedef int Excess_total;
+
+// GPU data
+typedef int** GPUGraph;
+typedef int* GPUExcessFlow;
+typedef int* GPUHeight;
 
 namespace parallel {
     /*
@@ -31,8 +37,19 @@ namespace parallel {
             - is relabled: if for all c(x, *) > 0, h(*) >= h(x)
     */
     namespace GoldbergTarjan{
-        __global__ void push(){
+        __global__ void push(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             printf("TODO: GPU push");
+
+            if(e[x] > 0 && height[x] < HEIGHT_MAX){
+                for(int y = 0; y < V; y++){
+                    if(height[y] == height[x]+1){
+                        int flow = min(Gf[x][y], e[x]);
+                        e[x] -= flow; e[y] += flow;
+                        Gf[x][y] -= flow;
+                        Gf[y][x] += flow;
+                    }
+                }
+            }
         }
 
         __global__ void relable(){
