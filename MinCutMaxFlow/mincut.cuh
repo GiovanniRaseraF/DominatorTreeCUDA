@@ -120,7 +120,7 @@ namespace parallel {
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
                    	
-		            //push(dev_Gf, dev_Gf, );	
+		            push<<<1,1>>>(dev_Gf, dev_Gf, V, 0, dev_e, dev_h, V);	
                     // copy memory to gpu
                     //cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice);
                     //cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice);
