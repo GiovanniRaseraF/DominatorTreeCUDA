@@ -4,6 +4,7 @@
 // Help From: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4563095
 // Help From: https://arxiv.org/pdf/2404.00270
 // Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
+// Help From: https://www.adrian-haarbach.de/idp-graph-algorithms/implementation/maxflow-push-relabel/index_en.html
 #pragma once
 
 #include <iostream>
