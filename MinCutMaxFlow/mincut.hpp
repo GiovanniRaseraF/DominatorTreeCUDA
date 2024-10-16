@@ -86,18 +86,22 @@ namespace sequential{
 
         void dfs(Graph &rGraph, std::vector<bool> &visited, int source){
             visited[source] = true;
-            for (int i = 0; i < rGraph.size(); i++)
-            if (rGraph[source][i] && !visited[i])
-                dfs(rGraph, visited, i);
+            for (int i = 0; i < rGraph.size(); i++){
+                if (rGraph[source][i] && !visited[i]){
+                    dfs(rGraph, visited, i);
+                }
+            }
         }
 
         /*
         Prepare the rGraph
         */ 
         void initialize(Graph &graph, Graph &rGraph){ // G = (graph.size(), E)
-            for (int u = 0; u < graph.size(); u++)
-                for (int v = 0; v < graph.size(); v++)
+            for (int u = 0; u < graph.size(); u++){
+                for (int v = 0; v < graph.size(); v++){
                     rGraph[u][v] = graph[u][v];
+                }
+            }
         }
 
         std::vector<std::tuple<int, int>> minCutMaxFlow(Graph &graph, Graph &rGraph, int source, int to){
@@ -114,13 +118,13 @@ namespace sequential{
             while(bfs(rGraph, parent, source, to)){
                 int path_flow = INT_MAX;
                 // a path from to -> source
-                for (v=to; v!=source; v=parent[v]){
+                for (v = to; v != source; v = parent[v]){
                     u = parent[v];
                     path_flow = std::min(path_flow, rGraph[u][v]);
                 }
                 
                 // update the flow in the residual graph
-                for (v=to; v != source; v=parent[v]){
+                for (v = to; v != source; v = parent[v]){
                     u = parent[v];
                     rGraph[u][v] -= path_flow;
                     rGraph[v][u] += path_flow;
