@@ -99,11 +99,7 @@ namespace parallel {
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
 
-            std::cout << "ExcessFlow e: ";
-            for(int i = 0; i < N; i++){
-                std::cout << e[i] << ", ";
-            }
-            std::cout << "\n";
+            std::printf("ExcessFlow e: {:}\n", e);
 
             // prepare GPU data
             int host_Gf[N][N], host_e[N], host_h[N];

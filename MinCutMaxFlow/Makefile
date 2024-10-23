@@ -4,16 +4,16 @@ V=1024
 cpu:
 	#if [ -d "./build" ]; then rm -r build; fi
 	#mkdir build
-	g++ -o ./build/$@_sequential.out ./$@.cpp -DV=$V -std=c++17
+	g++ -o ./build/$@_sequential.out ./$@.cpp -DV=$V -std=c++23
 
 	./build/$@_sequential.out
 
 gpu:
 	# from cuda documentation
-	# nvcc -c -I/usr/local/cuda/include $@.cu -std=c++11 -Dthreads=$(threads) -Dblocks=$(blocks) -D$(REDUCTION) -o ./build/nvcc_$@.o
+	# nvcc -c -I/usr/local/cuda/include $@.cu -std=c++23 -Dthreads=$(threads) -Dblocks=$(blocks) -D$(REDUCTION) -o ./build/nvcc_$@.o
 	# g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -Dthreads=$(threads) -Dblocks=$(blocks) -lcusparse -lcudart
 
-	nvcc -c -I/usr/local/cuda/include $@.cu -std=c++11 -o ./build/nvcc_$@.o
+	nvcc -c -I/usr/local/cuda/include $@.cu -std=c++23 -o ./build/nvcc_$@.o
 	g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
 	./build/$@_parallel.out
