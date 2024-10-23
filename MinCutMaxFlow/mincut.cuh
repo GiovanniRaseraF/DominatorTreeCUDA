@@ -46,23 +46,22 @@ namespace parallel {
             if(x == 0){
                 for(int i = 0; i < V; i ++){
                     for(int j = 0; j < V; j++){
-                        printf("%d ", G[i*V+j]);
-                        //printf("%d ", i+j);
+                        printf("%d ", Gf[i*V+j]);
                     }
                     printf("\n");
                 }
             }
 
-            // if(e[x] > 0 && height[x] < HEIGHT_MAX){
-            //     for(int y = 0; y < V; y++){
-            //         if(height[y] == height[x]+1){
-            //             int flow = min(Gf[x][y], e[x]);
-            //             e[x] -= flow; e[y] += flow; // atomic ?
-            //             Gf[x][y] -= flow; // atomic ? 
-            //             Gf[y][x] += flow; // atomic ?
-            //         }
-            //     }
-            // }
+            if(e[x] > 0 && height[x] < HEIGHT_MAX){
+                for(int y = 0; y < V; y++){
+                    if(height[y] == height[x]+1){
+                        int flow = min(Gf[x][y], e[x]);
+                        e[x] -= flow; e[y] += flow; // atomic ?
+                        Gf[x][y] -= flow; // atomic ? 
+                        Gf[y][x] += flow; // atomic ?
+                    }
+                }
+            }
         }
 
         // __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
@@ -128,12 +127,12 @@ namespace parallel {
                     host_Gf[i*N+j] = Gf[i][j];
                 }
             }
-            for(int i = 0; i < N; i++){
-                for(int j = 0; j < N; j++){
-                    printf("%d ", host_Gf[i*N+j]);
-                }
-                printf("\n");
-            }
+            // for(int i = 0; i < N; i++){
+            //     for(int j = 0; j < N; j++){
+            //         printf("%d ", host_Gf[i*N+j]);
+            //     }
+            //     printf("\n");
+            // }
             
             for(int j = 0; j < N; j++){
                 host_e[j] = e[j];
@@ -160,14 +159,24 @@ namespace parallel {
 		            push<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
 		            //relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
 
-                    //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
-
                     cudaDeviceSynchronize();
+
+                    cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
+                    cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyDeviceToHost);
 
                     std::cout << "ExcessFlow e: ";
                     for(int i = 0; i < N; i++){
-                        std::cout << e[i] << ", ";
+                        std::cout << host_e[i] << ", ";
                     }
+
+                    std::cout << "\n";
+
+                    std::cout << "height h: ";
+                    for(int i = 0; i < N; i++){
+                        std::cout << host_h[i] << ", ";
+                    }
+
                     std::cout << "\n";
                     std::cout << "ExcessTotal: " << excessTotal << std::endl;
                     std::cout << ">>>";std::cin.ignore();
