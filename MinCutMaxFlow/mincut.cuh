@@ -11,7 +11,6 @@
 #include <vector>
 #include <stdio.h>
 #include <iomanip>
-#include <print>
 
 // CPU data
 // TODO: use CSR rappresentation
@@ -100,7 +99,11 @@ namespace parallel {
             // Step 0: Preflow
             preflow(G, Gf, e, excessTotal);            
 
-            std::print("ExcessFlow e: {:}\n", e);
+            std::cout << "ExcessFlow e: ";
+            for(int i = 0; i < N; i++){
+                std::cout << e[i] << ", ";
+            }
+            std::cout << "\n";
 
             // prepare GPU data
             int host_Gf[N][N], host_e[N], host_h[N];
