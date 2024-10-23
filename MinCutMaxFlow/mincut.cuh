@@ -90,7 +90,7 @@ namespace parallel {
             TODO: i need the vertex cut or the edge cut 
             and i can use it to vertex cut the graph
         */ 
-        void MinCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
+        void minCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int N = G.size(); 
             // Initialize
