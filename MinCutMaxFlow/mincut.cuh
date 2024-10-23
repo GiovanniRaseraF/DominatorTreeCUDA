@@ -43,6 +43,15 @@ namespace parallel {
             int x = threadIdx.x;
             printf("called push: %d, e[]:%d, height[]:%d\n", x, e[x], height[x]);
 
+            if(x == 0){
+                for(int i = 0; i < G.size(); i ++){
+                    for(int j = 0; j < G.size(); j++){
+                        printf("%d ", G[i][j]);
+                    }
+                    printf("\n");
+                }
+            }
+
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
                     if(height[y] == height[x]+1){
