@@ -26,3 +26,6 @@ test:
 	make cpu STRUCT=USEVECTOR V=8024
 	make cpu STRUCT=USEVECTOR V=16024
 	make cpu STRUCT=USEVECTOR V=32024
+
+p:
+	git add . && git commit -m "automatic: data exchange" && git push
