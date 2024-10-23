@@ -128,6 +128,13 @@ namespace parallel {
                     host_Gf[i*N+j] = Gf[i][j];
                 }
             }
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < N; j++){
+                    printf("%d ", host_Gf[i*N+j]);
+                }
+                printf("\n");
+            }
+            
             for(int j = 0; j < N; j++){
                 host_e[j] = e[j];
                 host_h[j] = h[j];
