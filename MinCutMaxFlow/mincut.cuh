@@ -140,6 +140,9 @@ namespace parallel {
                 cudaMalloc((void**)&(host_Gf[i]), N*sizeof(int));
             }
             cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
+            for(int i=0; i<N; i++){
+                cudaMemcpy(dev_Gf[i], host_Gf[i], N*sizeof(int), cudaMemcpyHostToDevice);
+            }
             cudaMalloc((void**)&dev_e, N*sizeof(int));
             cudaMalloc((void**)&dev_h, N*sizeof(int));
             cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
