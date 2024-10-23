@@ -137,7 +137,7 @@ namespace parallel {
             // static memory allocation
             cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
             for(int i=0; i<N; i++){
-                cudaMalloc((void**)&(host_Gf[i]), N*sizeof(int));
+                cudaMalloc((void**)&(dev_Gf[i]), N*sizeof(int));
             }
             cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
             for(int i=0; i<N; i++){
