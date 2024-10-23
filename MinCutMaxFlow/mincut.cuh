@@ -120,7 +120,7 @@ namespace parallel {
             }
             for(int j = 0; j < N; j++){
                 host_e[j] = e[j];
-                host_h[j] = height[j];
+                host_h[j] = h[j];
             }
 
             int **dev_Gf, *dev_e, *dev_h;
