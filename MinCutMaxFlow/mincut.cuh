@@ -40,6 +40,8 @@ namespace parallel {
     namespace GoldbergTarjan{
         __global__ void push(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
+            print("called push: %d", threadIdx.x);
+            
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
                     if(height[y] == height[x]+1){
