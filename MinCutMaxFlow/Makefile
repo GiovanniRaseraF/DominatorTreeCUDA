@@ -13,8 +13,9 @@ gpu:
 	# nvcc -c -I/usr/local/cuda/include $@.cu -std=c++23 -Dthreads=$(threads) -Dblocks=$(blocks) -D$(REDUCTION) -o ./build/nvcc_$@.o
 	# g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -Dthreads=$(threads) -Dblocks=$(blocks) -lcusparse -lcudart
 
-	nvcc -c -I/usr/local/cuda/include $@.cu -std=c++23 -o ./build/nvcc_$@.o
-	g++ -o ./build/$@_parallel.out ./build/nvcc_$@.o -L/usr/local/cuda/lib64 -lcusparse -lcudart
+	nvcc -c -I/usr/local/cuda/include $@.cu -std=c++17 -o ./build/nvcc_$@.o
+	g++ -o  ./build/$@_parallel.out ./build/nvcc_$@.o -std=c++23 -L/usr/local/cuda/lib64 -lcusparse -lcudart
+
 
 	./build/$@_parallel.out
 	nvprof ./build/$@_parallel.out --benchmark
