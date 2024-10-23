@@ -44,12 +44,13 @@ namespace parallel {
             printf("called push: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
 
             if(x == 0){
-                // for(int i = 0; i < V; i ++){
-                //     for(int j = 0; j < V; j++){
-                //         printf("%d ", G[i][j]);
-                //     }
-                //     printf("\n");
-                // }
+                for(int i = 0; i < V; i ++){
+                    for(int j = 0; j < V; j++){
+                        // printf("%d ", G[i][j]);
+                        printf("%d ", i+j);
+                    }
+                    printf("\n");
+                }
                 printf("Hello from zero");
             }
 
