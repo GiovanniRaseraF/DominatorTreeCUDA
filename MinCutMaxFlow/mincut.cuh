@@ -118,6 +118,10 @@ namespace parallel {
                     host_Gf[i][j] = Gf[i][j];
                 }
             }
+            for(int j = 0; j < N; j++){
+                host_e[j] = e[j];
+                host_h[j] = height[j];
+            }
 
             int **dev_Gf, *dev_e, *dev_h;
 
@@ -129,6 +133,8 @@ namespace parallel {
             cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
             cudaMalloc((void**)&dev_e, N*sizeof(int));
             cudaMalloc((void**)&dev_h, N*sizeof(int));
+            cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
+            cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyHostToDevice);
 
             // start while
             while(e[source] + e[to] < excessTotal){
