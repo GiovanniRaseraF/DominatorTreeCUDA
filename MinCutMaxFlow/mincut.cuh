@@ -104,6 +104,7 @@ namespace parallel {
                 std::cout << e[i] << ", ";
             }
             std::cout << "\n";
+            std::cout << "ExcessTotal: " << excessTotal << std::endl;
 
             // prepare GPU data
             int host_Gf[N][N], host_e[N], host_h[N];

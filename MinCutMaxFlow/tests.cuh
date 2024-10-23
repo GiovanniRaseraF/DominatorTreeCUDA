@@ -25,6 +25,16 @@ void generateFromStartToFinish(Graph &graph){
     }
 }
 
+void print(const Graph &graph) {
+    std::cout << std::endl;
+    for(int i = 0; i < graph.size(); i ++){
+        for(int j = 0; j < graph.size(); j++){
+            std::cout << graph[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 void test1(){
     std::cout << "\nTest with V elements and a connection from 0 to V-1" << std::endl;
     int source = 0;
@@ -33,6 +43,8 @@ void test1(){
     Graph graph(V);
     ExcessFlow e(V);
     Height h(V);
+
+    print(graph);
 
     justInitGraph(graph, rGraph);
     generateFromStartToFinish(graph);
