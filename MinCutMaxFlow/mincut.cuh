@@ -44,8 +44,8 @@ namespace parallel {
             printf("called push: %d, e[]:%d, height[]:%d\n", x, e[x], height[x]);
 
             if(x == 0){
-                for(int i = 0; i < G.size(); i ++){
-                    for(int j = 0; j < G.size(); j++){
+                for(int i = 0; i < V; i ++){
+                    for(int j = 0; j < V; j++){
                         printf("%d ", G[i][j]);
                     }
                     printf("\n");
