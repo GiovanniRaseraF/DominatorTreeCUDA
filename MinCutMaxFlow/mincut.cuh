@@ -69,10 +69,12 @@ namespace parallel {
             // maybe i can parallelize this
             for(int s = 0; s < G.size(); s++){
                 for(int v = 0; v < G.size(); v++){
-                    Gf[s][v] = 0;
-                    Gf[v][s] = G[s][v];
-                    e[v] = G[s][v];
-                    excessTotal += G[s][v];
+                    if(G[s][v] > 0){
+                        Gf[s][v] = 0;
+                        Gf[v][s] = G[s][v];
+                        e[v] = G[s][v];
+                        excessTotal += G[s][v];
+                    }
                 }
             }
         }
