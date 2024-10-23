@@ -141,7 +141,7 @@ namespace parallel {
                     //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
 
                     cudaDeviceSynchronize();
-
+                    std::cout << ">>>";std::cin.ignore();
                     cicle--;
                 }
             }
