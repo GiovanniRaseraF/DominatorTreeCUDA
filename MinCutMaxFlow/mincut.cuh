@@ -5,6 +5,7 @@
 // Help From: https://arxiv.org/pdf/2404.00270
 // Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
 // Help From: https://www.adrian-haarbach.de/idp-graph-algorithms/implementation/maxflow-push-relabel/index_en.html
+// Help From: https://www.geeksforgeeks.org/push-relabel-algorithm-set-2-implementation/
 #pragma once
 
 #include <iostream>
@@ -54,7 +55,7 @@ namespace parallel {
 
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
-                    if(height[y] == height[x]+1){
+                    if(Gf[x*V+y] > 0 && height[y] == height[x]-1){
                         int flow = min(Gf[x*V+y], e[x]);
                         e[x] -= flow; e[y] += flow; // atomic ?
                         Gf[x*V+y] -= flow; // atomic ? 
