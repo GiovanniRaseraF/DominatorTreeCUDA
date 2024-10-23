@@ -44,10 +44,10 @@ void test1(){
     ExcessFlow e(V);
     Height h(V);
 
-    print(graph);
 
     justInitGraph(graph, rGraph);
     generateFromStartToFinish(graph);
 
+    print(graph);
     parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to); 
 }
