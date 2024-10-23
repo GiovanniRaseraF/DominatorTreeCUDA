@@ -133,7 +133,7 @@ namespace parallel {
                 host_h[j] = h[j];
             }
 
-            int **dev_Gf, *dev_e, *dev_h;
+            int *dev_Gf, *dev_e, *dev_h;
 
             // static memory allocation
             cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
@@ -151,7 +151,7 @@ namespace parallel {
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
 		            push<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
-		            relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+		            //relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
 
                     //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
 
