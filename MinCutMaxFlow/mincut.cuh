@@ -21,7 +21,7 @@ typedef std::vector<int> Height;
 typedef int Excess_total;
 
 // GPU data
-typedef int** GPUGraph;
+typedef int* GPUGraph;
 typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
@@ -46,23 +46,23 @@ namespace parallel {
             if(x == 0){
                 for(int i = 0; i < V; i ++){
                     for(int j = 0; j < V; j++){
-                        printf("%d ", G[i][j]);
+                        printf("%d ", G[i*V+j]);
                         //printf("%d ", i+j);
                     }
                     printf("\n");
                 }
             }
 
-            if(e[x] > 0 && height[x] < HEIGHT_MAX){
-                for(int y = 0; y < V; y++){
-                    if(height[y] == height[x]+1){
-                        int flow = min(Gf[x][y], e[x]);
-                        e[x] -= flow; e[y] += flow; // atomic ?
-                        Gf[x][y] -= flow; // atomic ? 
-                        Gf[y][x] += flow; // atomic ?
-                    }
-                }
-            }
+            // if(e[x] > 0 && height[x] < HEIGHT_MAX){
+            //     for(int y = 0; y < V; y++){
+            //         if(height[y] == height[x]+1){
+            //             int flow = min(Gf[x][y], e[x]);
+            //             e[x] -= flow; e[y] += flow; // atomic ?
+            //             Gf[x][y] -= flow; // atomic ? 
+            //             Gf[y][x] += flow; // atomic ?
+            //         }
+            //     }
+            // }
         }
 
         __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
@@ -122,10 +122,10 @@ namespace parallel {
             std::cout << "ExcessTotal: " << excessTotal << std::endl;
 
             // prepare GPU data
-            int host_Gf[N][N], host_e[N], host_h[N];
+            int host_Gf[N*N], host_e[N], host_h[N];
             for(int i = 0; i < N; i++){
                 for(int j = 0; j < N; j++){
-                    host_Gf[i][j] = Gf[i][j];
+                    host_Gf[i*N+j] = Gf[i][j];
                 }
             }
             for(int j = 0; j < N; j++){
@@ -136,11 +136,9 @@ namespace parallel {
             int **dev_Gf, *dev_e, *dev_h;
 
             // static memory allocation
-            cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
-            for(int i=0; i<N; i++){
-                cudaMalloc(((void**)&host_Gf[i]), N*sizeof(int));
-            }
-            cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
+            cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
+            cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyHostToDevice);
+
             cudaMalloc((void**)&dev_e, N*sizeof(int));
             cudaMalloc((void**)&dev_h, N*sizeof(int));
             cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
