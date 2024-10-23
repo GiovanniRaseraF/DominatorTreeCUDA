@@ -55,10 +55,10 @@ namespace parallel {
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
                     if(height[y] == height[x]+1){
-                        int flow = min(Gf[x][y], e[x]);
+                        int flow = min(Gf[x*V+y], e[x]);
                         e[x] -= flow; e[y] += flow; // atomic ?
-                        Gf[x][y] -= flow; // atomic ? 
-                        Gf[y][x] += flow; // atomic ?
+                        Gf[x*V+y] -= flow; // atomic ? 
+                        Gf[y*V+x] += flow; // atomic ?
                     }
                 }
             }
