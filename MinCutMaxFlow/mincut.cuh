@@ -41,7 +41,7 @@ namespace parallel {
         __global__ void push(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
             int x = threadIdx.x;
-            printf("called push: %d, e[]:%d, height[]:%d\n", x, e[x], height[x]);
+            printf("called push: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
 
             // if(x == 0){
             //     for(int i = 0; i < V; i ++){
@@ -137,12 +137,9 @@ namespace parallel {
             // static memory allocation
             cudaMalloc((void**)&dev_Gf, N * sizeof(int*));
             for(int i=0; i<N; i++){
-                cudaMalloc((void**)&(dev_Gf[i]), N*sizeof(int));
+                cudaMalloc(((void**)&host_Gf[i]), N*sizeof(int));
             }
             cudaMemcpy(dev_Gf, host_Gf, N*sizeof(int *), cudaMemcpyHostToDevice);
-            for(int i=0; i<N; i++){
-                cudaMemcpy(dev_Gf[i], host_Gf[i], N*sizeof(int), cudaMemcpyHostToDevice);
-            }
             cudaMalloc((void**)&dev_e, N*sizeof(int));
             cudaMalloc((void**)&dev_h, N*sizeof(int));
             cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
