@@ -46,12 +46,11 @@ namespace parallel {
             if(x == 0){
                 for(int i = 0; i < V; i ++){
                     for(int j = 0; j < V; j++){
-                        // printf("%d ", G[i][j]);
-                        printf("%d ", i+j);
+                        printf("%d ", G[i][j]);
+                        //printf("%d ", i+j);
                     }
                     printf("\n");
                 }
-                printf("Hello from zero");
             }
 
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
