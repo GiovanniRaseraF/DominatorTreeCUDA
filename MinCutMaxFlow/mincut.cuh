@@ -38,9 +38,10 @@ namespace parallel {
             - is relabled: if for all c(x, *) > 0, h(*) >= h(x)
     */
     namespace GoldbergTarjan{
-        __global__ void push(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
+        __global__ void push(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
-            printf("called push: %d", threadIdx.x);
+            int x = threadIdx.x;
+            printf("called push: %d, e[]:%d, height[]:%d\n", x, e[x], height[x]);
 
             if(e[x] > 0 && height[x] < HEIGHT_MAX){
                 for(int y = 0; y < V; y++){
@@ -135,13 +136,21 @@ namespace parallel {
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     // TODO: implement this page 5 of 2404.00270v1.pdf
-		            push<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
-		            relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+		            push<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
+		            relable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
 
                     //cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost); 
 
                     cudaDeviceSynchronize();
+
+                    std::cout << "ExcessFlow e: ";
+                    for(int i = 0; i < N; i++){
+                        std::cout << e[i] << ", ";
+                    }
+                    std::cout << "\n";
+                    std::cout << "ExcessTotal: " << excessTotal << std::endl;
                     std::cout << ">>>";std::cin.ignore();
+
                     cicle--;
                 }
             }
