@@ -37,7 +37,7 @@ namespace parallel {
             if(e[u] > 0 && h[u] < HEIGHT_MAX){
                 // line 10 from 2404.00270v1.pdf
                 int hprime = INT_MAX;
-                int vprime = 0;
+                int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
                         if(h[v] < hprime){
