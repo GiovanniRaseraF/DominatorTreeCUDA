@@ -94,6 +94,7 @@ void test3(){
     int to = numberOfNodes-1;
     //
     graph[source][1] = 1;
+    graph[source][to] = 100;
     graph[source][3] = 1;
     graph[source][4] = 1;
     graph[source][5] = 1;
