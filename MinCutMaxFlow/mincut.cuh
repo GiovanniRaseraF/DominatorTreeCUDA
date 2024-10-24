@@ -31,7 +31,7 @@ typedef int* GPUHeight;
 namespace sequential{
         void pushrelable(GPUGraph G, GPUGraph Gf, int x, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
-            int u = x;;
+            int u = x;
 
             if(e[u] > 0 && h[u] < HEIGHT_MAX){
                 // line 10 from 2404.00270v1.pdf
@@ -47,11 +47,15 @@ namespace sequential{
                 }
 
                 if(h[u] > hprime){
-                    int d = std::min(e[u], Gf[u*V+vprime]);
-                    Gf[u*V+vprime]-=d;
-                    e[u]-=d;
-                    Gf[vprime*V+u]+=d;
-                    e[vprime]-=d;
+                    for(int vprime = 0; vprime < V; vprime++){
+                        if(Gf[u*V+vprime]>0 && h[u] == h[vprime]+1){
+                            int d = std::min(e[u], Gf[u*V+vprime]);
+                            Gf[u*V+vprime]-=d;
+                            e[u]-=d;
+                            Gf[vprime*V+u]+=d;
+                            e[vprime]-=d;
+                        }
+                    }
                 }else{
                     h[u] = hprime + 1;
                 }
