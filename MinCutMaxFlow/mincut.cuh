@@ -126,7 +126,9 @@ namespace parallel {
                 for(int v = 0; v < G.size(); v++){
                     if(G[s][v] > 0){
                         cf[s][v] = 0;
+                        Gf[s][v] = 0;
                         cf[v][s] = G[s][v];
+                        Gf[v][s] = G[s][v];
                         e[v] = G[s][v];
                         excessTotal += G[s][v];
                     }
