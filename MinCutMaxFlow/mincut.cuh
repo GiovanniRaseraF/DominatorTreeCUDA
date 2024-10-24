@@ -51,7 +51,7 @@ namespace sequential{
                     cf[u*V+vprime]-=d;
                     e[u]-=d;
                     cf[vprime*V+u]+=d;
-                    e[vprime]-=d;
+                    e[vprime]+=d;
                 }else{
                     h[u] = hprime + 1;
                 }
