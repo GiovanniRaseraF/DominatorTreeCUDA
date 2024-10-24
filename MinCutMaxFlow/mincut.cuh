@@ -130,7 +130,12 @@ namespace parallel {
             Excess_total excessTotal = 0;
 
             // Step 0: Preflow
-            ResidualFlow cf; 
+            ResidualFlow cf(N); 
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < N; j++){
+                    cf[i].push_back(0);
+                }
+            }
             preflow(G, Gf, cf, e, excessTotal);            
 
             std::cout << "ExcessFlow e: ";
