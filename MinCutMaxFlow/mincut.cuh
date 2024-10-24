@@ -81,8 +81,8 @@ namespace parallel {
                             Gf[vprime*V+u]+=d;
                             e[vprime]-=d;
 
-                            // printf("u, v': (%d, %d) \n", u, vprime);
-                            // printf("d: %d\n", d);
+                            printf("u, v': (%d, %d) \n", u, vprime);
+                            printf("d: %d\n", d);
                             // atomic operations 
                         }
                     }
@@ -195,6 +195,12 @@ namespace parallel {
                     cudaMemcpy(host_Gf, dev_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
                     cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
                     cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
+
+                    std::cout << "e: ";
+                    for(int j = 0; j < N; j++){
+                        std::cout << host_e[j] << " ";
+                    }
+                    std::cout << "\n";
 
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
