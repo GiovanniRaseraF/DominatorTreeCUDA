@@ -168,7 +168,7 @@ namespace parallel {
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     for(int u = 0; u < N; u++){
-		                sequential::pushrelable(dev_Gf, dev_Gf, u, N, dev_e, dev_h, N);	
+		                sequential::pushrelable(host_Gf, host_Gf, u, N, host_e, host_h, N);	
                     }
 
 		            //pushrelable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
