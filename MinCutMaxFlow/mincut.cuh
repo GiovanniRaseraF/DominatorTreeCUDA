@@ -46,7 +46,7 @@ namespace parallel {
             // calcualte x with thread id instead of passing int
             int u = threadIdx.x;;
 
-            if(e[u] > 0 && h[x] < HEIGHT_MAX){
+            if(e[u] > 0 && h[u] < HEIGHT_MAX){
                 // line 10 from 2404.00270v1.pdf
                 int hprime = INT_MAX;
                 for(int v = 0; v < V; v++){
