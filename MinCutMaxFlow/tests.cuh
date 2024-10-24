@@ -78,8 +78,41 @@ void test2(){
     ExcessFlow e(numberOfNodes);
     Height h(numberOfNodes);
 
-    justInitGraph(graph, rGraph);
-
     print(graph);
     parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to); 
+}
+
+
+void test3(){
+    std::cout << "\nTest with custom graph with more then connecition from" << std::endl;
+    const int numberOfNodes = 10;
+    Graph rGraph(numberOfNodes);
+    Graph graph(numberOfNodes);
+    justInitGraph(graph, rGraph);
+
+    int source = 0;
+    int to = numberOfNodes-1;
+    //
+    graph[source][1] = 1;
+    graph[source][3] = 1;
+    graph[source][4] = 1;
+    graph[source][5] = 1;
+
+    graph[5][2] = 1;
+    graph[1][2] = 1;
+    graph[3][2] = 1;
+    graph[4][2] = 1;
+
+    graph[2][to] = 2;
+    graph[2][6] = 1;
+    graph[6][7] = 1;
+    graph[7][8] = 1;
+    graph[8][to] = 1;
+    //
+
+    ExcessFlow e(numberOfNodes);
+    Height h(numberOfNodes);
+
+    print(graph);
+    parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to);
 }
