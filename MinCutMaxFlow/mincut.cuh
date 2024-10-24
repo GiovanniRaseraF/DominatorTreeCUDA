@@ -40,7 +40,7 @@ namespace sequential{
                 int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        if(h[v] < hprime){
+                        if(hprime < h[v]){
                             hprime = h[v];
                             vprime = v;
                         }
