@@ -39,12 +39,17 @@ namespace parallel {
             - is relabled: if for all c(x, *) > 0, h(*) >= h(x)
     */
     namespace GoldbergTarjan{
+        // If the vertex is active, the thread
+        // u will find its neighbor vertex v whose height is minimum among other neighbor 
+        // vertices (line:10 - 13). The thread then push flow from u to v (line:15 - 19)
+        // when h(u) > h(v); otherwise, the thread will relabel the active vertex u.
         __global__ void push(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
             int x = threadIdx.x;
-            printf("called push: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
+            int u = x;
+            //printf("called push: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
 
-            if(x == 0){
+            if(false && x == 0){
                 for(int i = 0; i < V; i ++){
                     for(int j = 0; j < V; j++){
                         printf("%d ", Gf[i*V+j]);
@@ -53,16 +58,19 @@ namespace parallel {
                 }
             }
 
-            // if(e[x] > 0 && height[x] < HEIGHT_MAX){
-            //     for(int y = 0; y < V; y++){
+            if(e[u] > 0 && height[x] < HEIGHT_MAX){
+                for(int v = 0; v < V; v++){
+                    if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
+                        printf("pushing: (%d, %d) in Ef\n", u, v);
             //         if(Gf[x*V+y] > 0 && height[y] == height[x]-1){
             //             int flow = min(Gf[x*V+y], e[x]);
             //             e[x] -= flow; e[y] += flow; // atomic ?
             //             Gf[x*V+y] -= flow; // atomic ? 
             //             Gf[y*V+x] += flow; // atomic ?
             //         }
-            //     }
-            // }
+                    }
+               }
+            }
         }
 
         __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x_unused, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
