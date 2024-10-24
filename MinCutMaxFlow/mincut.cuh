@@ -65,12 +65,12 @@ namespace parallel {
                 int hprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        printf("pushing: (%d, %d) £ Ef\n", u, v);
+                        //printf("pushing: (%d, %d) £ Ef\n", u, v);
                         // find min
                         hprime = min(hprime, h[v]);
                     }
                 }
-                printf("h[%d]: %d, hprime: %d\n", u, h[u], hprime);
+                //printf("h[%d]: %d, hprime: %d\n", u, h[u], hprime);
                 // line 14 from 2404.00270v1.pdf
                 if(h[u] > hprime){
                     for(int vprime = 0; vprime < V; vprime++){
@@ -81,11 +81,13 @@ namespace parallel {
                             Gf[vprime*V+u]+=d;
                             e[vprime]-=d;
 
-                            printf("u, v': (%d, %d) \n", u, vprime);
-                            printf("d: %d\n", d);
+                            // printf("u, v': (%d, %d) \n", u, vprime);
+                            // printf("d: %d\n", d);
                             // atomic operations 
                         }
                     }
+                }else{
+                    h[u] = hprime + 1;
                 }
 
             }
@@ -94,7 +96,8 @@ namespace parallel {
         __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x_unused, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             int x = threadIdx.x;
             //printf("called relable: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
-            if(false && x == 0){
+            if(x == 0){
+                print("relable print\n");
                 for(int i = 0; i < V; i ++){
                     for(int j = 0; j < V; j++){
                         printf("%d ", Gf[i*V+j]);
@@ -186,11 +189,11 @@ namespace parallel {
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
-                    // TODO: implement this page 5 of 2404.00270v1.pdf
 		            push<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
                     cudaDeviceSynchronize();
-
                     
+                    // relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+                    // cudaDeviceSynchronize();
 
                     // cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
                     // cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyDeviceToHost);
@@ -212,14 +215,13 @@ namespace parallel {
 
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
-                    // std::cout << ">>>";std::cin.ignore();
+                    std::cout << ">>>";std::cin.ignore();
 
 
                     cicle--;
                 }
+
                 
-                relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
-                cudaDeviceSynchronize();
             }
         }
     };
