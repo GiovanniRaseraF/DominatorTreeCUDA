@@ -201,7 +201,7 @@ namespace parallel {
                     std::cout << "graph:\n";
                     for(int i = 0; i < N; i ++){
                         for(int j = 0; j < N; j++){
-                            printf("%d ", host_Gf[i*N+j]);
+                            printf("%d.%d", host_Gf[i*N+j], host_cf[i*N+j]);
                         }
                         printf("\n");
                     }
