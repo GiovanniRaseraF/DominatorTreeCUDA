@@ -29,19 +29,7 @@ typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
 namespace parallel {
-    /*
-    From: https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf
-    Definitions: page 11
-        - each node x:
-            - has access flow u(x) and height(x)
-            - outgoing edges to neighbors(x, *) with capacity c(x, *)
-        - node x is active: if u(x) > 0 and h(x) < HEIGHT_MAX
-        - active node x
-            - can push to neighbor y: if (x, y) > 0, h(y) = h(x) -1
-            - is relabled: if for all c(x, *) > 0, h(*) >= h(x)
-    */
     namespace GoldbergTarjan{
-
         __global__ void pushrelable(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
             int u = threadIdx.x;;
@@ -153,7 +141,7 @@ namespace parallel {
                     cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
                     cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
 
-                    std::cout << "\n\ne: ";
+                    std::cout << "\n\n\ne: ";
                     for(int j = 0; j < N; j++){
                         std::cout << host_e[j] << " ";
                     }
@@ -178,11 +166,8 @@ namespace parallel {
                     std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
                     //std::cin.ignore();
 
-
                     cicle--;
                 }
-
-                std::cin.ignore();
             }
         }
     };
