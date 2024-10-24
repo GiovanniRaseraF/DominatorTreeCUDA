@@ -25,15 +25,16 @@ typedef int Excess_total;
 
 // GPU data
 typedef int* GPUGraph;
+typedef int* GPUResidualFlow;
 typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
 namespace sequential{
-        void pushrelable(GPUGraph G, GPUGraph Gf, int x, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
+        void pushrelable(GPUGraph G, GPUGraph Gf, GPUResidualFlow cf, int x, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
             int u = x;
 
-            if(e[u] > 0 && h[u] < HEIGHT_MAX){
+            if(e[u] > 0 && h[u] < V){
                 // line 10 from 2404.00270v1.pdf
                 int hprime = INT_MAX;
                 int vprime = INT_MAX;
@@ -47,15 +48,11 @@ namespace sequential{
                 }
 
                 if(h[u] > hprime){
-                    for(int vprime = 0; vprime < V; vprime++){
-                        if(Gf[u*V+vprime]>0 && h[u] == h[vprime]+1){
-                            int d = std::min(e[u], Gf[u*V+vprime]);
-                            Gf[u*V+vprime]-=d;
-                            e[u]-=d;
-                            Gf[vprime*V+u]+=d;
-                            e[vprime]-=d;
-                        }
-                    }
+                    int d = std::min(e[u], cf[u*V+vprime]);
+                    cf[u*V+vprime]-=d;
+                    e[u]-=d;
+                    cf[vprime*V+u]+=d;
+                    e[vprime]-=d;
                 }else{
                     h[u] = hprime + 1;
                 }
@@ -98,14 +95,14 @@ namespace parallel {
         }
 
         // Initialize the flow
-        void preflow(const Graph &G, Graph &Gf, ExcessFlow &e, Excess_total &excessTotal){
+        void preflow(const Graph &G, Graph &Gf, ResidualFlow &cf, ExcessFlow &e, Excess_total &excessTotal){
             std::cout << "called Preflow" << std::endl;
             // maybe i can parallelize this
             for(int s = 0; s < G.size(); s++){
                 for(int v = 0; v < G.size(); v++){
                     if(G[s][v] > 0){
-                        Gf[s][v] = 0;
-                        Gf[v][s] = G[s][v];
+                        cf[s][v] = 0;
+                        cf[v][s] = G[s][v];
                         e[v] = G[s][v];
                         excessTotal += G[s][v];
                     }
@@ -133,7 +130,8 @@ namespace parallel {
             Excess_total excessTotal = 0;
 
             // Step 0: Preflow
-            preflow(G, Gf, e, excessTotal);            
+            ResidualFlow cf; 
+            preflow(G, Gf, cf, e, excessTotal);            
 
             std::cout << "ExcessFlow e: ";
             for(int i = 0; i < N; i++){
@@ -143,10 +141,11 @@ namespace parallel {
             std::cout << "ExcessTotal: " << excessTotal << std::endl;
 
             // prepare GPU data
-            int host_Gf[N*N], host_e[N], host_h[N];
+            int host_Gf[N*N], host_e[N], host_h[N], host_cf[N];
             for(int i = 0; i < N; i++){
                 for(int j = 0; j < N; j++){
                     host_Gf[i*N+j] = Gf[i][j];
+                    host_cf[i*N+j] = cf[i][j];
                 }
             }
             
@@ -172,7 +171,7 @@ namespace parallel {
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     for(int u = 0; u < N; u++){
-		                sequential::pushrelable(host_Gf, host_Gf, u, N, host_e, host_h, N);	
+		                sequential::pushrelable(host_Gf, host_Gf, host_cf, u, N, host_e, host_h, N);	
                     }
 
 		            //pushrelable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
