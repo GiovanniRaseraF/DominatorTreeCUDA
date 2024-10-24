@@ -167,7 +167,7 @@ namespace parallel {
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
-                    for(int u = 0; u < V; u++){
+                    for(int u = 0; u < N; u++){
 		                sequential::pushrelable(dev_Gf, dev_Gf, u, N, dev_e, dev_h, N);	
                     }
 
