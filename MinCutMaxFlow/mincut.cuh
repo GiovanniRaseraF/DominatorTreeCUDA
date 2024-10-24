@@ -208,16 +208,16 @@ namespace parallel {
                     }
                     std::cout << "\n";
 
-                    for(int i = 0; i < N; i ++){
-                        for(int j = 0; j < N; j++){
-                            printf("%d ", host_Gf[i*N+j]);
-                        }
-                        printf("\n");
-                    }
+                    // for(int i = 0; i < N; i ++){
+                    //     for(int j = 0; j < N; j++){
+                    //         printf("%d ", host_Gf[i*N+j]);
+                    //     }
+                    //     printf("\n");
+                    // }
 
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
-                    std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal; std::cin.ignore();
+                    // std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal; std::cin.ignore();
 
 
                     cicle--;
