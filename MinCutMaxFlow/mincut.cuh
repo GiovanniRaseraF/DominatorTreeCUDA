@@ -190,34 +190,36 @@ namespace parallel {
 		            push<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
                     cudaDeviceSynchronize();
 
-                    relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
-                    cudaDeviceSynchronize();
+                    
 
-                    cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
-                    cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyDeviceToHost);
-                    cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    // cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
+                    // cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    // cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyDeviceToHost);
 
 
-                    // print
-                    std::cout << "ExcessFlow e: ";
-                    for(int i = 0; i < N; i++){
-                        std::cout << host_e[i] << ", ";
-                    }
+                    // // print
+                    // std::cout << "ExcessFlow e: ";
+                    // for(int i = 0; i < N; i++){
+                    //     std::cout << host_e[i] << ", ";
+                    // }
 
-                    std::cout << "\n";
+                    // std::cout << "\n";
 
-                    std::cout << "height h: ";
-                    for(int i = 0; i < N; i++){
-                        std::cout << host_h[i] << ", ";
-                    }
+                    // std::cout << "height h: ";
+                    // for(int i = 0; i < N; i++){
+                    //     std::cout << host_h[i] << ", ";
+                    // }
 
-                    std::cout << "\n";
-                    std::cout << "ExcessTotal: " << excessTotal << std::endl;
-                    std::cout << ">>>";std::cin.ignore();
+                    // std::cout << "\n";
+                    // std::cout << "ExcessTotal: " << excessTotal << std::endl;
+                    // std::cout << ">>>";std::cin.ignore();
 
 
                     cicle--;
                 }
+                
+                relable<<<1, N>>>(dev_Gf, dev_Gf, N, 0, dev_e, dev_h, N);	
+                cudaDeviceSynchronize();
             }
         }
     };
