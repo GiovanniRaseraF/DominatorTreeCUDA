@@ -36,8 +36,8 @@ namespace sequential{
 
             if(e[u] > 0 && h[u] < V){
                 // line 10 from 2404.00270v1.pdf
-                int hprime = INT_MAX;
-                int vprime = INT_MAX;
+                int hprime = INT_MAX/2;
+                int vprime = INT_MAX/2;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
                         if(h[v] < hprime){
