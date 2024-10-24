@@ -159,16 +159,16 @@ namespace parallel {
                 host_h[j] = h[j];
             }
 
-            int *dev_Gf, *dev_e, *dev_h;
+            // int *dev_Gf, *dev_e, *dev_h;
 
-            // static memory allocation
-            cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
-            cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyHostToDevice);
+            // // static memory allocation
+            // cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
+            // cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyHostToDevice);
 
-            cudaMalloc((void**)&dev_e, N*sizeof(int));
-            cudaMalloc((void**)&dev_h, N*sizeof(int));
-            cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
-            cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyHostToDevice);
+            // cudaMalloc((void**)&dev_e, N*sizeof(int));
+            // cudaMalloc((void**)&dev_h, N*sizeof(int));
+            // cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
+            // cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyHostToDevice);
 
             // start while
             //while((host_e[source] + host_e[to]) < excessTotal){
