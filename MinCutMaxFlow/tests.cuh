@@ -110,8 +110,8 @@ void test3(){
     graph[8][to] = 1;
     //
 
-    ExcessFlow e(numberOfNodes);
-    Height h(numberOfNodes);
+    ExcessFlow e(numberOfNodes, 0);
+    Height h(numberOfNodes, 0);
 
     print(graph);
     parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to);
@@ -132,8 +132,8 @@ void test4(){
     
     //
 
-    ExcessFlow e(numberOfNodes);
-    Height h(numberOfNodes);
+    ExcessFlow e(numberOfNodes, 0);
+    Height h(numberOfNodes, 0);
 
     print(graph);
     parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to);
