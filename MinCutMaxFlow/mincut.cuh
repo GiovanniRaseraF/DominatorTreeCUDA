@@ -63,8 +63,8 @@ namespace sequential{
                 int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
+                        std::cout << "v: " << v << " " << "hprime: " << hprime << std::endl;
                         if(h[v] < hprime){
-                            std::cout << "v: " << v << " " << "hprime: " << hprime << std::endl;
                             hprime = h[v];
                             vprime = v;
                         }
