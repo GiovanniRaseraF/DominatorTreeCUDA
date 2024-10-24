@@ -32,29 +32,6 @@ typedef int* GPUHeight;
 namespace sequential{
         void pushrelable(GPUGraph G, GPUGraph Gf, GPUResidualFlow cf, int x, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
-
-            std::cout << "\n\nInside pushrelabel\ne: ";
-            for(int j = 0; j < V; j++){
-                std::cout << e[j] << " ";
-            }
-            std::cout << "\n";
-
-            std::cout << "h: ";
-            for(int j = 0; j < V; j++){
-                std::cout << h[j] << " ";
-            }
-            std::cout << "\n";
-
-            std::cout << "graph:\n";
-            for(int i = 0; i < V; i ++){
-                for(int j = 0; j < V; j++){
-                    printf("%d/%d  ", Gf[i*V+j], cf[i*V+j]);
-                }
-                printf("\n");
-            }
-
-            std::cin.ignore();
-
             int u = x;
 
             if(e[u] > 0 && h[u] < V){
@@ -63,14 +40,12 @@ namespace sequential{
                 int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        std::cout << "v: " << v << " " << "hprime: " << hprime << std::endl;
                         if(h[v] < hprime){
                             hprime = h[v];
                             vprime = v;
                         }
                     }
                 }
-                std::cout << u << " " << "hprime: " << hprime << std::endl;
                 if(h[u] > hprime){
                     int d = std::min(e[u], cf[u*V+vprime]);
                     cf[u*V+vprime]-=d;
@@ -205,7 +180,7 @@ namespace parallel {
                 printf("\n");
             }
 
-            std::cin.ignore();
+            //std::cin.ignore();
 
 
             // int *dev_Gf, *dev_e, *dev_h;
@@ -257,8 +232,8 @@ namespace parallel {
 
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
-                    std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
-                    std::cin.ignore();
+                    //std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
+                    //std::cin.ignore();
 
                     cicle--;
                 }
