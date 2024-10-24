@@ -70,11 +70,11 @@ namespace parallel {
                         hprime = min(hprime, h[v]);
                     }
                 }
-                printf("hprime: %d\n", hprime);
+                printf("h[%d]: %d, hprime: %d\n", u, h[u], hprime);
                 // line 14 from 2404.00270v1.pdf
                 if(h[u] > hprime){
+                    printf("u, v': (%d, %d) \n", u, vprime);
                     for(int vprime = 0; vprime < V; vprime++){
-                        printf("u, v': (%d, %d) \n", u, vprime);
                         if(Gf[u*V+vprime] > 0 && h[u] > h[vprime]){ 
                             int d = min(e[u], Gf[u*V+vprime]);
                             // atomic operations 
