@@ -51,3 +51,35 @@ void test1(){
     print(graph);
     parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to); 
 }
+
+void test2(){
+    std::cout << "\nTest with custom graph design with Professor" << std::endl;
+    const int numberOfNodes = 7;
+    Graph rGraph(numberOfNodes);
+    Graph graph(numberOfNodes);
+    justInitGraph(graph, rGraph);
+
+    int source = 0;
+    int to = 6;
+    //
+    graph[source][1] = 1;
+    graph[source][3] = 1;
+    graph[source][4] = 1;
+    graph[source][5] = 1;
+
+    graph[5][2] = 1;
+    graph[1][2] = 1;
+    graph[3][2] = 1;
+    graph[4][2] = 1;
+
+    graph[2][to] = 1;
+    //
+
+    ExcessFlow e(numberOfNodes);
+    Height h(numberOfNodes);
+
+    justInitGraph(graph, rGraph);
+
+    print(graph);
+    parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to); 
+}
