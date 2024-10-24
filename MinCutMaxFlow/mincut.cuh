@@ -93,28 +93,28 @@ namespace parallel {
             }
         }
 
-        __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x_unused, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
-            int x = threadIdx.x;
-            //printf("called relable: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
-            if(x == 0){
-                print("relable print\n");
-                for(int i = 0; i < V; i ++){
-                    for(int j = 0; j < V; j++){
-                        printf("%d ", Gf[i*V+j]);
-                    }
-                    printf("\n");
-                }
-            }
-            if(e[x] > 0 && height[x] < HEIGHT_MAX){
-                int my_height = HEIGHT_MAX;
-                for(int y = 0; y < V; y++){
-                    if(G[x*V+y] > 0){
-                        my_height = min(my_height, height[y]+1);
-                    }
-                }
-                height[x] = my_height;
-            }
-        }       
+        // __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x_unused, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
+        //     int x = threadIdx.x;
+        //     //printf("called relable: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
+        //     if(x == 0){
+        //         printf("relable print\n");
+        //         for(int i = 0; i < V; i ++){
+        //             for(int j = 0; j < V; j++){
+        //                 printf("%d ", Gf[i*V+j]);
+        //             }
+        //             printf("\n");
+        //         }
+        //     }
+        //     if(e[x] > 0 && height[x] < HEIGHT_MAX){
+        //         int my_height = HEIGHT_MAX;
+        //         for(int y = 0; y < V; y++){
+        //             if(G[x*V+y] > 0){
+        //                 my_height = min(my_height, height[y]+1);
+        //             }
+        //         }
+        //         height[x] = my_height;
+        //     }
+        // }       
 
         void preflow(const Graph &G, Graph &Gf, ExcessFlow &e, Excess_total &excessTotal){
             std::cout << "called Preflow" << std::endl;
