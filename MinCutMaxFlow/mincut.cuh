@@ -141,7 +141,7 @@ namespace parallel {
             std::cout << "ExcessTotal: " << excessTotal << std::endl;
 
             // prepare GPU data
-            int host_Gf[N*N], host_e[N], host_h[N], host_cf[N];
+            int host_Gf[N*N], host_e[N], host_h[N], host_cf[N*N];
             for(int i = 0; i < N; i++){
                 for(int j = 0; j < N; j++){
                     host_Gf[i*N+j] = Gf[i][j];
