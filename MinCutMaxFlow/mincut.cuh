@@ -74,8 +74,8 @@ namespace parallel {
                 // line 14 from 2404.00270v1.pdf
                 if(h[u] > hprime){
                     for(int vprime = 0; vprime < V; vprime++){
+                        printf("u, v': (%d, %d) \n", u, vprime);
                         if(Gf[u*V+vprime] > 0 && h[u] > h[vprime]){ 
-                            printf("u, v': (%d, %d) \n", u, vprime);
                             int d = min(e[u], Gf[u*V+vprime]);
                             // atomic operations 
                         }
