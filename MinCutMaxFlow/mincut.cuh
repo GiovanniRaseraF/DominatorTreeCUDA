@@ -65,7 +65,7 @@ namespace parallel {
             // }
         }
 
-        __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
+        __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x_unused, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             int x = threadIdx.x;
             printf("called relable: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
             if(x == 0){
