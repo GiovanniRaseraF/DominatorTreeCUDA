@@ -142,7 +142,7 @@ namespace parallel {
             cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyHostToDevice);
 
             // start while
-            //while((host_e[source] + host_e[to]) < excessTotal){
+            while((host_e[source] + host_e[to]) < excessTotal){
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
@@ -153,7 +153,7 @@ namespace parallel {
                     cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
                     cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
 
-                    std::cout << "e: ";
+                    std::cout << "\n\ne: ";
                     for(int j = 0; j < N; j++){
                         std::cout << host_e[j] << " ";
                     }
@@ -175,15 +175,15 @@ namespace parallel {
 
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
-                    std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal; 
+                    std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
                     //std::cin.ignore();
 
 
                     cicle--;
                 }
 
-                
-            //}
+                std::cin.ignore();
+            }
         }
     };
 };
