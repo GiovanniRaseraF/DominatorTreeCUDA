@@ -53,7 +53,7 @@ namespace sequential{
                     cf[vprime*V+u]+=d;
                     e[vprime]+=d;
                 }else{
-                    h[u] = hprime + 1;
+                    if(hprime != INT_MAX / 2) h[u] = hprime + 1;
                 }
 
             }
