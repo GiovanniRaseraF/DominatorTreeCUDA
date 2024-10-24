@@ -28,6 +28,39 @@ typedef int* GPUGraph;
 typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
+namespace sequential{
+        void pushrelable(GPUGraph G, GPUGraph Gf, int x, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
+            // calcualte x with thread id instead of passing int
+            int u = x;;
+
+            if(e[u] > 0 && h[u] < HEIGHT_MAX){
+                // line 10 from 2404.00270v1.pdf
+                int hprime = INT_MAX;
+                int vprime = INT_MAX;
+                for(int v = 0; v < V; v++){
+                    if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
+                        if(h[v] < hprime){
+                            hprime = h[v];
+                            vprime = v;
+                        }
+                    }
+                }
+
+                if(h[u] > hprime){
+                    int d = std::min(e[u], Gf[u*V+vprime]);
+                    Gf[u*V+vprime]-=d;
+                    e[u]-=d;
+                    Gf[vprime*V+u]+=d;
+                    e[vprime]-=d;
+                }else{
+                    h[u] = hprime + 1;
+                }
+
+            }
+        }
+    
+};
+
 namespace parallel {
     namespace GoldbergTarjan{
         __global__ void pushrelable(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
@@ -134,12 +167,16 @@ namespace parallel {
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
-		            pushrelable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
-                    cudaDeviceSynchronize();
+                    for(int u = 0; u < V; u++){
+		                sequential::pushrelable(dev_Gf, dev_Gf, u, N, dev_e, dev_h, N);	
+                    }
+
+		            //pushrelable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
+                    //cudaDeviceSynchronize();
                     
-                    cudaMemcpy(host_Gf, dev_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
-                    cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
-                    cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    // cudaMemcpy(host_Gf, dev_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
+                    // cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    // cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
 
                     std::cout << "\n\n\ne: ";
                     for(int j = 0; j < N; j++){
