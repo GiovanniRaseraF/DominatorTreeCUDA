@@ -37,22 +37,22 @@ namespace parallel {
             if(e[u] > 0 && h[u] < HEIGHT_MAX){
                 // line 10 from 2404.00270v1.pdf
                 int hprime = INT_MAX;
+                int vprime = 0;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        hprime = min(hprime, h[v]);
+                        if(h[v] < hprime){
+                            hprime = h[v];
+                            vprime = v;
+                        }
                     }
                 }
 
                 if(h[u] > hprime){
-                    for(int vprime = 0; vprime < V; vprime++){
-                        if(Gf[u*V+vprime] > 0 && h[u] > h[vprime]+1){ 
-                            int d = min(e[u], Gf[u*V+vprime]);
-                            Gf[u*V+vprime]-=d;
-                            e[u]-=d;
-                            Gf[vprime*V+u]+=d;
-                            e[vprime]-=d;
-                        }
-                    }
+                    int d = min(e[u], Gf[u*V+vprime]);
+                    Gf[u*V+vprime]-=d;
+                    e[u]-=d;
+                    Gf[vprime*V+u]+=d;
+                    e[vprime]-=d;
                 }else{
                     h[u] = hprime + 1;
                 }
