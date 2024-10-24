@@ -11,6 +11,8 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
+#include <limits>
+#include <limits.h>
 #include <iomanip>
 
 // CPU data
@@ -59,17 +61,27 @@ namespace parallel {
             }
 
             if(e[u] > 0 && height[x] < HEIGHT_MAX){
+                // line 10 from 2404.00270v1.pdf
+                int hprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
                         printf("pushing: (%d, %d) £ Ef\n", u, v);
-            //         if(Gf[x*V+y] > 0 && height[y] == height[x]-1){
-            //             int flow = min(Gf[x*V+y], e[x]);
-            //             e[x] -= flow; e[y] += flow; // atomic ?
-            //             Gf[x*V+y] -= flow; // atomic ? 
-            //             Gf[y*V+x] += flow; // atomic ?
-            //         }
+                        // find min
+                        hprime = min(hprime, h[v]);
                     }
-               }
+                }
+                printf("hprime: %d\n", hprime);
+                // line 14 from 2404.00270v1.pdf
+                if(h[u] > hprime){
+                    for(int vprime = 0; vprime < V; vprime++){
+                        if(Gf[u*V+vprime] > 0 && h[u] > h[vprime]){ 
+                            printf("u, v': (%d, %d) \n", u, vprime);
+                            int d = min(e[u], Gf[u*V+vprime]);
+                            // atomic operations 
+                        }
+                    }
+                }
+
             }
         }
 
