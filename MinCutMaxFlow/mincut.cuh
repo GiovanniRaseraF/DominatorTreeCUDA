@@ -61,7 +61,7 @@ namespace parallel {
             if(e[u] > 0 && height[x] < HEIGHT_MAX){
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        printf("pushing: (%d, %d) in Ef\n", u, v);
+                        printf("pushing: (%d, %d) £ Ef\n", u, v);
             //         if(Gf[x*V+y] > 0 && height[y] == height[x]-1){
             //             int flow = min(Gf[x*V+y], e[x]);
             //             e[x] -= flow; e[y] += flow; // atomic ?
@@ -75,8 +75,8 @@ namespace parallel {
 
         __global__ void relable(GPUGraph G, GPUGraph Gf, int V, int x_unused, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
             int x = threadIdx.x;
-            printf("called relable: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
-            if(x == 0){
+            //printf("called relable: %d, e[]:%d, height[]:%d, H_MAX:%d\n", x, e[x], height[x], HEIGHT_MAX);
+            if(false && x == 0){
                 for(int i = 0; i < V; i ++){
                     for(int j = 0; j < V; j++){
                         printf("%d ", Gf[i*V+j]);
