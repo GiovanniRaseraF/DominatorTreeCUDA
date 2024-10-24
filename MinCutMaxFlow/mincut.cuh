@@ -138,12 +138,12 @@ namespace parallel {
             }
             preflow(G, Gf, cf, e, excessTotal);            
 
-            std::cout << "ExcessFlow e: ";
-            for(int i = 0; i < N; i++){
-                std::cout << e[i] << ", ";
-            }
-            std::cout << "\n";
-            std::cout << "ExcessTotal: " << excessTotal << std::endl;
+            // std::cout << "ExcessFlow e: ";
+            // for(int i = 0; i < N; i++){
+            //     std::cout << e[i] << ", ";
+            // }
+            // std::cout << "\n";
+            // std::cout << "ExcessTotal: " << excessTotal << std::endl;
 
             // prepare GPU data
             int host_Gf[N*N], host_e[N], host_h[N], host_cf[N*N];
@@ -201,7 +201,7 @@ namespace parallel {
                     std::cout << "graph:\n";
                     for(int i = 0; i < N; i ++){
                         for(int j = 0; j < N; j++){
-                            printf("%d.%d", host_Gf[i*N+j], host_cf[i*N+j]);
+                            printf("%d/%d  ", host_Gf[i*N+j], host_cf[i*N+j]);
                         }
                         printf("\n");
                     }
