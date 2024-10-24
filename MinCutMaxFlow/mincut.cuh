@@ -159,6 +159,29 @@ namespace parallel {
                 host_h[j] = h[j];
             }
 
+            std::cout << "\n\n\ne: ";
+            for(int j = 0; j < N; j++){
+                std::cout << host_e[j] << " ";
+            }
+            std::cout << "\n";
+
+            std::cout << "h: ";
+            for(int j = 0; j < N; j++){
+                std::cout << host_h[j] << " ";
+            }
+            std::cout << "\n";
+
+            std::cout << "graph:\n";
+            for(int i = 0; i < N; i ++){
+                for(int j = 0; j < N; j++){
+                    printf("%d/%d  ", host_Gf[i*N+j], host_cf[i*N+j]);
+                }
+                printf("\n");
+            }
+            
+            std::cin.ignore();
+
+
             // int *dev_Gf, *dev_e, *dev_h;
 
             // // static memory allocation
@@ -209,7 +232,7 @@ namespace parallel {
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
                     std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
-                    //std::cin.ignore();
+                    std::cin.ignore();
 
                     cicle--;
                 }
