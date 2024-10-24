@@ -81,8 +81,8 @@ namespace parallel {
                             Gf[vprime*V+u]+=d;
                             e[vprime]-=d;
 
-                            printf("u, v': (%d, %d) \n", u, vprime);
-                            printf("d: %d\n", d);
+                            // printf("u, v': (%d, %d) \n", u, vprime);
+                            // printf("d: %d\n", d);
                             // atomic operations 
                         }
                     }
