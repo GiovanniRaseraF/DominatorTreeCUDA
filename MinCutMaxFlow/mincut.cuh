@@ -45,7 +45,7 @@ namespace parallel {
         // u will find its neighbor vertex v whose height is minimum among other neighbor 
         // vertices (line:10 - 13). The thread then push flow from u to v (line:15 - 19)
         // when h(u) > h(v); otherwise, the thread will relabel the active vertex u.
-        __global__ void push(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight height, int HEIGHT_MAX){
+        __global__ void push(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
             int x = threadIdx.x;
             int u = x;
