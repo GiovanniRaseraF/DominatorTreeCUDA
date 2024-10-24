@@ -40,13 +40,13 @@ namespace sequential{
                 int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        if(hprime < h[v]){
+                        if(h[v] < hprime){
                             hprime = h[v];
                             vprime = v;
                         }
                     }
                 }
-
+                std::cout << u << " " << "hprime: " << hprime << std::endl;
                 if(h[u] > hprime){
                     int d = std::min(e[u], cf[u*V+vprime]);
                     cf[u*V+vprime]-=d;
