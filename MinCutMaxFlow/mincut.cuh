@@ -41,6 +41,7 @@ namespace sequential{
                 for(int v = 0; v < V; v++){
                     if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
                         if(h[v] < hprime){
+                            std::cout << "v: " << v << " " << "hprime: " << hprime << std::endl;
                             hprime = h[v];
                             vprime = v;
                         }
@@ -178,7 +179,7 @@ namespace parallel {
                 }
                 printf("\n");
             }
-            
+
             std::cin.ignore();
 
 
