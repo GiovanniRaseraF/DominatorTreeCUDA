@@ -96,15 +96,15 @@ namespace parallel {
                     printf("\n");
                 }
             }
-            // if(e[x] > 0 && height[x] < HEIGHT_MAX){
-            //     int my_height = HEIGHT_MAX;
-            //     for(int y = 0; y < V; y++){
-            //         if(G[x][y] > 0){
-            //             my_height = min(my_height, height[y]+1);
-            //         }
-            //     }
-            //     height[x] = my_height;
-            // }
+            if(e[x] > 0 && height[x] < HEIGHT_MAX){
+                int my_height = HEIGHT_MAX;
+                for(int y = 0; y < V; y++){
+                    if(G[x*V+y] > 0){
+                        my_height = min(my_height, height[y]+1);
+                    }
+                }
+                height[x] = my_height;
+            }
         }       
 
         void preflow(const Graph &G, Graph &Gf, ExcessFlow &e, Excess_total &excessTotal){
