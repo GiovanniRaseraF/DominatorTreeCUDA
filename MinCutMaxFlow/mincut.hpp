@@ -26,7 +26,136 @@ typedef std::vector<int> Height;
 typedef int Excess_total;
 
 namespace sequential{
-    namespace Goldberg{
+    namespace GraphCutsGeneric {
+        bool active(int x, ExcessFlow &u, Height &h, int HEIGHT_MAX){
+            return u[x] > 0 && h[x] < HEIGHT_MAX;
+        }
+        bool canXpushToY(int x, int y, ResidualFlow &c, Height &h){
+            return c[x][y] > 0 && h[y] == h[x] - 1;
+        }
+
+        bool canXbeRelabled(int x, const ResidualFlow &c, const Height &h, const Graph &G){
+            for(int y = 0; y < c.size(); y++){
+                if(G[x][y] > 0){
+                    if(c[x][y] > 0 && h[y] >= h[x]){
+                    }else{
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        void push(int x, Height &h, ExcessFlow &u, ResidualFlow &c, const Graph &G, int HEIGHT_MAX){
+            if(active(x, u, h, HEIGHT_MAX)){
+                for(int y = 0; y < G.size(); y++){
+                    if(G[x][y] > 0){
+                        if(h[y] == h[x] - 1){
+                            int flow = std::min(c[x][y], u[x]);
+                            u[x] -= flow;
+                            u[y] += flow;
+                            c[x][y] -= flow;
+                            c[y][x] -= flow;
+                        }
+                    }
+                }
+            }
+        }
+
+        void relable(int x, Height &h, ExcessFlow &u, ResidualFlow &c, const Graph &G, int HEIGHT_MAX){
+            if(active(x, u, h, HEIGHT_MAX)){
+                int my_height = HEIGHT_MAX;
+                for(int y = 0; y < G.size(); y++){
+                    if(G[x][y] > 0){
+                        if(c[x][y] > 0){
+                            my_height = std::min(my_height, h[y]+1);
+                        }
+                    }
+                }
+                h[x] = my_height;
+            }
+        }
+
+        void minCutMaxFlow(Graph &G, Graph &Gf, int source, int to){
+            std::cout << "sequential::minCutMaxFlow" << std::endl;
+            int N = G.size();
+
+            Excess_total etotal = 0;
+            ExcessFlow e(N, 0); 
+            Height h(N, 0); 
+            h[0] = N;
+
+            ResidualFlow cf(N); 
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < N; j++){
+                    cf[i].push_back(0);
+                }
+            }
+
+            std::cout << "\n\n\ne: ";
+            for(int j = 0; j < N; j++){
+                std::cout << e[j] << " ";
+            }
+            std::cout << "\n";
+
+            std::cout << "h: ";
+            for(int j = 0; j < N; j++){
+                std::cout << h[j] << " ";
+            }
+            std::cout << "\n";
+
+            std::cout << "graph:\n";
+            for(int i = 0; i < N; i ++){
+                for(int j = 0; j < N; j++){
+                    printf("%d/%d  ", Gf[i][j], cf[i][j]);
+                }
+                printf("\n");
+            }
+
+            //preflow(G, Gf, cf, e, etotal);
+
+            //while((e[source] + e[to]) < etotal){
+                // Step 1: Push-relabel kernel (GPU)
+                int cicle = G.size(); // = |V|
+                while(cicle > 0){
+                    for(int u = 0; u < N; u++){
+		                push(u, h, e, cf, G, N);	
+                    }
+
+                    for(int u = 0; u < N; u++){
+		                relable(u, h, e, cf, G, N);	
+                    }
+
+                    std::cout << "\n\n\ne: ";
+                    for(int j = 0; j < N; j++){
+                        std::cout << e[j] << " ";
+                    }
+                    std::cout << "\n";
+
+                    std::cout << "h: ";
+                    for(int j = 0; j < N; j++){
+                        std::cout << h[j] << " ";
+                    }
+                    std::cout << "\n";
+
+                    std::cout << "graph:\n";
+                    for(int i = 0; i < N; i ++){
+                        for(int j = 0; j < N; j++){
+                            printf("%d/%d  ", Gf[i][j], cf[i][j]);
+                        }
+                        printf("\n");
+                    }
+
+                    std::cin.ignore();
+                    cicle--;
+                }
+            //}
+        }
+
+
+    };
+
+    namespace GoldbergTarjan{
         // Initialize the flow
         void preflow(const Graph &G, Graph &Gf, ResidualFlow &cf, ExcessFlow &excess, Excess_total &excessTotal){
             std::cout << "called Preflow" << std::endl;

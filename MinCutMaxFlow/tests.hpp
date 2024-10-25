@@ -69,7 +69,8 @@ void test2(){
     //
 
     auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
-    sequential::Goldberg::minCutMaxFlow(graph, rGraph, source, to);
+    //sequential::GoldbergTarjan::minCutMaxFlow(graph, rGraph, source, to);
+    sequential::GraphCutsGeneric::minCutMaxFlow(graph, rGraph, source, to);
 
     // print result
     std::cout << "Edges to remove are: " << std::endl;
@@ -109,7 +110,8 @@ void test3(){
     //
 
     auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
-    sequential::Goldberg::minCutMaxFlow(graph, rGraph, source, to);
+    //sequential::GoldbergTarjan::minCutMaxFlow(graph, rGraph, source, to);
+    sequential::GraphCutsGeneric::minCutMaxFlow(graph, rGraph, source, to);
 
     // print result
     std::cout << "Edges to remove are: " << std::endl;
