@@ -69,6 +69,7 @@ void test2(){
     //
 
     auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
+    sequential::Goldberg::minCutMaxFlow(graph, rGraph, source, to);
 
     // print result
     std::cout << "Edges to remove are: " << std::endl;
@@ -108,6 +109,7 @@ void test3(){
     //
 
     auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
+    sequential::Goldberg::minCutMaxFlow(graph, rGraph, source, to);
 
     // print result
     std::cout << "Edges to remove are: " << std::endl;
@@ -202,6 +204,7 @@ void test5(){
     sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
     // we need to pay attention to the start, because the cut must start form v'odd
     auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
+    //sequential::Goldberg::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
 
     // print result
     std::cout << "Nodes to remove in G are: " << std::endl;
@@ -236,6 +239,7 @@ void test6(){
     sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
     // we need to pay attention to the start, because the cut must start form v'odd
     auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
+    //sequential::Goldberg::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
 
     // print result
     std::cout << "Nodes to remove in G are: " << std::endl;

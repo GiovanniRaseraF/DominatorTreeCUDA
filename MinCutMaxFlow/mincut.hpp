@@ -18,10 +18,135 @@
 #include <unordered_set>
 #include <tuple>
 
-// can use in cpu
+// CPU data
 typedef std::vector<std::vector<int>> Graph;
+typedef std::vector<std::vector<int>> ResidualFlow;
+typedef std::vector<int> ExcessFlow;
+typedef std::vector<int> Height;
+typedef int Excess_total;
 
 namespace sequential{
+    namespace Goldberg{
+        // Initialize the flow
+        void preflow(const Graph &G, Graph &Gf, ResidualFlow &cf, ExcessFlow &excess, Excess_total &excessTotal){
+            std::cout << "called Preflow" << std::endl;
+            // maybe i can parallelize this
+            for(int s = 0; s < G.size(); s++){
+                for(int v = 0; v < G.size(); v++){
+                    if(G[s][v] > 0){
+                        cf[s][v] = 0;
+                        Gf[s][v] = 0;
+                        cf[v][s] = G[s][v];
+                        Gf[v][s] = G[s][v];
+                        excess[v] = G[s][v];
+                        excessTotal += G[s][v];
+                    }
+                }
+            }
+        }
+
+        void pushrelable(const Graph &G, const Graph &Gf, ResidualFlow &cf, int x, ExcessFlow &excess, Height &h, int HEIGHT_MAX){
+            int NumberOfNodes = G.size();
+            int u = x;
+
+            if(excess[u] > 0 && h[u] < NumberOfNodes){
+                int hprime = INT_MAX/2;
+                int vprime = INT_MAX/2;
+                for(int v = 0; v < NumberOfNodes; v++){
+                    if(Gf[u][v] > 0){ // is (u,v) £ Ef ?
+                        if(h[v] < hprime){
+                            hprime = h[v];
+                            vprime = v;
+                        }
+                    }
+                }
+                if(h[u] > hprime){
+                    int d = std::min(excess[u], cf[u][vprime]);
+                    cf[u][vprime]-=d;
+                    excess[u]-=d;
+                    cf[vprime][u]+=d;
+                    excess[vprime]+=d;
+                }else{
+                    h[u] = hprime + 1;
+                }
+
+            }
+        }
+
+        void minCutMaxFlow(Graph &G, Graph &Gf, int source, int to){
+            std::cout << "sequential::minCutMaxFlow" << std::endl;
+            int N = G.size();
+
+            Excess_total etotal = 0;
+            ExcessFlow e(N, 0); 
+            Height h(N, 0); 
+            h[0] = N;
+
+            ResidualFlow cf(N); 
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < N; j++){
+                    cf[i].push_back(0);
+                }
+            }
+
+            std::cout << "\n\n\ne: ";
+            for(int j = 0; j < N; j++){
+                std::cout << e[j] << " ";
+            }
+            std::cout << "\n";
+
+            std::cout << "h: ";
+            for(int j = 0; j < N; j++){
+                std::cout << h[j] << " ";
+            }
+            std::cout << "\n";
+
+            std::cout << "graph:\n";
+            for(int i = 0; i < N; i ++){
+                for(int j = 0; j < N; j++){
+                    printf("%d/%d  ", Gf[i][j], cf[i][j]);
+                }
+                printf("\n");
+            }
+
+            preflow(G, Gf, cf, e, etotal);
+
+            //while((e[source] + e[to]) < etotal){
+                // Step 1: Push-relabel kernel (GPU)
+                int cicle = G.size(); // = |V|
+                while(cicle > 0){
+                    for(int u = 0; u < N; u++){
+		                pushrelable(G, Gf, cf, u, e, h, N);	
+                    }
+
+                    std::cout << "\n\n\ne: ";
+                    for(int j = 0; j < N; j++){
+                        std::cout << e[j] << " ";
+                    }
+                    std::cout << "\n";
+
+                    std::cout << "h: ";
+                    for(int j = 0; j < N; j++){
+                        std::cout << h[j] << " ";
+                    }
+                    std::cout << "\n";
+
+                    std::cout << "graph:\n";
+                    for(int i = 0; i < N; i ++){
+                        for(int j = 0; j < N; j++){
+                            printf("%d/%d  ", Gf[i][j], cf[i][j]);
+                        }
+                        printf("\n");
+                    }
+
+                    std::cin.ignore();
+                    cicle--;
+                }
+            //}
+        }
+    };
+
+
     namespace FordFulkerson{
         /*
         As suggested by: Professor Andrea Formisano 
