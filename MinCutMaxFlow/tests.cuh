@@ -128,9 +128,17 @@ void test4(){
     int source = 0;
     int to = numberOfNodes-1;
     //
-
-
-    
+    // Creating above shown flow network 
+    graph[0][1] =  16;
+    graph[0][2] =  13;
+    graph[1][2] =  10;
+    graph[2][1] =  4;
+    graph[1][3] =  12;
+    graph[2][4] =  14;
+    graph[3][2] =  9;
+    graph[3][5] =  20;
+    graph[4][3] =  7;
+    graph[4][5] =  4;
     //
 
     ExcessFlow e(numberOfNodes, 0);
