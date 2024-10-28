@@ -95,6 +95,7 @@ namespace parallel {
         void minCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int N = G.size(); 
+            h[source] = N;
             // Initialize
             Excess_total excessTotal = 0;
 
