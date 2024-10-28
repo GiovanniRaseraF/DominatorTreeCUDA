@@ -33,8 +33,8 @@ namespace parallel {
     namespace GoldbergTarjan{
         __global__ void pushrelable(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
-            int u = threadIdx.x;;
-
+            int u = threadIdx.x;
+            printf("threadnidx: %d", u);
             if(e[u] > 0 && h[u] < HEIGHT_MAX){
                 // line 10 from 2404.00270v1.pdf
                 int hprime = INT_MAX;
