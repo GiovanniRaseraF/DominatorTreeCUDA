@@ -29,10 +29,22 @@ typedef int* GPUResidualFlow;
 typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
+constexpr int num_nodes = 7;
+std::vector<int> heights{num_nodes};
+int ExcessTotal = 0;
+std::vector<int> offsets{num_nodes * num_nodes};
+std::vector<int> destinations{num_nodes * num_nodes};
+std::vector<int> capacities{num_nodes * num_nodes};
+std::vector<int> excesses{num_nodes};
+std::vector<int> forward_flows{num_nodes*num_nodes};
+std::vector<int>  backward_flows{num_nodes*num_nodes};
+int source = 0;
+constexpr int sink = num_nodes-1;
+
 namespace sequential {
     void preflow(int source){
         heights[source] = num_nodes; 
-        Excess_total = 0;
+        ExcessTotal = 0;
 
         // Initialize preflow
         for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
@@ -42,8 +54,8 @@ namespace sequential {
             excesses[dest] = cap;
             forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
             backward_flows[i] = cap; // residualFlow[(dest, source)] = cap
-            Excess_total += cap;
-            PRINTF("Source: %d's neighbor: %d\n", source, dest);
+            ExcessTotal += cap;
+            printf("Source: %d's neighbor: %d\n", source, dest);
         }
     }
 
@@ -59,7 +71,7 @@ namespace sequential {
                 backward_flows[i] += flow;
                 excesses[v] -= flow;
                 excesses[w] += flow;
-                PRINTF("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
                 return true;
             }
         }
@@ -94,19 +106,11 @@ namespace sequential {
         return count;
     }
 
-    void maxflow(int source, int sink) {
-        this->source = source;
-        this->sink = sink;
-
-        if (!checkPath()) {
-            printf("No path from source to sink\n");
-            return;
-        }
-
+    void maxflow() {
         preflow(source);
 
         printf("Preflow done\n");
-        printf("Excess total: %d\n", Excess_total);
+        printf("Excess total: %d\n", ExcessTotal);
 
         int active_node = findActiveNode();
 
@@ -114,7 +118,7 @@ namespace sequential {
             /* If there is an outgoing edge (v, w) of v in Gf with h(v) = h(w) + 1 */
             //printf("#active nodes: %d\n", countActiveNodes());
             if (!push(active_node)) {
-            PRINTF("Relabeling %d\n", active_node);
+            printf("Relabeling %d\n", active_node);
             relabel(active_node);
             }
             active_node = findActiveNode();
