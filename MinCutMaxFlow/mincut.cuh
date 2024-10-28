@@ -40,7 +40,7 @@ namespace parallel {
                 int hprime = INT_MAX;
                 int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
-                    if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
+                    if(G[u*V+v] > 0){ // is (u,v) £ Ef ?
                         if(h[v] < hprime){
                             hprime = h[v];
                             vprime = v;
@@ -105,25 +105,27 @@ namespace parallel {
 
             h[source] = N;
             e[source] = INT_MAX;
-            
+
             // prepare GPU data
-            int host_Gf[N*N], host_e[N], host_h[N], host_cf[N*N];
+            int host_G[N*N], host_Gf[N*N], host_e[N], host_h[N], host_cf[N*N];
             for(int i = 0; i < N; i++){
                 for(int j = 0; j < N; j++){
+                    host_G[i*N+j] = G[i][j];
                     host_Gf[i*N+j] = Gf[i][j];
-                    host_cf[i*N+j] = cf[i][j];
                 }
             }
-            
+
             for(int j = 0; j < N; j++){
                 host_e[j] = e[j];
                 host_h[j] = h[j];
             }
 
 
-            int *dev_Gf, *dev_e, *dev_h;
+            int *dev_Gf, *dev_e, *dev_h, *dev_G;
 
             // static memory allocation
+            cudaMalloc((void**)&dev_G, N * N * sizeof(int));
+            cudaMemcpy(dev_G, host_G, N * N * sizeof(int), cudaMemcpyHostToDevice);
             cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
             cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyHostToDevice);
 
@@ -137,7 +139,7 @@ namespace parallel {
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
-		            pushrelable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
+		            pushrelable<<<1, N>>>(dev_G, dev_Gf, N, dev_e, dev_h, N);	
                     cudaDeviceSynchronize();
                     
                     cudaMemcpy(host_Gf, dev_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
@@ -159,7 +161,7 @@ namespace parallel {
                     std::cout << "graph:\n";
                     for(int i = 0; i < N; i ++){
                         for(int j = 0; j < N; j++){
-                            printf("%d/%d  ", host_Gf[i*N+j], host_cf[i*N+j]);
+                            printf("%d/%d  ", G[i][j], host_Gf[i*N+j]);
                         }
                         printf("\n");
                     }
