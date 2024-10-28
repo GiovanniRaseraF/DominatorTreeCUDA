@@ -252,3 +252,62 @@ void test6(){
         std::cout << from / 2 << std::endl; 
     }
 }
+
+void test7(){
+    std::cout << "\nTest paper graph" << std::endl;
+    const int numberOfNodes = 7;
+    Graph rGraph(numberOfNodes);
+    Graph graph(numberOfNodes);
+    justInitGraph(graph, rGraph);
+
+    int source = 0;
+    int to = numberOfNodes-1;
+    //
+    graph[source][1] = 3;
+    graph[source][2] = 9;
+    graph[source][3] = 5;
+    graph[source][4] = 6;
+    graph[source][5] = 2;
+    // graph[1][source] = 3;
+    // graph[2][source] = 9;
+    // graph[3][source] = 5;
+    // graph[4][source] = 6;
+    // graph[5][source] = 2;
+
+
+    graph[1][2] = 3;
+    graph[2][3] = 3;
+    //graph[3][4] = 4;
+    //graph[4][5] = 1;
+    graph[2][1] = 3;
+    graph[3][2] = 3;
+    graph[4][3] = 4;
+    graph[5][4] = 1;
+
+
+    graph[1][to] = 10;
+    graph[2][to] = 2;
+    graph[3][to] = 1;
+    graph[4][to] = 8;
+    graph[5][to] = 9;
+    // graph[to][1] = 10;
+    // graph[to][2] = 2;
+    // graph[to][3] = 1;
+    // graph[to][4] = 8;
+    // graph[to][5] = 9;
+    //
+
+    auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
+    //sequential::GoldbergTarjan::minCutMaxFlow(graph, rGraph, source, to);
+    //sequential::GraphCutsGeneric::minCutMaxFlow(graph, rGraph, source, to);
+    sequential::GoldbergTarjan::minCutMaxFlow(graph, rGraph, source, to);
+
+    // print result
+    std::cout << "Edges to remove are: " << std::endl;
+    for(auto r : result){
+        int from = std::get<0>(r);
+        int to = std::get<1>(r);
+
+        std::cout << from << " --> " << to << std::endl;
+    }
+}

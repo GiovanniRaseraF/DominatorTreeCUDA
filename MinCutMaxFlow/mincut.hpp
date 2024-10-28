@@ -50,12 +50,12 @@ namespace sequential{
             if(active(x, u, h, HEIGHT_MAX)){
                 for(int y = 0; y < G.size(); y++){
                     if(G[x][y] > 0){
-                        if(h[y] == h[x] - 1){
+                        if(h[y] = h[x] - 1){
                             int flow = std::min(c[x][y], u[x]);
                             u[x] -= flow;
                             u[y] += flow;
                             c[x][y] -= flow;
-                            c[y][x] -= flow;
+                            c[y][x] += flow;
                         }
                     }
                 }
@@ -76,6 +76,24 @@ namespace sequential{
             }
         }
 
+        // Initialize the flow
+        void preflow(const Graph &G, Graph &Gf, ResidualFlow &cf, ExcessFlow &e, Excess_total &excessTotal){
+            std::cout << "called Preflow" << std::endl;
+            // maybe i can parallelize this
+            for(int s = 0; s < G.size(); s++){
+                for(int v = 0; v < G.size(); v++){
+                    if(G[s][v] > 0){
+                        cf[s][v] = 0;
+                        Gf[s][v] = 0;
+                        cf[v][s] = G[s][v];
+                        Gf[v][s] = G[s][v];
+                        e[v] = G[s][v];
+                        excessTotal += G[s][v];
+                    }
+                }
+            }
+        }
+
         void minCutMaxFlow(Graph &G, Graph &Gf, int source, int to){
             std::cout << "sequential::minCutMaxFlow" << std::endl;
             int N = G.size();
@@ -91,6 +109,7 @@ namespace sequential{
                     cf[i].push_back(0);
                 }
             }
+            preflow(G, Gf, cf, e, etotal);
 
             std::cout << "\n\n\ne: ";
             for(int j = 0; j < N; j++){
@@ -119,11 +138,11 @@ namespace sequential{
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
                     for(int u = 0; u < N; u++){
-		                push(u, h, e, cf, G, N);	
+		                push(u, h, e, cf, Gf, N);	
                     }
 
                     for(int u = 0; u < N; u++){
-		                relable(u, h, e, cf, G, N);	
+		                relable(u, h, e, cf, Gf, N);	
                     }
 
                     std::cout << "\n\n\ne: ";
@@ -209,7 +228,6 @@ namespace sequential{
             Excess_total etotal = 0;
             ExcessFlow e(N, 0); 
             Height h(N, 0); 
-            h[0] = N;
 
             ResidualFlow cf(N); 
             for(int i = 0; i < N; i++){
@@ -239,8 +257,9 @@ namespace sequential{
             }
 
             preflow(G, Gf, cf, e, etotal);
+            //e[source] = N;
 
-            //while((e[source] + e[to]) < etotal){
+            while((e[source] + e[to]) < etotal){
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
@@ -260,18 +279,15 @@ namespace sequential{
                     }
                     std::cout << "\n";
 
-                    std::cout << "graph:\n";
+                    std::cout << "e/h:\n";
                     for(int i = 0; i < N; i ++){
-                        for(int j = 0; j < N; j++){
-                            printf("%d/%d  ", Gf[i][j], cf[i][j]);
-                        }
-                        printf("\n");
+                        printf("node%d : %d/%d \n", i, e[i], h[i]);
                     }
 
                     std::cin.ignore();
                     cicle--;
                 }
-            //}
+            }
         }
     };
 
