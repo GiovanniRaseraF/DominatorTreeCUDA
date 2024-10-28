@@ -68,6 +68,7 @@ namespace parallel {
             ResidualFlow cf; cf.assign(N, std::vector<int>(N, 0));
             preflow();            
 
+            int host_Gf[N*N], host_e[N], host_h[N];
             int *dev_Gf, *dev_e, *dev_h;
 
             // // static memory allocation
