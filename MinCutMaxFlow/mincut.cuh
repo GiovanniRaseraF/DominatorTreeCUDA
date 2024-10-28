@@ -51,9 +51,9 @@ namespace parallel {
                 if(h[u] > hprime){
                     int d = min(e[u], Gf[u*V+vprime]);
                     atomicSub(&Gf[u*V+vprime], d);
-                    e[u]-=d;
-                    Gf[vprime*V+u]+=d;
-                    e[vprime]+=d;
+                    atomicSub(&e[u], d);
+                    atomicAdd(&Gf[vprime*V+u], d);
+                    atomicAdd(&e[vprime], d);
                 }else{
                     h[u] = hprime + 1;
                 }
