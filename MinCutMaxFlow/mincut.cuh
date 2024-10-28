@@ -29,7 +29,109 @@ typedef int* GPUResidualFlow;
 typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
+namespace sequential {
+    void preflow(int source){
+        heights[source] = num_nodes; 
+        Excess_total = 0;
+
+        // Initialize preflow
+        for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
+            int dest = destinations[i];
+            int cap = capacities[i];
+
+            excesses[dest] = cap;
+            forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
+            backward_flows[i] = cap; // residualFlow[(dest, source)] = cap
+            Excess_total += cap;
+            PRINTF("Source: %d's neighbor: %d\n", source, dest);
+        }
+    }
+
+    bool push(int v){
+    // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
+        for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
+            int w = destinations[i];
+            if (heights[v] == heights[w] + 1) {
+            // Push flow
+                int flow = std::min(excesses[v], forward_flows[i]);
+                if (flow == 0) continue;
+                forward_flows[i] -= flow;
+                backward_flows[i] += flow;
+                excesses[v] -= flow;
+                excesses[w] += flow;
+                PRINTF("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                return true;
+            }
+        }
+    }
+
+
+    void relabel(int u){
+        heights[u]+=1;
+    }
+
+    int findActiveNode(void){
+        int max_height = num_nodes;
+        int return_node = -1;
+        for (int i = 0; i < num_nodes; ++i) {
+            if (excesses[i] > 0 && i != source && i != sink) {
+            if (heights[i] < max_height) {
+                max_height = heights[i];
+                return_node = i;
+            }
+            }
+        }
+        return return_node;
+    }
+
+    int countActiveNodes(void){
+        int count = 0;
+        for (int i = 0; i < num_nodes; ++i) {
+            if (excesses[i] > 0 && i != source && i != sink) {
+            count++;
+            }
+        }
+        return count;
+    }
+
+    void maxflow(int source, int sink) {
+        this->source = source;
+        this->sink = sink;
+
+        if (!checkPath()) {
+            printf("No path from source to sink\n");
+            return;
+        }
+
+        preflow(source);
+
+        printf("Preflow done\n");
+        printf("Excess total: %d\n", Excess_total);
+
+        int active_node = findActiveNode();
+
+        while(active_node != -1) {
+            /* If there is an outgoing edge (v, w) of v in Gf with h(v) = h(w) + 1 */
+            //printf("#active nodes: %d\n", countActiveNodes());
+            if (!push(active_node)) {
+            PRINTF("Relabeling %d\n", active_node);
+            relabel(active_node);
+            }
+            active_node = findActiveNode();
+        }
+
+
+        /* Calculate Max flow */
+        /* Sum all all rflow(u, sink)*/
+        printf("Max flow: %d\n", excesses[sink]);
+
+    }
+};
+
+
 namespace parallel {
+
+
     namespace GoldbergTarjan{
         __global__ void pushrelable(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
             // calcualte x with thread id instead of passing int
