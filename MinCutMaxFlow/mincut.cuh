@@ -40,7 +40,7 @@ namespace parallel {
                 int hprime = INT_MAX;
                 int vprime = INT_MAX;
                 for(int v = 0; v < V; v++){
-                    if(G[u*V+v] > 0){ // is (u,v) £ Ef ?
+                    if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
                         if(h[v] < hprime){
                             hprime = h[v];
                             vprime = v;
