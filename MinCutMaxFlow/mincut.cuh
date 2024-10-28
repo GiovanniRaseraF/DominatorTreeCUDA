@@ -95,7 +95,7 @@ namespace parallel {
         void minCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int N = G.size(); 
-            h[source] = N;
+            
             // Initialize
             Excess_total excessTotal = 0;
 
@@ -103,6 +103,9 @@ namespace parallel {
             ResidualFlow cf; cf.assign(N, std::vector<int>(N, 0)); 
             preflow(G, Gf, cf, e, excessTotal);            
 
+            h[source] = N;
+            e[source] = INT_MAX;
+            
             // prepare GPU data
             int host_Gf[N*N], host_e[N], host_h[N], host_cf[N*N];
             for(int i = 0; i < N; i++){
