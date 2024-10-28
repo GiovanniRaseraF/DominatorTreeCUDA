@@ -147,3 +147,48 @@ void test4(){
     print(graph);
     parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to);
 }
+
+void test7(){
+    std::cout << "\nTest paper graph" << std::endl;
+    const int numberOfNodes = 7;
+    Graph rGraph(numberOfNodes);
+    Graph graph(numberOfNodes);
+    justInitGraph(graph, rGraph);
+
+    int source = 0;
+    int to = numberOfNodes-1;
+    //
+    graph[source][1] = 3;
+    graph[source][2] = 9;
+    graph[source][3] = 5;
+    graph[source][4] = 6;
+    graph[source][5] = 2;
+
+    graph[1][2] = 3;
+    graph[2][3] = 3;
+    graph[2][1] = 3;
+    graph[3][2] = 3;
+    graph[4][3] = 4;
+    graph[5][4] = 1;
+
+
+    graph[1][to] = 10;
+    graph[2][to] = 2;
+    graph[3][to] = 1;
+    graph[4][to] = 8;
+    graph[5][to] = 9;
+
+    ExcessFlow e(numberOfNodes, 0);
+    Height h(numberOfNodes, 0);
+
+    parallel::GoldbergTarjan::minCutMaxFlow(graph, rGraph, e, h, source, to);
+
+    // print result
+    //std::cout << "Edges to remove are: " << std::endl;
+    // for(auto r : result){
+    //     int from = std::get<0>(r);
+    //     int to = std::get<1>(r);
+
+    //     std::cout << from << " --> " << to << std::endl;
+    // }
+}

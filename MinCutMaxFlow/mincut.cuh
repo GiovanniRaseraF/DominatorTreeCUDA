@@ -29,86 +29,19 @@ typedef int* GPUResidualFlow;
 typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
-namespace sequential{
-        void pushrelable(GPUGraph G, GPUGraph Gf, GPUResidualFlow cf, int x, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
-            // calcualte x with thread id instead of passing int
-            int u = x;
-
-            if(e[u] > 0 && h[u] < V){
-                // line 10 from 2404.00270v1.pdf
-                int hprime = INT_MAX/2;
-                int vprime = INT_MAX/2;
-                for(int v = 0; v < V; v++){
-                    if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        if(h[v] < hprime){
-                            hprime = h[v];
-                            vprime = v;
-                        }
-                    }
-                }
-                if(h[u] > hprime){
-                    int d = std::min(e[u], cf[u*V+vprime]);
-                    cf[u*V+vprime]-=d;
-                    e[u]-=d;
-                    cf[vprime*V+u]+=d;
-                    e[vprime]+=d;
-                }else{
-                    if(hprime != INT_MAX / 2) h[u] = hprime + 1;
-                }
-
-            }
-        }
-    
-};
-
 namespace parallel {
     namespace GoldbergTarjan{
-        __global__ void pushrelable(GPUGraph G, GPUGraph Gf, int V, GPUExcessFlow e, GPUHeight h, int HEIGHT_MAX){
-            // calcualte x with thread id instead of passing int
-            int u = threadIdx.x;;
+        __global__ void push(){
 
-            if(e[u] > 0 && h[u] < HEIGHT_MAX){
-                // line 10 from 2404.00270v1.pdf
-                int hprime = INT_MAX;
-                int vprime = INT_MAX;
-                for(int v = 0; v < V; v++){
-                    if(Gf[u*V+v] > 0){ // is (u,v) £ Ef ?
-                        if(h[v] < hprime){
-                            hprime = h[v];
-                            vprime = v;
-                        }
-                    }
-                }
+        }
 
-                if(h[u] > hprime){
-                    int d = min(e[u], Gf[u*V+vprime]);
-                    Gf[u*V+vprime]-=d;
-                    e[u]-=d;
-                    Gf[vprime*V+u]+=d;
-                    e[vprime]-=d;
-                }else{
-                    h[u] = hprime + 1;
-                }
+        __global__ void relable(){
 
-            }
         }
 
         // Initialize the flow
-        void preflow(const Graph &G, Graph &Gf, ResidualFlow &cf, ExcessFlow &e, Excess_total &excessTotal){
-            std::cout << "called Preflow" << std::endl;
-            // maybe i can parallelize this
-            for(int s = 0; s < G.size(); s++){
-                for(int v = 0; v < G.size(); v++){
-                    if(G[s][v] > 0){
-                        cf[s][v] = 0;
-                        Gf[s][v] = 0;
-                        cf[v][s] = G[s][v];
-                        Gf[v][s] = G[s][v];
-                        e[v] = G[s][v];
-                        excessTotal += G[s][v];
-                    }
-                }
-            }
+        void preflow(){
+            
         }
 
         /*
@@ -127,114 +60,39 @@ namespace parallel {
         void minCutMaxFlow(Graph &G, Graph &Gf, ExcessFlow &e, Height &h, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int N = G.size(); 
+
             // Initialize
             Excess_total excessTotal = 0;
 
             // Step 0: Preflow
-            ResidualFlow cf(N); 
-            for(int i = 0; i < N; i++){
-                for(int j = 0; j < N; j++){
-                    cf[i].push_back(0);
-                }
-            }
-            preflow(G, Gf, cf, e, excessTotal);            
+            ResidualFlow cf; cf.assign(N, std::vector<int>(N, 0));
+            preflow();            
 
-            // std::cout << "ExcessFlow e: ";
-            // for(int i = 0; i < N; i++){
-            //     std::cout << e[i] << ", ";
-            // }
-            // std::cout << "\n";
-            // std::cout << "ExcessTotal: " << excessTotal << std::endl;
-
-            // prepare GPU data
-            int host_Gf[N*N], host_e[N], host_h[N], host_cf[N*N];
-            for(int i = 0; i < N; i++){
-                for(int j = 0; j < N; j++){
-                    host_Gf[i*N+j] = Gf[i][j];
-                    host_cf[i*N+j] = cf[i][j];
-                }
-            }
-            
-            for(int j = 0; j < N; j++){
-                host_e[j] = e[j];
-                host_h[j] = h[j];
-            }
-
-            std::cout << "\n\n\ne: ";
-            for(int j = 0; j < N; j++){
-                std::cout << host_e[j] << " ";
-            }
-            std::cout << "\n";
-
-            std::cout << "h: ";
-            for(int j = 0; j < N; j++){
-                std::cout << host_h[j] << " ";
-            }
-            std::cout << "\n";
-
-            std::cout << "graph:\n";
-            for(int i = 0; i < N; i ++){
-                for(int j = 0; j < N; j++){
-                    printf("%d/%d  ", host_Gf[i*N+j], host_cf[i*N+j]);
-                }
-                printf("\n");
-            }
-
-            //std::cin.ignore();
-
-
-            // int *dev_Gf, *dev_e, *dev_h;
+            int *dev_Gf, *dev_e, *dev_h;
 
             // // static memory allocation
-            // cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
-            // cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyHostToDevice);
+            cudaMalloc((void**)&dev_Gf, N * N * sizeof(int));
+            cudaMemcpy(dev_Gf, host_Gf, N * N * sizeof(int), cudaMemcpyHostToDevice);
 
-            // cudaMalloc((void**)&dev_e, N*sizeof(int));
-            // cudaMalloc((void**)&dev_h, N*sizeof(int));
-            // cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
-            // cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyHostToDevice);
+            cudaMalloc((void**)&dev_e, N*sizeof(int));
+            cudaMalloc((void**)&dev_h, N*sizeof(int));
+            cudaMemcpy(dev_e, host_e, N*sizeof(int), cudaMemcpyHostToDevice);
+            cudaMemcpy(dev_h, host_h, N*sizeof(int), cudaMemcpyHostToDevice);
 
             // start while
-            while((host_e[source] + host_e[to]) < excessTotal){
+            while(true){
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
+
                 while(cicle > 0){
-                    for(int u = 0; u < N; u++){
-		                sequential::pushrelable(host_Gf, host_Gf, host_cf, u, N, host_e, host_h, N);	
-                    }
-
-		            //pushrelable<<<1, N>>>(dev_Gf, dev_Gf, N, dev_e, dev_h, N);	
-                    //cudaDeviceSynchronize();
+		            push<<<1, N>>>();	
+                    cudaDeviceSynchronize();
                     
-                    // cudaMemcpy(host_Gf, dev_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
-                    // cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
-                    // cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    cudaMemcpy(host_Gf, dev_Gf, N * N * sizeof(int), cudaMemcpyDeviceToHost);
+                    cudaMemcpy(host_e, dev_e, N*sizeof(int), cudaMemcpyDeviceToHost);
+                    cudaMemcpy(host_h, dev_h, N*sizeof(int), cudaMemcpyDeviceToHost);
 
-                    std::cout << "\n\n\ne: ";
-                    for(int j = 0; j < N; j++){
-                        std::cout << host_e[j] << " ";
-                    }
-                    std::cout << "\n";
-
-                    std::cout << "h: ";
-                    for(int j = 0; j < N; j++){
-                        std::cout << host_h[j] << " ";
-                    }
-                    std::cout << "\n";
-
-                    std::cout << "graph:\n";
-                    for(int i = 0; i < N; i ++){
-                        for(int j = 0; j < N; j++){
-                            printf("%d/%d  ", host_Gf[i*N+j], host_cf[i*N+j]);
-                        }
-                        printf("\n");
-                    }
-
-                    // std::cout << "\n";
-                    // std::cout << "ExcessTotal: " << excessTotal << std::endl;
-                    //std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
-                    //std::cin.ignore();
-
+                    std::cin.ignore(); 
                     cicle--;
                 }
             }

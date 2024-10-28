@@ -299,7 +299,7 @@ void test7(){
 
     auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
     //sequential::GoldbergTarjan::minCutMaxFlow(graph, rGraph, source, to);
-    sequential::GraphCutsGeneric::minCutMaxFlow(graph, rGraph, source, to);
+    //sequential::GraphCutsGeneric::minCutMaxFlow(graph, rGraph, source, to);
     //sequential::GoldbergTarjan::minCutMaxFlow(graph, rGraph, source, to);
 
     // print result
