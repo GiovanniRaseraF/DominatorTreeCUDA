@@ -163,7 +163,7 @@ namespace parallel {
                     // std::cout << "\n";
                     // std::cout << "ExcessTotal: " << excessTotal << std::endl;
                     //std::cout << ">>>" << "\ncicle: " << cicle << "\ne(0): " << host_e[source] << "\ne[to]: " << host_e[to] << "\nexcessTotal: " << excessTotal << "\n"; 
-                    //std::cin.ignore();
+                    std::cin.ignore();
 
                     cicle--;
                 }
