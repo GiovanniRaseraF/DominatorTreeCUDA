@@ -8,5 +8,6 @@ int main(){
     //test2();
     //test3();
     //test4();
-    test7();
+    //test7();
+    sequential::maxflow();
 }
