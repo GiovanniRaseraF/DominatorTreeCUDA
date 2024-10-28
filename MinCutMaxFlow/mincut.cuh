@@ -37,7 +37,7 @@ std::vector<int> destinations{num_nodes * num_nodes};
 std::vector<int> capacities{num_nodes * num_nodes};
 std::vector<int> excesses{num_nodes};
 std::vector<int> forward_flows{num_nodes*num_nodes};
-std::vector<int>  backward_flows{num_nodes*num_nodes};
+std::vector<int> backward_flows{num_nodes*num_nodes};
 int source = 0;
 constexpr int sink = num_nodes-1;
 
@@ -87,10 +87,10 @@ namespace sequential {
         int return_node = -1;
         for (int i = 0; i < num_nodes; ++i) {
             if (excesses[i] > 0 && i != source && i != sink) {
-            if (heights[i] < max_height) {
-                max_height = heights[i];
-                return_node = i;
-            }
+                if (heights[i] < max_height) {
+                    max_height = heights[i];
+                    return_node = i;
+                }
             }
         }
         return return_node;
