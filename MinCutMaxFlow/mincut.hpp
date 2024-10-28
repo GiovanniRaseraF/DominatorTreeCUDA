@@ -46,6 +46,29 @@ namespace sequential{
             return true;
         }
 
+        void print(){
+            // std::cout << "\n\n\ne: ";
+            // for(int j = 0; j < N; j++){
+            //     std::cout << e[j] << " ";
+            // }
+            // std::cout << "\n";
+
+            // std::cout << "h: ";
+            // for(int j = 0; j < N; j++){
+            //     std::cout << h[j] << " ";
+            // }
+            // std::cout << "\n";
+
+            // std::cout << "graph:\n";
+            // for(int i = 0; i < N; i ++){
+            //     for(int j = 0; j < N; j++){
+            //         printf("%d/%d  ", Gf[i][j], cf[i][j]);
+            //     }
+            //     printf("\n");
+            // }
+            // std::cout << "etotal: " << etotal;
+        }
+
         void push(int x, Height &h, ExcessFlow &u, ResidualFlow &c, const Graph &G, int HEIGHT_MAX){
             if(active(x, u, h, HEIGHT_MAX)){
                 for(int y = 0; y < G.size(); y++){
@@ -90,9 +113,12 @@ namespace sequential{
                         e[v] = G[s][v];
                         excessTotal += G[s][v];
                     }
+                    //excessTotal = G.size();
                 }
             }
         }
+
+        
 
         void minCutMaxFlow(Graph &G, Graph &Gf, int source, int to){
             std::cout << "sequential::minCutMaxFlow" << std::endl;
@@ -111,29 +137,9 @@ namespace sequential{
             }
             preflow(G, Gf, cf, e, etotal);
 
-            std::cout << "\n\n\ne: ";
-            for(int j = 0; j < N; j++){
-                std::cout << e[j] << " ";
-            }
-            std::cout << "\n";
+            std::cin.ignore();
 
-            std::cout << "h: ";
-            for(int j = 0; j < N; j++){
-                std::cout << h[j] << " ";
-            }
-            std::cout << "\n";
-
-            std::cout << "graph:\n";
-            for(int i = 0; i < N; i ++){
-                for(int j = 0; j < N; j++){
-                    printf("%d/%d  ", Gf[i][j], cf[i][j]);
-                }
-                printf("\n");
-            }
-
-            //preflow(G, Gf, cf, e, etotal);
-
-            //while((e[source] + e[to]) < etotal){
+            while((e[source] + e[to]) < etotal){
                 // Step 1: Push-relabel kernel (GPU)
                 int cicle = G.size(); // = |V|
                 while(cicle > 0){
@@ -145,30 +151,10 @@ namespace sequential{
 		                relable(u, h, e, cf, Gf, N);	
                     }
 
-                    std::cout << "\n\n\ne: ";
-                    for(int j = 0; j < N; j++){
-                        std::cout << e[j] << " ";
-                    }
-                    std::cout << "\n";
-
-                    std::cout << "h: ";
-                    for(int j = 0; j < N; j++){
-                        std::cout << h[j] << " ";
-                    }
-                    std::cout << "\n";
-
-                    std::cout << "graph:\n";
-                    for(int i = 0; i < N; i ++){
-                        for(int j = 0; j < N; j++){
-                            printf("%d/%d  ", Gf[i][j], cf[i][j]);
-                        }
-                        printf("\n");
-                    }
-
                     std::cin.ignore();
                     cicle--;
                 }
-            //}
+            }
         }
 
 
