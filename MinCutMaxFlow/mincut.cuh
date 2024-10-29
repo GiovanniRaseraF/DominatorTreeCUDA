@@ -52,7 +52,7 @@ namespace sequential {
         for (int i = (source*num_nodes); i < (source*num_nodes)+num_nodes; ++i) {
             // int dest = destinations[i];
             // int cap = capacities[i];
-            if(offsets[source*num_nodes + i] > 0){
+            if(offsets[i] > 0){
                 int dest = i - (source*num_nodes);
                 int cap = offsets[source*num_nodes + i];
 
@@ -69,7 +69,7 @@ namespace sequential {
     // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
         for (int i = (v*num_nodes); i < (v*num_nodes)+num_nodes; ++i) {
         //for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
-            if(offsets[v*num_nodes + i] > 0){
+            if(offsets[i] > 0){
                 int w = i - (source*num_nodes);
                 if (heights[v] == heights[w] + 1) {
                 // Push flow
