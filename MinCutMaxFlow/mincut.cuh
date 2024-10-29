@@ -30,14 +30,14 @@ typedef int* GPUExcessFlow;
 typedef int* GPUHeight;
 
 constexpr int num_nodes = 7;
-std::vector<int> heights{num_nodes};
+std::vector<int> heights(num_nodes, 0);
 int ExcessTotal = 0;
-std::vector<int> offsets{num_nodes * num_nodes};
-std::vector<int> destinations{num_nodes * num_nodes};
-std::vector<int> capacities{num_nodes * num_nodes};
-std::vector<int> excesses{num_nodes};
-std::vector<int> forward_flows{num_nodes*num_nodes};
-std::vector<int> backward_flows{num_nodes*num_nodes};
+std::vector<int> offsets(num_nodes * num_nodes, 0);
+std::vector<int> destinations(num_nodes * num_nodes, 0);
+std::vector<int> capacities(num_nodes * num_nodes, 0);
+std::vector<int> excesses(num_nodes, 0);
+std::vector<int> forward_flows(num_nodes*num_nodes, 0);
+std::vector<int> backward_flows(num_nodes*num_nodes, 0);
 int source = 0;
 constexpr int sink = num_nodes-1;
 constexpr int to = sink;
@@ -54,7 +54,7 @@ namespace sequential {
             // int cap = capacities[i];
             if(offsets[i] > 0){
                 int dest = i - (source*num_nodes);
-                int cap = offsets[source*num_nodes + i];
+                int cap = offsets[i];
 
                 excesses[dest] = cap;
                 forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
