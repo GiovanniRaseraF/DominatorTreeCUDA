@@ -40,6 +40,7 @@ std::vector<int> forward_flows{num_nodes*num_nodes};
 std::vector<int> backward_flows{num_nodes*num_nodes};
 int source = 0;
 constexpr int sink = num_nodes-1;
+constexpr int to = sink;
 
 namespace sequential {
     void preflow(int source){
@@ -47,32 +48,40 @@ namespace sequential {
         ExcessTotal = 0;
 
         // Initialize preflow
-        for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
-            int dest = destinations[i];
-            int cap = capacities[i];
+        //for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
+        for (int i = (source*num_nodes); i < (source*num_nodes)+num_nodes; ++i) {
+            // int dest = destinations[i];
+            // int cap = capacities[i];
+            if(offsets[source*num_nodes + i] > 0){
+                int dest = i - (source*num_nodes);
+                int cap = offsets[source*num_nodes + i];
 
-            excesses[dest] = cap;
-            forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
-            backward_flows[i] = cap; // residualFlow[(dest, source)] = cap
-            ExcessTotal += cap;
-            printf("Source: %d's neighbor: %d\n", source, dest);
+                excesses[dest] = cap;
+                forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
+                backward_flows[i] = cap; // residualFlow[(dest, source)] = cap
+                ExcessTotal += cap;
+                printf("Source: %d's neighbor: %d\n", source, dest);
+            }
         }
     }
 
     bool push(int v){
     // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
-        for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
-            int w = destinations[i];
-            if (heights[v] == heights[w] + 1) {
-            // Push flow
-                int flow = std::min(excesses[v], forward_flows[i]);
-                if (flow == 0) continue;
-                forward_flows[i] -= flow;
-                backward_flows[i] += flow;
-                excesses[v] -= flow;
-                excesses[w] += flow;
-                printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
-                return true;
+        for (int i = (v*num_nodes); i < (v*num_nodes)+num_nodes; ++i) {
+        //for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
+            if(offsets[v*num_nodes + i] > 0){
+                int w = i - (source*num_nodes);
+                if (heights[v] == heights[w] + 1) {
+                // Push flow
+                    int flow = std::min(excesses[v], forward_flows[i]);
+                    if (flow == 0) continue;
+                    forward_flows[i] -= flow;
+                    backward_flows[i] += flow;
+                    excesses[v] -= flow;
+                    excesses[w] += flow;
+                    printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    return true;
+                }
             }
         }
     }
@@ -100,13 +109,33 @@ namespace sequential {
         int count = 0;
         for (int i = 0; i < num_nodes; ++i) {
             if (excesses[i] > 0 && i != source && i != sink) {
-            count++;
+                count++;
             }
         }
         return count;
     }
 
     void maxflow() {
+        offsets[source*num_nodes + 1] = 3;
+        offsets[source*num_nodes + 2] = 9;
+        offsets[source*num_nodes + 3] = 5;
+        offsets[source*num_nodes + 4] = 6;
+        offsets[source*num_nodes + 5] = 2;
+
+        offsets[1*num_nodes+2] = 3;
+        offsets[2*num_nodes+3] = 3;
+        offsets[2*num_nodes+1] = 3;
+        offsets[3*num_nodes+2] = 3;
+        offsets[4*num_nodes+3] = 4;
+        offsets[5*num_nodes+4] = 1;
+
+
+        offsets[1*num_nodes+to] = 10;
+        offsets[2*num_nodes+to] = 2;
+        offsets[3*num_nodes+to] = 1;
+        offsets[4*num_nodes+to] = 8;
+        offsets[5*num_nodes+to] = 9;
+
         preflow(source);
 
         printf("Preflow done\n");
@@ -128,7 +157,6 @@ namespace sequential {
         /* Calculate Max flow */
         /* Sum all all rflow(u, sink)*/
         printf("Max flow: %d\n", excesses[sink]);
-
     }
 };
 
