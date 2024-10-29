@@ -71,7 +71,7 @@ namespace sequential {
         //for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
             if(offsets[i] > 0){
                 int w = i - (source*num_nodes);
-                if (heights[v] == heights[w] + 1) {
+                if (heights[v] <= heights[w] + 1) {
                 // Push flow
                     int flow = std::min(excesses[v], forward_flows[i]);
                     if (flow == 0) continue;
@@ -170,7 +170,7 @@ namespace sequential {
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
                 //printf("%d-%d/%d  ", offsets[i*num_nodes+j], forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
-                if(offsets[i*num_nodes+j] > 0 && forward_flows[i*num_nodes+j] > 0 && (forward_flows[i*num_nodes+j] == backward_flows[i*num_nodes+j])){
+                if(offsets[i*num_nodes+j] > 0 && (offsets[i*num_nodes+j] == backward_flows[i*num_nodes+j])){
                     printf("Delete edge: %d -> %d\n", i, j);
                 }
             }
