@@ -69,11 +69,11 @@ namespace sequential {
     // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
         for (int i = (v*num_nodes); i < (v*num_nodes)+num_nodes; ++i) {
         //for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
-
             if(offsets[i] > 0){
-                //std::cout << "node before push" << std::endl;
+                std::cout << "node before push" << std::endl;
                 int w = i - (v*num_nodes);
                 if (true || heights[v] == heights[w] + 1) {
+                    std::cout << "node after push" << std::endl;
                     // Push flow
                     int flow = std::min(excesses[v], forward_flows[i]);
                     if (flow == 0) continue;
