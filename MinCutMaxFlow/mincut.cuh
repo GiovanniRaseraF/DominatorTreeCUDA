@@ -170,7 +170,7 @@ namespace sequential {
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
                 //printf("%d-%d/%d  ", offsets[i*num_nodes+j], forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
-                if(offsets[i*num_nodes+j] > 0 && (forward_flows[i*num_nodes+j] == backward_flows[i*num_nodes+j])){
+                if(offsets[i*num_nodes+j] > 0 && forward_flows[i*num_nodes+j] > 0 && (forward_flows[i*num_nodes+j] == backward_flows[i*num_nodes+j])){
                     printf("Delete edge: %d -> %d\n", i, j);
                 }
             }
