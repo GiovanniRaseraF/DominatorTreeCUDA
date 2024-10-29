@@ -147,8 +147,8 @@ namespace sequential {
             /* If there is an outgoing edge (v, w) of v in Gf with h(v) = h(w) + 1 */
             //printf("#active nodes: %d\n", countActiveNodes());
             if (!push(active_node)) {
-            printf("Relabeling %d\n", active_node);
-            relabel(active_node);
+                printf("Relabeling %d\n", active_node);
+                relabel(active_node);
             }
             active_node = findActiveNode();
         }
@@ -160,7 +160,7 @@ namespace sequential {
         std::cout << "graph:\n";
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
-                printf("%d/%d  ", forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
+                printf("%d-%d/%d  ", offsets[i*num_nodes+j], forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
             }
             printf("\n");
         }
