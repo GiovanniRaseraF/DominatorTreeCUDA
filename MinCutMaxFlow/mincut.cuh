@@ -157,6 +157,13 @@ namespace sequential {
         /* Calculate Max flow */
         /* Sum all all rflow(u, sink)*/
         printf("Max flow: %d\n", excesses[sink]);
+        std::cout << "graph:\n";
+        for(int i = 0; i < num_nodes; i ++){
+            for(int j = 0; j < num_nodes; j++){
+                printf("%d/%d  ", forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
+            }
+            printf("\n");
+        }
     }
 };
 
