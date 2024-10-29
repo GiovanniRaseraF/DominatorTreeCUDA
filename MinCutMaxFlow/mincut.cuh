@@ -73,7 +73,7 @@ namespace sequential {
             if(offsets[i] > 0){
                 std::cout << "node before push" << std::endl;
                 int w = i - (source*num_nodes);
-                if (heights[v] == heights[w] + 1) {
+                if (heights[v] >= heights[w] + 1) {
                     // Push flow
                     int flow = std::min(excesses[v], forward_flows[i]);
                     if (flow == 0) continue;
