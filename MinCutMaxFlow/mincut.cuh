@@ -46,7 +46,7 @@ namespace sequential {
     void preflow(int source){
         heights[source] = num_nodes; 
         ExcessTotal = 0;
-
+        excesses[source] = num_nodes;
         // Initialize preflow
         //for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
         for (int i = (source*num_nodes); i < (source*num_nodes)+num_nodes; ++i) {
