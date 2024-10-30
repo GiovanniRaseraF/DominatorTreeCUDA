@@ -146,8 +146,19 @@ namespace sequential {
             }
             printf("\n");
         }
+        std::cout << "before preflow heights: ";
+        for(int i = 0; i < num_nodes; i ++){
+            printf("%d ", heights[i]);
+        }
+        std::cout << "\n";
 
         preflow(source);
+
+        std::cout << "after preflow heights: ";
+        for(int i = 0; i < num_nodes; i ++){
+            printf("%d ", heights[i]);
+        }
+        std::cout << "\n";
 
         printf("Preflow done\n");
         printf("Excess total: %d\n", ExcessTotal);
@@ -170,6 +181,13 @@ namespace sequential {
                 }
                 printf("\n");
             }
+
+            std::cout << "heights: ";
+            for(int i = 0; i < num_nodes; i ++){
+                printf("%d ", heights[i]);
+            }
+            std::cout << "\n";
+
             active_node = findActiveNode();
             std::cout << "active_node" << active_node << std::endl;
         }
@@ -187,6 +205,12 @@ namespace sequential {
             }
             printf("\n");
         }
+
+        std::cout << "heights: ";
+        for(int i = 0; i < num_nodes; i ++){
+            printf("%d ", heights[i]);
+        }
+        std::cout << "\n";
 
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
