@@ -46,7 +46,7 @@ namespace sequential {
     void preflow(int source){
         heights[source] = num_nodes; 
         ExcessTotal = 0;
-        excesses[source] = num_nodes;
+        //excesses[source] = num_nodes;
         // Initialize preflow
         //for (int i = G[source]; i < G[source + 1]; ++i) {
         for (int i = (source*num_nodes); i < (source*num_nodes)+num_nodes; ++i) {
@@ -57,8 +57,8 @@ namespace sequential {
                 int cap = G[i];
 
                 excesses[dest] = cap;
-                forward_flows[i] = cap; // residualFlow[(source, dest)] = 0
-                backward_flows[i] = 0; // residualFlow[(dest, source)] = cap
+                forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
+                backward_flows[i] = cap; // residualFlow[(dest, source)] = cap
                 ExcessTotal += cap;
                 printf("Source: %d's neighbor: %d\n", source, dest);
             }
@@ -76,7 +76,7 @@ namespace sequential {
                     //std::cout << "node after push" << std::endl;
                     // Push flow
                     int flow = std::min(excesses[v], forward_flows[i]);
-                    //if (flow == 0) continue;
+                    if (flow == 0) continue;
                     forward_flows[i] -= flow;
                     backward_flows[i] += flow;
                     excesses[v] -= flow;
