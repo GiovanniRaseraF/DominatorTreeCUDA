@@ -57,8 +57,8 @@ namespace sequential {
                 int cap = G[i];
 
                 excesses[dest] = cap;
-                forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
-                backward_flows[i] = cap; // residualFlow[(dest, source)] = cap
+                forward_flows[i] = cap; // residualFlow[(source, dest)] = 0
+                backward_flows[i] = 0; // residualFlow[(dest, source)] = cap
                 ExcessTotal += cap;
                 printf("Source: %d's neighbor: %d\n", source, dest);
             }
@@ -76,7 +76,7 @@ namespace sequential {
                     //std::cout << "node after push" << std::endl;
                     // Push flow
                     int flow = std::min(excesses[v], forward_flows[i]);
-                    if (flow == 0) continue;
+                    //if (flow == 0) continue;
                     forward_flows[i] -= flow;
                     backward_flows[i] += flow;
                     excesses[v] -= flow;
