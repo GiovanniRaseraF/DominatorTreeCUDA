@@ -33,6 +33,7 @@ constexpr int num_nodes = 7;
 std::vector<int> heights(num_nodes, 0);
 int ExcessTotal = 0;
 std::vector<int> G(num_nodes * num_nodes, 0);
+std::vector<int> Gr(num_nodes * num_nodes, 0);
 std::vector<int> destinations(num_nodes * num_nodes, 0);
 std::vector<int> capacities(num_nodes * num_nodes, 0);
 std::vector<int> excesses(num_nodes, 0);
@@ -86,6 +87,24 @@ namespace sequential {
                 }
             }
         }
+
+        // Find the outgoing edge (v, w) in backward edge with h(v) = h(w) + 1
+        for (int i = roffsets[v]; i < roffsets[v+1]; ++i) {
+            int w = rdestinations[i];
+            if (heights[v] == heights[w] + 1) {
+            // Push flow
+            int push_index = flow_index[i];
+            int flow = std::min(excesses[v], backward_flows[push_index]);
+            if (flow == 0) continue;
+            backward_flows[push_index] -= flow;
+            forward_flows[push_index] += flow;
+            excesses[v] -= flow;
+            excesses[w] += flow;
+            printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+            return true;
+            }
+        }
+
         return false;
     }
 
