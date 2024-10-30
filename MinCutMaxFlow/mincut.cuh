@@ -32,7 +32,7 @@ typedef int* GPUHeight;
 constexpr int num_nodes = 7;
 std::vector<int> heights(num_nodes, 0);
 int ExcessTotal = 0;
-std::vector<int> offsets(num_nodes * num_nodes, 0);
+std::vector<int> G(num_nodes * num_nodes, 0);
 std::vector<int> destinations(num_nodes * num_nodes, 0);
 std::vector<int> capacities(num_nodes * num_nodes, 0);
 std::vector<int> excesses(num_nodes, 0);
@@ -48,13 +48,13 @@ namespace sequential {
         ExcessTotal = 0;
         excesses[source] = num_nodes;
         // Initialize preflow
-        //for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
+        //for (int i = G[source]; i < G[source + 1]; ++i) {
         for (int i = (source*num_nodes); i < (source*num_nodes)+num_nodes; ++i) {
             // int dest = destinations[i];
             // int cap = capacities[i];
-            if(offsets[i] > 0){
+            if(G[i] > 0){
                 int dest = i - (source*num_nodes);
-                int cap = offsets[i];
+                int cap = G[i];
 
                 excesses[dest] = cap;
                 forward_flows[i] = 0; // residualFlow[(source, dest)] = 0
@@ -68,8 +68,8 @@ namespace sequential {
     bool push(int v){
     // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
         for (int i = (v*num_nodes); i < (v*num_nodes)+num_nodes; ++i) {
-        //for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
-            if(offsets[i] > 0){
+        //for (int i = G[v]; i < G[v + 1]; ++i) {
+            if(G[i] > 0){
                 //std::cout << "node before push" << std::endl;
                 int w = i - (v*num_nodes);
                 if (heights[v] == heights[w] + 1) {
@@ -119,30 +119,30 @@ namespace sequential {
     }
 
     void maxflow() {
-        offsets[source*num_nodes + 1] = 3;
-        offsets[source*num_nodes + 2] = 9;
-        offsets[source*num_nodes + 3] = 5;
-        offsets[source*num_nodes + 4] = 6;
-        offsets[source*num_nodes + 5] = 2;
+        G[source*num_nodes + 1] = 3;
+        G[source*num_nodes + 2] = 9;
+        G[source*num_nodes + 3] = 5;
+        G[source*num_nodes + 4] = 6;
+        G[source*num_nodes + 5] = 2;
 
-        offsets[1*num_nodes+2] = 3;
-        offsets[2*num_nodes+3] = 3;
-        offsets[2*num_nodes+1] = 3;
-        offsets[3*num_nodes+2] = 3;
-        offsets[4*num_nodes+3] = 4;
-        offsets[5*num_nodes+4] = 1;
+        G[1*num_nodes+2] = 3;
+        G[2*num_nodes+3] = 3;
+        G[2*num_nodes+1] = 3;
+        G[3*num_nodes+2] = 3;
+        G[4*num_nodes+3] = 4;
+        G[5*num_nodes+4] = 1;
 
 
-        offsets[1*num_nodes+to] = 10;
-        offsets[2*num_nodes+to] = 2;
-        offsets[3*num_nodes+to] = 1;
-        offsets[4*num_nodes+to] = 8;
-        offsets[5*num_nodes+to] = 9;
+        G[1*num_nodes+to] = 10;
+        G[2*num_nodes+to] = 2;
+        G[3*num_nodes+to] = 1;
+        G[4*num_nodes+to] = 8;
+        G[5*num_nodes+to] = 9;
 
         std::cout << "graph:\n";
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
-                printf("%d ", offsets[i*num_nodes+j]);
+                printf("%d ", G[i*num_nodes+j]);
             }
             printf("\n");
         }
@@ -186,7 +186,7 @@ namespace sequential {
             std::cout << "g/f/b:\n";
             for(int i = 0; i < num_nodes; i ++){
                 for(int j = 0; j < num_nodes; j++){
-                    printf("%d/%d/%d  ", offsets[i*num_nodes+j], 
+                    printf("%d/%d/%d  ", G[i*num_nodes+j], 
                     forward_flows[i*num_nodes+j], 
                     backward_flows[i*num_nodes+j]);
                 }
@@ -216,7 +216,7 @@ namespace sequential {
         std::cout << "graph:\n";
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
-                printf("%d/%d  ", offsets[i*num_nodes+j], 
+                printf("%d/%d  ", G[i*num_nodes+j], 
                 //forward_flows[i*num_nodes+j], 
                 backward_flows[i*num_nodes+j]);
             }
@@ -231,8 +231,8 @@ namespace sequential {
 
         for(int i = 0; i < num_nodes; i ++){
             for(int j = 0; j < num_nodes; j++){
-                //printf("%d-%d/%d  ", offsets[i*num_nodes+j], forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
-                if(offsets[i*num_nodes+j] > 0 && (offsets[i*num_nodes+j] == backward_flows[i*num_nodes+j])){
+                //printf("%d-%d/%d  ", G[i*num_nodes+j], forward_flows[i*num_nodes+j], backward_flows[i*num_nodes+j]);
+                if(G[i*num_nodes+j] > 0 && (G[i*num_nodes+j] == backward_flows[i*num_nodes+j])){
                     printf("Delete edge: %d -> %d\n", i, j);
                 }
             }
