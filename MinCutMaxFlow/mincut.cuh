@@ -76,7 +76,7 @@ namespace sequential {
                     //std::cout << "node after push" << std::endl;
                     // Push flow
                     int flow = std::min(excesses[v], forward_flows[i]);
-                    //if (flow == 0) continue;
+                    if (flow == 0) continue;
                     forward_flows[i] -= flow;
                     backward_flows[i] += flow;
                     excesses[v] -= flow;
@@ -86,6 +86,7 @@ namespace sequential {
                 }
             }
         }
+        return false;
     }
 
 
@@ -138,6 +139,14 @@ namespace sequential {
         offsets[4*num_nodes+to] = 8;
         offsets[5*num_nodes+to] = 9;
 
+        std::cout << "graph:\n";
+        for(int i = 0; i < num_nodes; i ++){
+            for(int j = 0; j < num_nodes; j++){
+                printf("%d ", offsets[i*num_nodes+j]);
+            }
+            printf("\n");
+        }
+
         preflow(source);
 
         printf("Preflow done\n");
@@ -152,6 +161,19 @@ namespace sequential {
                 printf("Relabeling %d\n", active_node);
                 relabel(active_node);
             }
+
+            std::cout << "g/f/b:\n";
+            for(int i = 0; i < num_nodes; i ++){
+                for(int j = 0; j < num_nodes; j++){
+                    printf("%d/%d/%d ", offsets[i*num_nodes+j], 
+                    forward_flows[i*num_nodes+j], 
+                    backward_flows[i*num_nodes+j]);
+                }
+                printf("\n");
+            }   
+
+            printf("\n");
+        }
             active_node = findActiveNode();
         }
 
