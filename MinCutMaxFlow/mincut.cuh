@@ -151,6 +151,11 @@ namespace sequential {
             printf("%d ", heights[i]);
         }
         std::cout << "\n";
+        std::cout << "before preflow excesses: ";
+        for(int i = 0; i < num_nodes; i ++){
+            printf("%d ", excesses[i]);
+        }
+        std::cout << "\n";
 
         preflow(source);
 
@@ -159,11 +164,17 @@ namespace sequential {
             printf("%d ", heights[i]);
         }
         std::cout << "\n";
+        std::cout << "after preflow excesses: ";
+        for(int i = 0; i < num_nodes; i ++){
+            printf("%d ", excesses[i]);
+        }
+        std::cout << "\n";
 
         printf("Preflow done\n");
         printf("Excess total: %d\n", ExcessTotal);
 
         int active_node = findActiveNode();
+        std::cin.ignore();
 
         while(active_node != -1) {
             /* If there is an outgoing edge (v, w) of v in Gf with h(v) = h(w) + 1 */
@@ -185,6 +196,12 @@ namespace sequential {
             std::cout << "heights: ";
             for(int i = 0; i < num_nodes; i ++){
                 printf("%d ", heights[i]);
+            }
+            std::cout << "\n";
+
+            std::cout << "excesses: ";
+            for(int i = 0; i < num_nodes; i ++){
+                printf("%d ", excesses[i]);
             }
             std::cout << "\n";
 
