@@ -170,8 +170,8 @@ namespace sequential {
         G[0*num_nodes + 4] = 6;
         //G[0*num_nodes + 5] = 2;
 
-        G[1*num_nodes+2] = 3;
-        G[2*num_nodes+3] = 3;
+        G[1*num_nodes+2] = 300;
+        G[2*num_nodes+3] = 30;
         G[2*num_nodes+1] = 3;
         //G[3*num_nodes+2] = 3;
         G[4*num_nodes+3] = 4;
