@@ -34,6 +34,7 @@ std::vector<int> heights(num_nodes, 0);
 int ExcessTotal = 0;
 std::vector<int> G(num_nodes * num_nodes, 0);
 std::vector<int> Gr(num_nodes * num_nodes, 0);
+std::vector<int> flow_index(num_nodes * num_nodes, 0);
 std::vector<int> destinations(num_nodes * num_nodes, 0);
 std::vector<int> capacities(num_nodes * num_nodes, 0);
 std::vector<int> excesses(num_nodes, 0);
@@ -47,12 +48,9 @@ namespace sequential {
     void preflow(int source){
         heights[source] = num_nodes; 
         ExcessTotal = 0;
-        //excesses[source] = num_nodes;
+
         // Initialize preflow
-        //for (int i = G[source]; i < G[source + 1]; ++i) {
         for (int i = (source*num_nodes); i < (source*num_nodes)+num_nodes; ++i) {
-            // int dest = destinations[i];
-            // int cap = capacities[i];
             if(G[i] > 0){
                 int dest = i - (source*num_nodes);
                 int cap = G[i];
@@ -64,12 +62,30 @@ namespace sequential {
                 printf("Source: %d's neighbor: %d\n", source, dest);
             }
         }
+
+        // Initialize flow index
+        for (int u = 0; u < num_nodes; u++) {
+            for (int i = (u*num_nodes); i < (u + 1)*num_nodes; i++) {
+                if(Gr[i] > 0){
+                    int v = i - (u*num_nodes); 
+                    // Find the forward edge index
+                    for (int j = (v*num_nodes); j < (v + 1)*num_nodes; j++) {
+                        if(G[j] > 0){
+                            if (G[j] == u) {
+                                flow_index[i] = j;
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
     }
 
     bool push(int v){
-    // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
+        // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
         for (int i = (v*num_nodes); i < (v*num_nodes)+num_nodes; ++i) {
-        //for (int i = G[v]; i < G[v + 1]; ++i) {
             if(G[i] > 0){
                 //std::cout << "node before push" << std::endl;
                 int w = i - (v*num_nodes);
@@ -89,19 +105,21 @@ namespace sequential {
         }
 
         // Find the outgoing edge (v, w) in backward edge with h(v) = h(w) + 1
-        for (int i = roffsets[v]; i < roffsets[v+1]; ++i) {
-            int w = rdestinations[i];
-            if (heights[v] == heights[w] + 1) {
-            // Push flow
-            int push_index = flow_index[i];
-            int flow = std::min(excesses[v], backward_flows[push_index]);
-            if (flow == 0) continue;
-            backward_flows[push_index] -= flow;
-            forward_flows[push_index] += flow;
-            excesses[v] -= flow;
-            excesses[w] += flow;
-            printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
-            return true;
+        for (int i = (v*num_nodes); i < (v*num_nodes)+num_nodes; ++i) {
+            if(Gr[i] > 0){
+                int w = i - (v*num_nodes);
+                if (heights[v] == heights[w] + 1) {
+                    // Push flow
+                    int push_index = flow_index[i];
+                    int flow = std::min(excesses[v], backward_flows[push_index]);
+                    if (flow == 0) continue;
+                    backward_flows[push_index] -= flow;
+                    forward_flows[push_index] += flow;
+                    excesses[v] -= flow;
+                    excesses[w] += flow;
+                    printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    return true;
+                }
             }
         }
 
@@ -137,6 +155,14 @@ namespace sequential {
         return count;
     }
 
+    void buildGr(){
+        for (int u = 0; u < num_nodes; u++){
+            for (int v = 0; v < num_nodes; v++){
+                Gr[u*num_nodes+v] = G[v*num_nodes+u];
+            }
+        }
+    }
+
     void maxflow() {
         G[source*num_nodes + 1] = 3;
         G[source*num_nodes + 2] = 9;
@@ -157,6 +183,8 @@ namespace sequential {
         G[3*num_nodes+to] = 1;
         G[4*num_nodes+to] = 8;
         G[5*num_nodes+to] = 9;
+
+        buildGr();
 
         std::cout << "graph:\n";
         for(int i = 0; i < num_nodes; i ++){
