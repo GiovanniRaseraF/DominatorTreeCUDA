@@ -40,7 +40,7 @@ std::vector<int> capacities(num_nodes * num_nodes, 0);
 std::vector<int> excesses(num_nodes, 0);
 std::vector<int> forward_flows(num_nodes*num_nodes, 0);
 std::vector<int> backward_flows(num_nodes*num_nodes, 0);
-int source = 0;
+int source = 1;
 constexpr int sink = 6;
 constexpr int to = num_nodes-1;
 
@@ -173,13 +173,13 @@ namespace sequential {
         G[1*num_nodes+2] = 3;
         G[2*num_nodes+3] = 3;
         G[2*num_nodes+1] = 3;
-        G[3*num_nodes+2] = 3;
+        //G[3*num_nodes+2] = 3;
         G[4*num_nodes+3] = 4;
         G[5*num_nodes+4] = 1;
 
 
-        G[1*num_nodes+6] = 10;
-        G[2*num_nodes+6] = 23;
+        //G[1*num_nodes+6] = 10;
+        //G[2*num_nodes+6] = 23;
         G[3*num_nodes+6] = 11;
         G[4*num_nodes+6] = 8;
         G[5*num_nodes+6] = 9;
