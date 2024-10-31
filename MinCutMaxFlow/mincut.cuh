@@ -41,8 +41,8 @@ std::vector<int> excesses(num_nodes, 0);
 std::vector<int> forward_flows(num_nodes*num_nodes, 0);
 std::vector<int> backward_flows(num_nodes*num_nodes, 0);
 int source = 0;
-constexpr int sink = num_nodes-1;
-constexpr int to = sink;
+constexpr int sink = 6;
+constexpr int to = num_nodes-1;
 
 namespace sequential {
     void preflow(int source){
