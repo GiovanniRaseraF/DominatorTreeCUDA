@@ -34,6 +34,9 @@ typedef int* GPUBackwardFlow;
 
 typedef int* GPUExcesses;
 
+typedef int* GPUExcessTotal;
+
+// implementation
 namespace parallel {
     namespace GoldbergTarjan{
         __global__ void push(){
@@ -45,8 +48,37 @@ namespace parallel {
         }
 
         // Initialize the flow
-        void preflow(){
+        void preflow(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            heights[source] = numNodes; 
+            *excessTotal = 0;
 
+            // Initialize preflow
+            for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
+                int dest = destinations[i];
+                int cap = capacities[i];
+
+                excesses[dest] = cap;
+                forwardFlows[i] = 0; 
+                backwardFlows[i] = cap;
+                *excessTotal = *excessTotal + cap;
+            } 
         }
 
         void minCutMaxFlow(Graph &G, int source, int to){
