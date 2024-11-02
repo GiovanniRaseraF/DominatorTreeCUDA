@@ -4,5 +4,5 @@
 
 
 int main(){
-    test4();
+    test1();
 }
