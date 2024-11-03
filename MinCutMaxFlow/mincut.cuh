@@ -232,7 +232,7 @@ namespace parallel {
             int backwardFlows[numEdges]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
             int excesses[numNodes]{0, 0, 0, 0, 0, 0, 0, };
 
-            int excessTotal[1]{352493152};
+            int excessTotal[1]{0};
 
             print(
                 offsets,
