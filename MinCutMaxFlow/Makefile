@@ -18,7 +18,7 @@ gpu:
 
 
 	./build/$@_parallel.out
-	nvprof ./build/$@_parallel.out --benchmark
+	# nvprof ./build/$@_parallel.out --benchmark
 
 test:
 	make cpu STRUCT=USEVECTOR V=1024

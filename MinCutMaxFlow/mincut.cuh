@@ -39,11 +39,47 @@ typedef int* GPUExcessTotal;
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
-        __global__ void push(){
+        __global__ void push(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            std::cout << "TODO: push" << std::endl;
 
         }
 
-        __global__ void relable(){
+        __global__ void relable(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            std::cout << "TODO: relable" << std::endl;
 
         }
 
