@@ -257,7 +257,7 @@ namespace parallel {
                 source,
                 to
             );
-
+            printf("Preflow: \n");
             preflow(
                 offsets,
                 rOffsets,
@@ -282,6 +282,7 @@ namespace parallel {
                 to
             );
 
+            printf("\n\n");
             print(
                 offsets,
                 rOffsets,
