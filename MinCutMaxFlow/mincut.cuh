@@ -436,7 +436,7 @@ namespace parallel {
                     numEdges,
                     source,
                     to,
-                    i,
+                    active,
                     ret
                 );
 
