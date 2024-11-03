@@ -39,87 +39,6 @@ typedef int* GPUExcessTotal;
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
-        __global__ void push(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
-        ){
-
-        }
-
-        __global__ void relable(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
-        ){
-
-        }
-
-        // Initialize the flow
-        void preflow(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
-
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
-
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
-        ){
-            heights[source] = numNodes; 
-            *excessTotal = 0;
-
-            // Initialize preflow
-            for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
-                int dest = destinations[i];
-                int cap = capacities[i];
-
-                excesses[dest] = cap;
-                forwardFlows[i] = 0; 
-                backwardFlows[i] = cap;
-                *excessTotal = *excessTotal + cap;
-            } 
-        }
-
         void print(
             GPUOffsets offsets,
             GPUrOffsets Roffsets,
@@ -212,6 +131,129 @@ namespace parallel {
             printf("int excessTotal[1]{%d};\n", *excessTotal);
         }
 
+        bool push(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to,
+            int v,
+            bool *ret
+        ){
+            // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
+            for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
+                int w = destinations[i];
+                if (heights[v] == heights[w] + 1) {
+                    // Push flow
+                    int flow = min(excesses[v], forwardFlows[i]);
+                    if (flow == 0) continue;
+
+                    forwardFlows[i] -= flow;
+                    backwardFlows[i] += flow;
+                    excesses[v] -= flow;
+                    excesses[w] += flow;
+                    printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    //*ret = true;
+                    return true;
+                }
+            }
+
+            // Find the outgoing edge (v, w) in backward edge with h(v) = h(w) + 1
+            for (int i = Roffsets[v]; i < Roffsets[v+1]; ++i) {
+                int w = Rdestinations[i];
+                if (heights[v] == heights[w] + 1) {
+                    // Push flow
+                    int push_index = flowIndex[i];
+                    int flow = min(excesses[v], backwardFlows[push_index]);
+                    if (flow == 0) continue;
+
+                    backwardFlows[push_index] -= flow;
+                    forwardFlows[push_index] += flow;
+                    excesses[v] -= flow;
+                    excesses[w] += flow;
+                    printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    //*ret = true;
+                    return true;
+                }
+            }
+
+            //*ret = false;
+            return false;
+        }
+
+        __global__ void relable(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+
+        }
+
+        // Initialize the flow
+        void preflow(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            heights[source] = numNodes; 
+            *excessTotal = 0;
+
+            // Initialize preflow
+            for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
+                int dest = destinations[i];
+                int cap = capacities[i];
+
+                excesses[dest] = cap;
+                forwardFlows[i] = 0; 
+                backwardFlows[i] = cap;
+                *excessTotal = *excessTotal + cap;
+            } 
+        }
+
+       
+
         void minCutMaxFlow(Graph &G, int source, int to){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             constexpr int numNodes = 7;
@@ -233,6 +275,7 @@ namespace parallel {
             int excesses[numNodes]{0, 0, 0, 0, 0, 0, 0, };
 
             int excessTotal[1]{0};
+            bool ret[1]{false};
 
             print(
                 offsets,
@@ -306,6 +349,35 @@ namespace parallel {
                 source,
                 to
             );
+
+            // for each node
+            for(int i = 0; i < numNodes; i++){
+                push(
+                    offsets,
+                    rOffsets,
+
+                    destinations,
+                    rDestinations,
+
+                    capacities,
+                    rCapacities,
+
+                    flowIndex,
+                    heights,
+
+                    forwardFlow,
+                    backwardFlows,
+                    excesses,
+
+                    excessTotal,
+                    numNodes,
+                    numEdges,
+                    source,
+                    to,
+                    i,
+                    ret
+                );
+            }
         }
     };
 };
