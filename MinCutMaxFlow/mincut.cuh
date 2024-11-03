@@ -195,7 +195,7 @@ namespace parallel {
                     backwardFlows[i] += flow;
                     excesses[v] -= flow;
                     excesses[w] += flow;
-                    printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    printf("->Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
                     //*ret = true;
                     return true;
                 }
@@ -214,7 +214,7 @@ namespace parallel {
                     forwardFlows[push_index] += flow;
                     excesses[v] -= flow;
                     excesses[w] += flow;
-                    printf("Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    printf("<-Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
                     //*ret = true;
                     return true;
                 }
