@@ -209,7 +209,7 @@ namespace parallel {
             }
             printf("};\n");
 
-            printf("int excessTotal[1]{%d};\n", Excess_total);
+            printf("int excessTotal[1]{%d};\n", excessTotal);
         }
 
         void minCutMaxFlow(Graph &G, int source, int to){
