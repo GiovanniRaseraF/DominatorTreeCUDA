@@ -57,7 +57,6 @@ namespace parallel {
             int source,
             int to
         ){
-            std::cout << "TODO: push" << std::endl;
 
         }
 
@@ -79,7 +78,6 @@ namespace parallel {
             int source,
             int to
         ){
-            std::cout << "TODO: relable" << std::endl;
 
         }
 
