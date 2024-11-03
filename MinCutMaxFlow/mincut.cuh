@@ -493,6 +493,8 @@ namespace parallel {
             source,
             to
         );
+
+        std::cout << "\n\nMaxFlow: " << excesses[to] << std::endl;
         }
     };
 };
