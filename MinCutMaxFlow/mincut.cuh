@@ -378,6 +378,30 @@ namespace parallel {
                     ret
                 );
             }
+        printf("\n\n");
+            print(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
         }
     };
 };
