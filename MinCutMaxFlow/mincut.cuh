@@ -257,6 +257,54 @@ namespace parallel {
                 source,
                 to
             );
+
+            preflow(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
+
+            print(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
         }
     };
 };
