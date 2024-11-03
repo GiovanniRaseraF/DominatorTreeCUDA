@@ -131,6 +131,38 @@ namespace parallel {
             printf("int excessTotal[1]{%d};\n", *excessTotal);
         }
 
+        
+        int findActiveNode(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            int max_height = numNodes;
+            int return_node = -1;
+            for (int i = 0; i < numNodes; ++i) {
+                if (excesses[i] > 0 && i != source && i != to) {
+                if (heights[i] < max_height) {
+                    max_height = heights[i];
+                    return_node = i;
+                }
+                }
+            }
+            return return_node;
+        }
+
         bool push(
             GPUOffsets offsets,
             GPUrOffsets Roffsets,
@@ -252,6 +284,13 @@ namespace parallel {
             } 
         }
 
+        void relabel(
+            GPUHeights heights,
+            int u
+        ){
+            heights[u]+=1;
+        }
+
        
 
         void minCutMaxFlow(Graph &G, int source, int to){
@@ -350,9 +389,32 @@ namespace parallel {
                 to
             );
 
-            // for each node
-            for(int i = 0; i < numNodes; i++){
-                push(
+            int active = findActiveNode(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
+            while(active != -1){
+                // for each node
+                bool p = push(
                     offsets,
                     rOffsets,
 
@@ -377,31 +439,60 @@ namespace parallel {
                     i,
                     ret
                 );
+
+                if(!p){
+                    relabel(heights, active);
+                }
+
+                active = findActiveNode(
+                    offsets,
+                    rOffsets,
+
+                    destinations,
+                    rDestinations,
+
+                    capacities,
+                    rCapacities,
+
+                    flowIndex,
+                    heights,
+
+                    forwardFlow,
+                    backwardFlows,
+                    excesses,
+
+                    excessTotal,
+                    numNodes,
+                    numEdges,
+                    source,
+                    to
+                );
+
             }
         printf("\n\n");
-            print(
-                offsets,
-                rOffsets,
+        print(
+            offsets,
+            rOffsets,
 
-                destinations,
-                rDestinations,
+            destinations,
+            rDestinations,
 
-                capacities,
-                rCapacities,
+            capacities,
+            rCapacities,
 
-                flowIndex,
-                heights,
+            flowIndex,
+            heights,
 
-                forwardFlow,
-                backwardFlows,
-                excesses,
+            forwardFlow,
+            backwardFlows,
+            excesses,
 
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
-            );
+            excessTotal,
+            numNodes,
+            numEdges,
+            source,
+            to
+        );
         }
     };
 };
