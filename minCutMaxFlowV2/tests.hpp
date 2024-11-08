@@ -3,10 +3,39 @@
 #pragma once
 #include <iostream>
 #include "mincut.hpp"
+#include "loader.hpp"
 
 constexpr int V = 7;
 
 void test1(){
+    std::string filename = "./test_graph.txt";
+    int num_nodes{0};
+    int num_edges{0};
+    int num_edges_processed{0};
+    int source_node{0};
+    int sink_node{0};
+    std::vector<int> destinations{};
+    std::vector<int> offsets{};
+    std::vector<int> capacities{};
+
+    loader::buildFromTxtFile(
+        filename, 
+        num_nodes,
+        num_edges,
+        num_edges_processed,
+        source_node,
+        sink_node,
+        destinations,
+        offsets,
+        capacities
+    );
+
+    std::cout << num_nodes << std::endl;
+    std::cout << num_edges << std::endl;
+    std::cout << num_edges_processed << std::endl;
+    std::cout << source_node << std::endl;
+    std::cout << sink_node << std::endl;
+
     std::cout << "Test 1" << std::endl;
     Graph G(V, std::vector<int>(V, 0));
     int from = 0;
