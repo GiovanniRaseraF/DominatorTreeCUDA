@@ -1,156 +1,500 @@
 // Author: Giovanni Rasera
-// Help From: Professor Andrea Formisano
-// Help From: https://web.stanford.edu/class/archive/cs/cs161/cs161.1172/CS161Lecture16.pdf
-// Help From: https://www.tutorialspoint.com/data_structures_algorithms/dsa_kargers_minimum_cut_algorithm.htm
-// Help From: https://www.baeldung.com/cs/minimum-cut-graphs
-// Help From: https://it.wikipedia.org/wiki/Algoritmo_di_Ford-Fulkerson
-
+// Help From: https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf
+// Help From: https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm
+// Help From: https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4563095
+// Help From: https://arxiv.org/pdf/2404.00270
+// Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
+// Help From: https://www.adrian-haarbach.de/idp-graph-algorithms/implementation/maxflow-push-relabel/index_en.html
+// Help From: https://www.geeksforgeeks.org/push-relabel-algorithm-set-2-implementation/
 #pragma once
-#include <deque>
-#include <queue>
-#include <climits>
-#include <list>
-#include <array>
-#include <vector>
-#include <algorithm>
-#include <iostream>
-#include <random>
-#include <unordered_set>
-#include <tuple>
 
-// CPU data
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <limits>
+#include <limits.h>
+#include <iomanip>
+
 typedef std::vector<std::vector<int>> Graph;
 
-typedef std::vector<std::vector<int>> ResidualFlow;
-typedef std::vector<int> ExcessFlow;
-typedef std::vector<int> Height;
-typedef int Excess_total;
+// GPU data
+typedef int* GPUOffsets;
+typedef int* GPUrOffsets;
+typedef int* GPUDestinations;
+typedef int* GPUrDestinations;
+typedef int* GPUCapacities;
+typedef int* GPUrCapacities;
 
-namespace sequential{
+typedef int* GPUFlowIndex;
+
+typedef int* GPUHeights;
+
+typedef int* GPUForwardFlow;
+typedef int* GPUBackwardFlow;
+
+typedef int* GPUExcesses;
+
+typedef int* GPUExcessTotal;
+
+// implementation
+namespace parallel {
     namespace GoldbergTarjan{
-        void preflow(){
+        void print(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            printf("int offsets[numNodes+1]{");
+            for (int i=0; i < numNodes + 1; i++) {
+                printf("%d, ", offsets[i]);
+            }
+            printf("};\n");
+
+            printf("int rOffsets[numNodes+1]{");
+            for (int i=0; i < numNodes + 1; i++) {
+                printf("%d, ", Roffsets[i]);
+            }
+            printf("};\n");
+
+            printf("int destinations[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", destinations[i]);
+            }
+            printf("};\n");
+
+            printf("int rDestinations[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", Rdestinations[i]);
+            }
+            printf("};\n");
+
+            printf("int capacities[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", capacities[i]);
+            }
+            printf("};\n");
+
+            printf("int rCapacities[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", capacities[i]);
+            }
+            printf("};\n");
+
+            printf("int flowIndex[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", flowIndex[i]);
+            }
+            printf("};\n");
+
+            printf("int heights[numNodes]{");
+            for (int i=0; i < numNodes; i++) {
+                printf("%d, ", heights[i]);
+            }
+            printf("};\n");
+
+            printf("int forwardFlow[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", forwardFlows[i]);
+            }
+            printf("};\n");
+
+            printf("int backwardFlows[numEdges]{");
+            for (int i=0; i < numEdges; i++) {
+                printf("%d, ", backwardFlows[i]);
+            }
+            printf("};\n");
+
+            printf("int excesses[numNodes]{");
+            for (int i=0; i < numNodes; i++) {
+                printf("%d, ", excesses[i]);
+            }
+            printf("};\n");
+
+            printf("int excessTotal[1]{%d};\n", *excessTotal);
         }
 
-        void push(){
-            
+        
+        int findActiveNode(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            int max_height = numNodes;
+            int return_node = -1;
+            for (int i = 0; i < numNodes; ++i) {
+                if (excesses[i] > 0 && i != source && i != to) {
+                if (heights[i] < max_height) {
+                    max_height = heights[i];
+                    return_node = i;
+                }
+                }
+            }
+            return return_node;
         }
 
-        void relable(){
-            
+        bool push(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to,
+            int v,
+            bool *ret
+        ){
+            // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
+            for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
+                int w = destinations[i];
+                if (heights[v] == heights[w] + 1) {
+                    // Push flow
+                    int flow = std::min(excesses[v], forwardFlows[i]);
+                    if (flow == 0) continue;
+
+                    forwardFlows[i] -= flow;
+                    backwardFlows[i] += flow;
+                    excesses[v] -= flow;
+                    excesses[w] += flow;
+                    printf("->Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    //*ret = true;
+                    return true;
+                }
+            }
+
+            // Find the outgoing edge (v, w) in backward edge with h(v) = h(w) + 1
+            for (int i = Roffsets[v]; i < Roffsets[v+1]; ++i) {
+                int w = Rdestinations[i];
+                if (heights[v] == heights[w] + 1) {
+                    // Push flow
+                    int push_index = flowIndex[i];
+                    int flow = std::min(excesses[v], backwardFlows[push_index]);
+                    if (flow == 0) continue;
+
+                    backwardFlows[push_index] -= flow;
+                    forwardFlows[push_index] += flow;
+                    excesses[v] -= flow;
+                    excesses[w] += flow;
+                    printf("<-Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
+                    //*ret = true;
+                    return true;
+                }
+            }
+
+            //*ret = false;
+            return false;
         }
 
-        void minCutMaxFlow(){
-            std::cout << "sequential::minCutMaxFlow" << std::endl;
+        void relable(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+
+        }
+
+        // Initialize the flow
+        void preflow(
+            GPUOffsets offsets,
+            GPUrOffsets Roffsets,
+
+            GPUDestinations destinations,
+            GPUrDestinations Rdestinations,
+
+            GPUCapacities capacities,
+            GPUrCapacities Rcapacities,
+
+            GPUFlowIndex flowIndex,
+            GPUHeights heights,
+
+            GPUForwardFlow forwardFlows,
+            GPUBackwardFlow backwardFlows,
+
+            GPUExcesses excesses,
+            GPUExcessTotal excessTotal,
+            int numNodes,
+            int numEdges,
+            int source,
+            int to
+        ){
+            heights[source] = numNodes; 
+            *excessTotal = 0;
+
+            // Initialize preflow
+            for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
+                int dest = destinations[i];
+                int cap = capacities[i];
+
+                excesses[dest] = cap;
+                forwardFlows[i] = 0; 
+                backwardFlows[i] = cap;
+                *excessTotal = *excessTotal + cap;
+            } 
+        }
+
+        void relabel(
+            GPUHeights heights,
+            int u
+        ){
+            heights[u]+=1;
+        }
+
+       
+
+        void minCutMaxFlow(Graph &G, int source, int to){
+            std::cout << "TODO: MinCutFaxFlow" << std::endl;
+            constexpr int numNodes = 7;
+            constexpr int numEdges = 15;
+            int offsets[numNodes+1]{0, 6, 8, 11, 13, 15, 18, 18, };
+            int rOffsets[numNodes+1]{0, 0, 2, 5, 8, 10, 13, 18, };
+
+            int destinations[numEdges]{1, 2, 3, 5, 5, 5, 2, 6, 1, 3, 6, 2, 6, 3, 6, };
+            int rDestinations[numEdges]{0, 2, 0, 1, 3, 0, 2, 4, 5, 5, 0, 0, 0, 1, 2, };
+
+            int capacities[numEdges]{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
+            int rCapacities[numEdges]{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
+
+            int flowIndex[numEdges]{0, 8, 1, 6, 11, 2, 9, 13, 0, 0, 3, 3, 3, 7, 10, };
+            int heights[numNodes]{0, 0, 0, 0, 0, 0, 0, };
+
+            int forwardFlow[numEdges]{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
+            int backwardFlows[numEdges]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+            int excesses[numNodes]{0, 0, 0, 0, 0, 0, 0, };
+
+            int excessTotal[1]{0};
+            bool ret[1]{false};
+
+            print(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
+            printf("Preflow: \n");
+            preflow(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
+
+            printf("\n\n");
+            print(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
+
+            int active = findActiveNode(
+                offsets,
+                rOffsets,
+
+                destinations,
+                rDestinations,
+
+                capacities,
+                rCapacities,
+
+                flowIndex,
+                heights,
+
+                forwardFlow,
+                backwardFlows,
+                excesses,
+
+                excessTotal,
+                numNodes,
+                numEdges,
+                source,
+                to
+            );
+            while(active != -1){
+                // for each node
+                bool p = push(
+                    offsets,
+                    rOffsets,
+
+                    destinations,
+                    rDestinations,
+
+                    capacities,
+                    rCapacities,
+
+                    flowIndex,
+                    heights,
+
+                    forwardFlow,
+                    backwardFlows,
+                    excesses,
+
+                    excessTotal,
+                    numNodes,
+                    numEdges,
+                    source,
+                    to,
+                    active,
+                    ret
+                );
+
+                if(!p){
+                    relabel(heights, active);
+                }
+
+                active = findActiveNode(
+                    offsets,
+                    rOffsets,
+
+                    destinations,
+                    rDestinations,
+
+                    capacities,
+                    rCapacities,
+
+                    flowIndex,
+                    heights,
+
+                    forwardFlow,
+                    backwardFlows,
+                    excesses,
+
+                    excessTotal,
+                    numNodes,
+                    numEdges,
+                    source,
+                    to
+                );
+
+            }
+        printf("\n\n");
+        print(
+            offsets,
+            rOffsets,
+
+            destinations,
+            rDestinations,
+
+            capacities,
+            rCapacities,
+
+            flowIndex,
+            heights,
+
+            forwardFlow,
+            backwardFlows,
+            excesses,
+
+            excessTotal,
+            numNodes,
+            numEdges,
+            source,
+            to
+        );
+
+        std::cout << "\n\nMaxFlow: " << excesses[to] << std::endl;
         }
     };
-
-
-    namespace FordFulkerson{
-        void buildGPrimeFromG(const Graph& graph, Graph& graphPrime){
-            // in and out edges
-            for (int u = 0; u < graph.size(); u++){
-                for (int v = 0; v < graph.size(); v++){
-                    if(graph[u][v] > 0){
-                        int uPodd = u*2 +1;
-                        int vPeven = v*2;
-                        graphPrime[uPodd][vPeven] = INT_MAX;
-                    }
-                }
-            }
-
-            // all internal to 1
-            for (int v = 0; v < graph.size(); v++){
-                int vPodd = v*2+1;
-                int vPeven = v*2;
-                graphPrime[vPeven][vPodd] = 1;
-            }
-        }
-
-        bool bfs(Graph &rGraph, std::vector<int> &parent, int source, int to){
-            // Init
-            std::vector<bool> visited(rGraph.size(), false);
-            std::queue<int> q;
-            q.push(source);
-            visited[source] = true;
-            parent[source] = -1; 
-
-            // bfs loop
-            while (!q.empty()){
-                int u = q.front();
-                q.pop();
- 
-                for (int v=0; v<rGraph.size(); v++){
-                    // if i did not visit this node and the node is a neighbor then
-                    if (visited[v]==false && rGraph[u][v] > 0){
-                        q.push(v);
-                        parent[v] = u;
-                        visited[v] = true;
-                    }
-                }
-            }
-
-            // return true if it can reach to form source
-            return visited[to];
-        }
-
-        void dfs(Graph &rGraph, std::vector<bool> &visited, int source){
-            visited[source] = true;
-            for (int i = 0; i < rGraph.size(); i++){
-                if (rGraph[source][i] && !visited[i]){
-                    dfs(rGraph, visited, i);
-                }
-            }
-        }
-
-        /*
-        Prepare the rGraph
-        */ 
-        void initialize(Graph &graph, Graph &rGraph){ // G = (graph.size(), E)
-            for (int u = 0; u < graph.size(); u++){
-                for (int v = 0; v < graph.size(); v++){
-                    rGraph[u][v] = graph[u][v];
-                }
-            }
-        }
-
-        std::vector<std::tuple<int, int>> minCutMaxFlow(Graph &graph, Graph &rGraph, int source, int to){
-            initialize(graph, rGraph); 
-
-            // return structure
-            std::vector<std::tuple<int, int>> ret;
-
-            std::vector<int> parent(graph.size(), -1);
-            std::vector<bool> visited(graph.size(), false);
- 
-            int v, u;
-
-            while(bfs(rGraph, parent, source, to)){
-                int path_flow = INT_MAX;
-                // a path from to -> source
-                for (v = to; v != source; v = parent[v]){
-                    u = parent[v];
-                    path_flow = std::min(path_flow, rGraph[u][v]);
-                }
-                
-                // update the flow in the residual graph
-                for (v = to; v != source; v = parent[v]){
-                    u = parent[v];
-                    rGraph[u][v] -= path_flow;
-                    rGraph[v][u] += path_flow;
-                }
-            }
-
-            // run dfs on the residual graph
-            dfs(rGraph, visited, source);
-
-            // checking if there is connection in the residual graph
-            for(int i = 0; i < graph.size(); i++)
-                for(int j = 0; j < graph.size(); j++)
-                    if(visited[i] && ! visited[j] && graph[i][j])
-                    ret.push_back({i, j});
-            
-            return ret;
-        }
-        
-    }
 };

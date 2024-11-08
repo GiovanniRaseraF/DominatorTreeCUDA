@@ -4,7 +4,7 @@ V=1024
 cpu:
 	if [ -d "./build" ]; then rm -r build; fi
 	mkdir build
-	g++ -o ./build/$@_sequential.out ./$@.cpp -DV=$V -std=c++23
+	g++ -o ./build/$@_sequential.out ./$@.cpp -std=c++17
 
 	./build/$@_sequential.out
 
