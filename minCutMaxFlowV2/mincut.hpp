@@ -14,98 +14,36 @@
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
-        int findActiveNode(
-           PARAMPASS 
-        ){
-            int max_height = numNodes;
-            int return_node = -1;
-
-            for (int i = 0; i < numNodes; ++i) {
-                if (excesses[i] > 0 && i != source && i != to) {
-                    if (heights[i] < max_height) {
-                        max_height = heights[i];
-                        return_node = i;
-                    }
-                }
-            }
-
-            return return_node;
-        }
-
-        bool push(
-            PARAMPASS,
-            int v,
-            bool *ret
-        ){
-            // Find the outgoing edge (v, w) in foward edge with h(v) = h(w) + 1
-            for (int i = offsets[v]; i < offsets[v + 1]; ++i) {
-                int w = destinations[i];
-                if (heights[v] == heights[w] + 1) {
-                    // Push flow
-                    int flow = std::min(excesses[v], forwardFlows[i]);
-                    if (flow == 0) continue;
-
-                    forwardFlows[i] -= flow;
-                    backwardFlows[i] += flow;
-                    excesses[v] -= flow;
-                    excesses[w] += flow;
-
-                    printf("->Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
-                    //*ret = true;
-                    return true;
-                }
-            }
-
-            // Find the outgoing edge (v, w) in backward edge with h(v) = h(w) + 1
-            for (int i = Roffsets[v]; i < Roffsets[v+1]; ++i) {
-                int w = Rdestinations[i];
-                if (heights[v] == heights[w] + 1) {
-                    // Push flow
-                    int push_index = flowIndex[i];
-                    int flow = std::min(excesses[v], backwardFlows[push_index]);
-                    if (flow == 0) continue;
-
-                    backwardFlows[push_index] -= flow;
-                    forwardFlows[push_index] += flow;
-                    excesses[v] -= flow;
-                    excesses[w] += flow;
-
-                    printf("<-Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
-                    //*ret = true;
-                    return true;
-                }
-            }
-
-            //*ret = false;
-            return false;
-        }
-
         // Initialize the flow
         void preflow(
-           PARAMPASS 
-        ){
-            heights[source] = numNodes; 
-            *excessTotal = 0;
+            int V, int source, int sink, int *cpu_height, int *cpu_excess_flow, 
+            int *offsets, int *destinations, int* capacities, int* forward_flows, int* backward_flows,
+            int *roffsets, int* rdestinations, int* flow_idx, int *Excess_total)
+        {
+            // initialising height values and excess flow, Excess_total values
+            for(int i = 0; i < V; i++)
+            {
+                cpu_height[i] = 0; 
+                cpu_excess_flow[i] = 0;
+            }
+    
+            cpu_height[source] = V;
+            *Excess_total = 0;
 
-            // Initialize preflow
-            for (int i = offsets[source]; i < offsets[source + 1]; ++i) {
-                int dest = destinations[i];
-                int cap = capacities[i];
-
-                excesses[dest] = cap;
-                forwardFlows[i] = 0; 
-                backwardFlows[i] = cap;
-                *excessTotal = *excessTotal + cap;
-            } 
+            // pushing flow in all edges going out from the source node
+            for(int i = offsets[source];  i < offsets[source + 1]; i++) {
+                int neighborID = destinations[i];
+        
+                if (capacities[i] > 0)  {
+                    forward_flows[i] = 0;
+                    backward_flows[i] = capacities[i];
+                    cpu_excess_flow[neighborID] = capacities[i];
+                    *Excess_total += cpu_excess_flow[neighborID];
+                } else {
+                    continue;
+                }
+            }
         }
-
-        void relabel(
-            GPUHeights heights,
-            int u
-        ){
-            heights[u]+=1;
-        }
-
        
 
         void minCutMaxFlow(Graph &G, int source, int to,
@@ -133,16 +71,10 @@ namespace parallel {
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
 
             preflow(
-                offsets,        roffsets,
-                destinations,   rdestinations,
-                capacities,     rcapacities,
-                flow_index,     heights,
-                fflow,bflow,    excess_flow,
-                excessTotal,
-                numNodes,       numEdges,
-                source,         to
-            );
-
+                V, source, sink, heights, excess_flow, 
+                (offsets), (destinations), (capacities), (fflow), (bflow),
+                (roffsets), (rdestinations), (flow_index), excessTotal);
+    
             // gpu structure
             int * gpu_offsets;
             int * gpu_roffsets;
