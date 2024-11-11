@@ -59,7 +59,23 @@ typedef int* GPUExcessTotal;
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
+        int findActiveNodeGPU(
+           PARAMPASS 
+        ){
+            int max_height = numNodes;
+            int return_node = -1;
 
+            for (int i = 0; i < numNodes; ++i) {
+                if (excesses[i] > 0 && i != source && i != to) {
+                    if (heights[i] < max_height) {
+                        max_height = heights[i];
+                        return_node = i;
+                    }
+                }
+            }
+
+            return return_node;
+        }
 
         int findActiveNode(
            PARAMPASS 
