@@ -15,6 +15,8 @@
 #include <limits.h>
 #include <iomanip>
 
+#include "printer.hpp"
+
 typedef std::vector<std::vector<int>> Graph;
 
 // GPU data
@@ -36,150 +38,49 @@ typedef int* GPUExcesses;
 
 typedef int* GPUExcessTotal;
 
+# define PARAMPASS \
+    GPUOffsets offsets, \
+    GPUrOffsets Roffsets, \
+    GPUDestinations destinations, \
+    GPUrDestinations Rdestinations, \
+    GPUCapacities capacities, \
+    GPUrCapacities Rcapacities, \
+    GPUFlowIndex flowIndex, \
+    GPUHeights heights, \
+    GPUForwardFlow forwardFlows, \
+    GPUBackwardFlow backwardFlows, \
+    GPUExcesses excesses, \
+    GPUExcessTotal excessTotal, \
+    int numNodes, \
+    int numEdges, \
+    int source, \
+    int to 
+
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
-        void print(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
 
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
 
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
-        ){
-            std::cout << std::setw(30) << std::left << ("int offsets[numNodes+1]{");
-            for (int i=0; i < numNodes + 1; i++) {
-                printf("%d, ", offsets[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int rOffsets[numNodes+1]{");
-            for (int i=0; i < numNodes + 1; i++) {
-                printf("%d, ", Roffsets[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int destinations[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", destinations[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int rDestinations[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", Rdestinations[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int capacities[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", capacities[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int rCapacities[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", capacities[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int flowIndex[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", flowIndex[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int heights[numNodes]{");
-            for (int i=0; i < numNodes; i++) {
-                printf("%d, ", heights[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int forwardFlow[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", forwardFlows[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int backwardFlows[numEdges]{");
-            for (int i=0; i < numEdges; i++) {
-                printf("%d, ", backwardFlows[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int excesses[numNodes]{");
-            for (int i=0; i < numNodes; i++) {
-                printf("%d, ", excesses[i]);
-            }
-            printf("};\n");
-
-            std::cout << std::setw(30) << std::left << ("int excessTotal[1]{%d};\n", *excessTotal);
-        }
-
-        
         int findActiveNode(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
+           PARAMPASS 
         ){
             int max_height = numNodes;
             int return_node = -1;
+
             for (int i = 0; i < numNodes; ++i) {
                 if (excesses[i] > 0 && i != source && i != to) {
-                if (heights[i] < max_height) {
-                    max_height = heights[i];
-                    return_node = i;
-                }
+                    if (heights[i] < max_height) {
+                        max_height = heights[i];
+                        return_node = i;
+                    }
                 }
             }
+
             return return_node;
         }
 
         bool push(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to,
+            PARAMPASS,
             int v,
             bool *ret
         ){
@@ -226,27 +127,7 @@ namespace parallel {
 
         // Initialize the flow
         void preflow(
-            GPUOffsets offsets,
-            GPUrOffsets Roffsets,
-
-            GPUDestinations destinations,
-            GPUrDestinations Rdestinations,
-
-            GPUCapacities capacities,
-            GPUrCapacities Rcapacities,
-
-            GPUFlowIndex flowIndex,
-            GPUHeights heights,
-
-            GPUForwardFlow forwardFlows,
-            GPUBackwardFlow backwardFlows,
-
-            GPUExcesses excesses,
-            GPUExcessTotal excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
+           PARAMPASS 
         ){
             heights[source] = numNodes; 
             *excessTotal = 0;
