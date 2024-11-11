@@ -1,13 +1,6 @@
 # Author: Giovanni Rasera
 V=1024
 
-cpu:
-	if [ -d "./build" ]; then rm -r build; fi
-	mkdir build
-	g++ -o ./build/$@_sequential.out ./$@.cpp -std=c++17
-
-	./build/$@_sequential.out
-
 gpu:
 	# from cuda documentation
 	# nvcc -c -I/usr/local/cuda/include $@.cu -std=c++23 -Dthreads=$(threads) -Dblocks=$(blocks) -D$(REDUCTION) -o ./build/nvcc_$@.o
@@ -18,7 +11,14 @@ gpu:
 
 
 	./build/$@_parallel.out
-	nvprof ./build/$@_parallel.out --benchmark
+	# nvprof ./build/$@_parallel.out --benchmark
+
+cpu:
+	if [ -d "./build" ]; then rm -r build; fi
+	mkdir build
+	g++ -o ./build/$@_sequential.out ./$@.cpp -std=c++17
+
+	./build/$@_sequential.out
 
 test:
 	make cpu STRUCT=USEVECTOR V=1024
