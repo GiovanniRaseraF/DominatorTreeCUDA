@@ -9,7 +9,6 @@
 #pragma once
 
 #include "commons.hpp"
-
 #include <cuda.h>
 #include <cooperative_groups.h>
 #include <bits/stdc++.h>

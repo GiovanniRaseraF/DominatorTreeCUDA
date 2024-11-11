@@ -132,8 +132,6 @@ namespace parallel {
             dim3 block_size(numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
 
-            
-
             preflow(
                 offsets,        roffsets,
                 destinations,   rdestinations,
@@ -186,22 +184,23 @@ namespace parallel {
             (cudaMemcpy(gpu_bflows,         bflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
-            //while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
+            while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 (cudaMemcpy(gpu_height,        heights,         V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_excess_flow,   excess_flow,     V*sizeof(int), cudaMemcpyHostToDevice));
-                (cudaMemcpy(gpu_fflows,        fflow,          E*sizeof(int), cudaMemcpyHostToDevice));
-                (cudaMemcpy(gpu_bflows,        bflow,          E*sizeof(int), cudaMemcpyHostToDevice));
+                (cudaMemcpy(gpu_fflows,        fflow,           E*sizeof(int), cudaMemcpyHostToDevice));
+                (cudaMemcpy(gpu_bflows,        bflow,           E*sizeof(int), cudaMemcpyHostToDevice));
                 // (cudaMemset(gpu_cycle,         V,               sizeof(int))); // Reset the gpu_cycle to V
 
                 // gpu call
                 cudaLaunchCooperativeKernel((void*)push_relabel_kernel, num_blocks, block_size, original_kernel_args, sharedMemSize, 0);
                 cudaDeviceSynchronize();
+                std::cout << "hello" << std::endl;
 
-                (cudaMemcpy(heights,       gpu_height,         V*sizeof(int), cudaMemcpyDeviceToHost));
-                (cudaMemcpy(excess_flow,   gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
-                (cudaMemcpy(fflow,        gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
-                (cudaMemcpy(bflow,        gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
-            //}
+                (cudaMemcpy(heights,        gpu_height,         V*sizeof(int), cudaMemcpyDeviceToHost));
+                (cudaMemcpy(excess_flow,    gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
+                (cudaMemcpy(fflow,          gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
+                (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
+            }
         }
     };
 };
