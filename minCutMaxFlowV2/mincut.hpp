@@ -173,6 +173,7 @@ namespace parallel {
                     source,
                     to
                 );
+                std::cin.ignore();
             }
         }
     };
