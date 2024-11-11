@@ -127,11 +127,11 @@ namespace parallel {
        
 
         void minCutMaxFlow(Graph &G, int source, int to,
-            int *offsets,int *rOffsets,
-            int *destinations,int *rDestinations,
-            int *capacities,int *rCapacities,
-            int *flowIndex,int *heights,
-            int *forwardFlow,int *backwardFlows,int *excesses,int numNodes,int numEdges
+            int *offsets,int *roffsets,
+            int *destinations,int *rdestinations,
+            int *capacities,int *rcapacities,
+            int *flow_index,int *heights,
+            int *fflow,int *bflow,int *excess_flow,int numNodes,int numEdges
         ){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int V = numNodes;
@@ -140,11 +140,11 @@ namespace parallel {
             bool ret[1]{false};
 
             preflow(
-                offsets,rOffsets,
-                destinations,rDestinations,
-                capacities,rCapacities,
-                flowIndex,heights,
-                forwardFlow,backwardFlows,excesses,
+                offsets,roffsets,
+                destinations,rdestinations,
+                capacities,rcapacities,
+                flow_index,heights,
+                fflow,bflow,excess_flow,
                 excessTotal,numNodes,numEdges,source,to
             );
 
@@ -165,7 +165,6 @@ namespace parallel {
             int * gpu_excess_flow;
 
             // gpu malloc
-            // allocating CUDA device global memory
             (cudaMalloc((void**)&gpu_offsets, (V+1)*sizeof(int)));
             (cudaMalloc((void**)&gpu_roffsets, (V+1)*sizeof(int)));
 
@@ -182,34 +181,35 @@ namespace parallel {
 
             (cudaMalloc((void**)&gpu_excess_flow, V*sizeof(int)));
 
+            // mem copy
+            CHECK(cudaMemcpy(gpu_height, heights, V*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_excess_flow,cpu_excess_flow, V*sizeof(int),cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_offsets, offsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_destinations, destinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_capacities, capacities, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_fflows, fflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_roffsets, roffsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_rdestinations, rdestinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_bflows, bflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_flow_index, flow_index, numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
             int active = findActiveNode(
-                offsets,rOffsets,
-                destinations,rDestinations,
-                capacities,rCapacities,
-                flowIndex,heights,
-                forwardFlow,backwardFlows,excesses,
+                offsets,roffsets,
+                destinations,rdestinations,
+                capacities,rcapacities,
+                flow_index,heights,
+                fflow,bflow,excess_flow, 
                 excessTotal,numNodes,numEdges,source,to
             );
 
             while(active != -1){
                 // for each node
                 bool p = push(
-                    offsets,
-                    rOffsets,
-
-                    destinations,
-                    rDestinations,
-
-                    capacities,
-                    rCapacities,
-
-                    flowIndex,
-                    heights,
-
-                    forwardFlow,
-                    backwardFlows,
-                    excesses,
+                    offsets,roffsets,
+                    destinations,rdestinations,
+                    capacities,rcapacities,
+                    flow_index,heights,
+                    fflow,bflow,excess_flow,
 
                     excessTotal,
                     numNodes,
@@ -225,21 +225,11 @@ namespace parallel {
                 }
 
                 active = findActiveNode(
-                    offsets,
-                    rOffsets,
-
-                    destinations,
-                    rDestinations,
-
-                    capacities,
-                    rCapacities,
-
-                    flowIndex,
-                    heights,
-
-                    forwardFlow,
-                    backwardFlows,
-                    excesses,
+                    offsets,roffsets,
+                    destinations,rdestinations,
+                    capacities,rcapacities,
+                    flow_index,heights,
+                    fflow,bflow,excess_flow,
 
                     excessTotal,
                     numNodes,
@@ -251,21 +241,11 @@ namespace parallel {
             }
         printf("\n\n");
         print(
-            offsets,
-            rOffsets,
-
-            destinations,
-            rDestinations,
-
-            capacities,
-            rCapacities,
-
-            flowIndex,
-            heights,
-
-            forwardFlow,
-            backwardFlows,
-            excesses,
+            offsets,roffsets,
+            destinations,rdestinations,
+            capacities,rcapacities,
+            flow_index,heights,
+            fflow,bflow,excess_flow,
 
             excessTotal,
             numNodes,
