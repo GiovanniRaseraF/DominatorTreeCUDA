@@ -134,20 +134,11 @@ namespace parallel {
             int *forwardFlow,int *backwardFlows,int *excesses,int numNodes,int numEdges
         ){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
-
+            int V = numNodes;
+            int E = numEdges;
             int excessTotal[1]{0};
             bool ret[1]{false};
 
-            // print(
-            //     offsets,rOffsets,
-            //     destinations,rDestinations,
-            //     capacities,rCapacities,
-            //     flowIndex,heights,
-            //     forwardFlow,backwardFlows,excesses,
-            //     excessTotal,numNodes,numEdges,source,to
-            // );
-
-            //printf("Preflow: \n");
             preflow(
                 offsets,rOffsets,
                 destinations,rDestinations,
