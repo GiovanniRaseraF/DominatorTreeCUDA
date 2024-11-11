@@ -182,16 +182,16 @@ namespace parallel {
             (cudaMalloc((void**)&gpu_excess_flow, V*sizeof(int)));
 
             // mem copy
-            CHECK(cudaMemcpy(gpu_height, heights, V*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_excess_flow, excess_flow, V*sizeof(int),cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_offsets, offsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_destinations, destinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_capacities, capacities, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_fflows, fflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_roffsets, roffsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_rdestinations, rdestinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_bflows, bflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_flow_index, flow_index, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_height, heights, V*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_excess_flow, excess_flow, V*sizeof(int),cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_offsets, offsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_destinations, destinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_capacities, capacities, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_fflows, fflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_roffsets, roffsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_rdestinations, rdestinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_bflows, bflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_flow_index, flow_index, numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
             int active = findActiveNode(
                 offsets,roffsets,
