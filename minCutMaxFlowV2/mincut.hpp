@@ -153,6 +153,7 @@ namespace parallel {
             int * gpu_roffsets;
 
             int * gpu_destinations;
+            int * gpu_rdestinations;
 
             int * gpu_capacities;
             int * gpu_rCapacities;
