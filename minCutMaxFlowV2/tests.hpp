@@ -14,9 +14,9 @@ void test1(){
     int num_edges_processed{0};
     int source_node{0};
     int sink_node{0};
-    std::vector<int> destinations{};
-    std::vector<int> offsets{};
-    std::vector<int> capacities{};
+    std::vector<int> graph_destinations{};
+    std::vector<int> graph_offsets{};
+    std::vector<int> graph_capacities{};
 
     loader::buildFromTxtFile(
         filename, 
@@ -25,9 +25,9 @@ void test1(){
         num_edges_processed,
         source_node,
         sink_node,
-        destinations,
-        offsets,
-        capacities
+        graph_destinations,
+        graph_offsets,
+        graph_capacities
     );
 
     std::cout << num_nodes << std::endl;
@@ -42,5 +42,61 @@ void test1(){
     int to = 0;
     std::cout << "source:"; std::cin >> from;
     std::cout << "to:"; std::cin >> to;
-    parallel::GoldbergTarjan::minCutMaxFlow(G, from, to);
+
+    int *offsets = nullptr;
+    int *roffsets = nullptr;
+    int *destinations = nullptr;
+    int *rdestinations = nullptr;
+    int *capacities = nullptr;
+    int *rcapacities = nullptr;
+    int *forward_flows = nullptr;
+    int *backward_flows = nullptr;
+    int *flow_index = nullptr;
+    int *heights = nullptr;
+    int *excesses = nullptr;
+
+    loader::buildFromCSRGraph(
+        num_nodes,
+        num_edges,
+        num_edges_processed,
+        source_node,
+        sink_node,
+        graph_destinations,
+        graph_offsets,
+        graph_capacities,
+        offsets,
+        destinations,
+        capacities,
+        rcapacities,
+        forward_flows,
+        roffsets,
+        rdestinations,
+        backward_flows,
+        flow_index,
+        heights,
+        excesses
+    );
+
+    // std::cout << "off: " << offsets << std::endl;
+
+    parallel::GoldbergTarjan::minCutMaxFlow(G, from, to,
+        offsets,
+        roffsets,
+
+        destinations,
+        rdestinations,
+
+        capacities,
+        rcapacities,
+        
+        flow_index,
+        heights,
+
+        forward_flows,
+        backward_flows,
+        
+        excesses,
+        num_nodes,
+        num_edges
+    );
 }

@@ -65,8 +65,8 @@ namespace loader
     }
 
     void buildFromCSRGraph(
-        int &num_nodes,
-        int &num_edges,
+        int num_nodes,
+        int num_edges,
         int &num_edges_processed,
         int &source_node,
         int &sink_node,
@@ -74,20 +74,24 @@ namespace loader
         std::vector<int> &graph_offsets,
         std::vector<int> &graph_capacities,
         // to load
-        int *offsets,
-        int *destinations,
-        int *capacities,
-        int *forward_flows,
-        int *roffsets,
-        int *rdestinations,
-        int *backward_flows,
-        int *flow_index,
-        int *heights,
-        int *excesses){
+        int *&offsets,
+        int *&destinations,
+        int *&capacities,
+        int *&rcapacities,
+        int *&forward_flows,
+        int *&roffsets,
+        int *&rdestinations,
+        int *&backward_flows,
+        int *&flow_index,
+        int *&heights,
+        int *&excesses
+    ){
+
         /* Allocate offsets, destinations, capacities, flows, roffsets, rdestinations, rflows */
         offsets = (int *)malloc(sizeof(int) * (num_nodes + 1));
         destinations = (int *)malloc(sizeof(int) * num_edges);
         capacities = (int *)malloc(sizeof(int) * num_edges);
+        rcapacities = (int *)malloc(sizeof(int) * num_edges);
         forward_flows = (int *)malloc(sizeof(int) * num_edges);
         roffsets = (int *)malloc(sizeof(int) * (num_nodes + 1));
         rdestinations = (int *)malloc(sizeof(int) * num_edges);
@@ -159,5 +163,11 @@ namespace loader
                 }
             }
         }
+
+        // printf("int offsets[numNodes+1]{");
+        // for (int i=0; i < num_nodes+1; i++) {
+        //     printf("%d, ", offsets[i]);
+        // }
+        // printf("};\n");
     }
 };

@@ -62,6 +62,8 @@ namespace parallel {
             int source,
             int to
         ){
+            std::cout << ": Print\n" << std::endl;
+            std::cout << numNodes;
             printf("int offsets[numNodes+1]{");
             for (int i=0; i < numNodes + 1; i++) {
                 printf("%d, ", offsets[i]);
@@ -293,25 +295,26 @@ namespace parallel {
 
        
 
-        void minCutMaxFlow(Graph &G, int source, int to){
+        void minCutMaxFlow(Graph &G, int source, int to,
+            int *offsets,
+            int *rOffsets,
+
+            int *destinations,
+            int *rDestinations,
+
+            int *capacities,
+            int *rCapacities,
+
+            int *flowIndex,
+            int *heights,
+
+            int *forwardFlow,
+            int *backwardFlows,
+            int *excesses,
+            int numNodes,
+            int numEdges
+        ){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
-            constexpr int numNodes = 7;
-            constexpr int numEdges = 15;
-            int offsets[numNodes+1]{0, 6, 8, 11, 13, 15, 18, 18, };
-            int rOffsets[numNodes+1]{0, 0, 2, 5, 8, 10, 13, 18, };
-
-            int destinations[numEdges]{1, 2, 3, 5, 5, 5, 2, 6, 1, 3, 6, 2, 6, 3, 6, };
-            int rDestinations[numEdges]{0, 2, 0, 1, 3, 0, 2, 4, 5, 5, 0, 0, 0, 1, 2, };
-
-            int capacities[numEdges]{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
-            int rCapacities[numEdges]{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
-
-            int flowIndex[numEdges]{0, 8, 1, 6, 11, 2, 9, 13, 0, 0, 3, 3, 3, 7, 10, };
-            int heights[numNodes]{0, 0, 0, 0, 0, 0, 0, };
-
-            int forwardFlow[numEdges]{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
-            int backwardFlows[numEdges]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
-            int excesses[numNodes]{0, 0, 0, 0, 0, 0, 0, };
 
             int excessTotal[1]{0};
             bool ret[1]{false};
