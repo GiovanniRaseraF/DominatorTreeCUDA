@@ -142,7 +142,7 @@ namespace parallel {
                     V, E, source, sink, heights, excess_flow,
                     offsets, destinations, capacities, fflow, bflow,
                     roffsets, rdestinations, flow_index,
-                    excessTotal);
+                    );
 
                 global_relabel(
                     V, E, source, sink, heights, excess_flow,
