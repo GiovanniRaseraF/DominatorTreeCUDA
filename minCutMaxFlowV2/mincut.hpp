@@ -196,7 +196,7 @@ namespace parallel {
                 cudaDeviceSynchronize();
                 //std::cout << "hello" << std::endl;
                 std::cin.ignore();
-                
+
                 print(
                     offsets,        roffsets,
                     destinations,   rdestinations,
@@ -212,6 +212,12 @@ namespace parallel {
                 (cudaMemcpy(excess_flow,    gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(fflow,          gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
+
+                // global_relabel(
+                //     V, E, source,sink,cpu_height,cpu_excess_flow,
+                //       cpu_offsets,cpu_destinations, cpu_capacities, cpu_fflows, cpu_bflows,
+                //       cpu_roffsets, cpu_rdestinations, cpu_flow_idx,
+                //       Excess_total, mark, scanned);
             }
         }
     };
