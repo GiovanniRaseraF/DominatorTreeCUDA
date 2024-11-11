@@ -173,6 +173,7 @@ namespace parallel {
                     source,
                     to
                 );
+                std::cout << "excessTotal:" << excessTotal << std::endl;
                 std::cin.ignore();
             }
         }
