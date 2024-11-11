@@ -183,7 +183,7 @@ namespace parallel {
 
             // mem copy
             CHECK(cudaMemcpy(gpu_height, heights, V*sizeof(int), cudaMemcpyHostToDevice));
-            CHECK(cudaMemcpy(gpu_excess_flow,cpu_excess_flow, V*sizeof(int),cudaMemcpyHostToDevice));
+            CHECK(cudaMemcpy(gpu_excess_flow, excess_flow, V*sizeof(int),cudaMemcpyHostToDevice));
             CHECK(cudaMemcpy(gpu_offsets, offsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
             CHECK(cudaMemcpy(gpu_destinations, destinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
             CHECK(cudaMemcpy(gpu_capacities, capacities, numEdges*sizeof(int), cudaMemcpyHostToDevice));
@@ -254,7 +254,6 @@ namespace parallel {
             to
         );
 
-        std::cout << "\n\nMaxFlow: " << excesses[to] << std::endl;
         }
     };
 };
