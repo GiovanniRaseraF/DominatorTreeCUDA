@@ -141,7 +141,7 @@ namespace parallel {
                 print(
                     V, E, source, sink, heights, excess_flow,
                     offsets, destinations, capacities, fflow, bflow,
-                    roffsets, rdestinations, flow_index,
+                    roffsets, rdestinations, flow_index
                     );
 
                 global_relabel(
@@ -154,8 +154,8 @@ namespace parallel {
                 print(
                     V, E, source, sink, heights, excess_flow,
                     offsets, destinations, capacities, fflow, bflow,
-                    roffsets, rdestinations, flow_index,
-                    excessTotal);
+                    roffsets, rdestinations, flow_index
+                    );
             }
         }
     };
