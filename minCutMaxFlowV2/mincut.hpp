@@ -160,6 +160,11 @@ namespace parallel {
                 &gpu_offsets, &gpu_destinations, &gpu_capacities, &gpu_fflows, &gpu_bflows, 
                 &gpu_roffsets, &gpu_rdestinations, &gpu_flow_index};
 
+            bool *mark,*scanned;
+            mark =      (bool*)malloc(V*sizeof(bool));
+            scanned =   (bool*)malloc(V*sizeof(bool));
+            for(int i = 0; i < V; i++) mark[i] = false;
+
             // gpu malloc
             (cudaMalloc((void**)&gpu_offsets,       (V+1)*sizeof(int)));
             (cudaMalloc((void**)&gpu_roffsets,      (V+1)*sizeof(int)));
@@ -184,6 +189,7 @@ namespace parallel {
             (cudaMemcpy(gpu_bflows,         bflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
+            // algo start
             while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 (cudaMemcpy(gpu_height,        heights,         V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_excess_flow,   excess_flow,     V*sizeof(int), cudaMemcpyHostToDevice));
@@ -213,11 +219,12 @@ namespace parallel {
                 (cudaMemcpy(fflow,          gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
 
-                // global_relabel(
-                //     V, E, source,sink,cpu_height,cpu_excess_flow,
-                //       cpu_offsets,cpu_destinations, cpu_capacities, cpu_fflows, cpu_bflows,
-                //       cpu_roffsets, cpu_rdestinations, cpu_flow_idx,
-                //       Excess_total, mark, scanned);
+                global_relabel(
+                    V, E, source, sink, heights, excess_flow,
+                    offsets, destinations, capacities, fflow, bflow,
+                    roffsets, rdestinations, flow_index,
+                    excessTotal, 
+                    mark, scanned);
             }
         }
     };
