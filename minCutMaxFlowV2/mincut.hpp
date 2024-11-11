@@ -159,20 +159,20 @@ namespace parallel {
 
             // gpu structure
             int * gpu_offsets;
-            int * gpu_rOffsets;
+            int * gpu_roffsets;
 
             int * gpu_destinations;
-            int * gpu_rDestinations;
+            int * gpu_rdestinations;
 
             int * gpu_capacities;
             int * gpu_rCapacities;
 
-            int * gpu_flowIndex;
-            int * gpu_heights;
+            int * gpu_flow_index;
+            int * gpu_height;
 
-            int * gpu_forwardFlow;
-            int * gpu_backwardFlows;
-            int * gpu_excesses;
+            int * gpu_fflows;
+            int * gpu_bflows;
+            int * gpu_excess_flow;
 
             int * gpu_excessTotal;
             int * gpu_numNodes;
@@ -183,6 +183,17 @@ namespace parallel {
             int * gpu_re;
 
             // gpu malloc
+            // allocating CUDA device global memory
+            CHECK(cudaMalloc((void**)&gpu_height, V*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_excess_flow, V*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_destinations,E*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_offsets, (V+1)*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_capacities, E*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_fflows, E*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_rdestinations,E*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_roffsets, (V+1)*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_bflows, E*sizeof(int)));
+            CHECK(cudaMalloc((void**)&gpu_flow_index, E*sizeof(int)));
 
 
             int active = findActiveNode(
