@@ -9,6 +9,7 @@
 #pragma once
 
 #include "commons.hpp"
+#include "mincut.cuh"
 
 // implementation
 namespace parallel {
@@ -182,7 +183,7 @@ namespace parallel {
             int * gpu_re;
 
             // gpu malloc
-            
+
 
             int active = findActiveNode(
                 offsets,rOffsets,
