@@ -15,6 +15,13 @@
 #include <bits/stdc++.h>
 #include <vector>
 #include <limits.h>
+#include <chrono>
+#include <cuda_runtime.h>
+#include <iomanip> // put_time
+#include <iostream>
+#include <mutex>
+#include <thread>
+
 
 using namespace cooperative_groups;
 namespace cg = cooperative_groups;
