@@ -29,7 +29,7 @@ namespace parallel {
     
             cpu_height[source] = V;
             *Excess_total = 0;
-            cpu_excess_flow[source] = V;
+            //cpu_excess_flow[source] = V;
 
             // pushing flow in all edges going out from the source node
             for(int i = offsets[source];  i < offsets[source + 1]; i++) {
@@ -103,7 +103,7 @@ namespace parallel {
                 source,
                 to
             );
-            
+
             // gpu structure
             int * gpu_offsets;
             int * gpu_roffsets;
