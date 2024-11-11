@@ -62,6 +62,7 @@ namespace parallel {
             int source,
             int to
         ){
+            return;
             std::cout << ": Print\n" << std::endl;
             std::cout << numNodes;
             printf("int offsets[numNodes+1]{");
