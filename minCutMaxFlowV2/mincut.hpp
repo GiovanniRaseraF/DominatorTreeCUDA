@@ -186,7 +186,7 @@ namespace parallel {
             (cudaMemcpy(gpu_bflows,         bflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
-            while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
+            //while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 (cudaMemcpy(gpu_height,        heights,         V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_excess_flow,   excess_flow,     V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_fflows,        fflow,          E*sizeof(int), cudaMemcpyHostToDevice));
@@ -201,7 +201,7 @@ namespace parallel {
                 (cudaMemcpy(excess_flow,   gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(fflow,        gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(bflow,        gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
-            }
+            //}
         }
     };
 };
