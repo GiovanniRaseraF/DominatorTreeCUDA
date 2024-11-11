@@ -14,24 +14,6 @@
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
-        int findActiveNodeGPU(
-           PARAMPASS 
-        ){
-            int max_height = numNodes;
-            int return_node = -1;
-
-            for (int i = 0; i < numNodes; ++i) {
-                if (excesses[i] > 0 && i != source && i != to) {
-                    if (heights[i] < max_height) {
-                        max_height = heights[i];
-                        return_node = i;
-                    }
-                }
-            }
-
-            return return_node;
-        }
-
         int findActiveNode(
            PARAMPASS 
         ){
@@ -136,124 +118,126 @@ namespace parallel {
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int V = numNodes;
             int E = numEdges;
+            int sink = to;
             int excessTotal[1]{0};
             bool ret[1]{false};
 
             preflow(
-                offsets,roffsets,
-                destinations,rdestinations,
-                capacities,rcapacities,
-                flow_index,heights,
-                fflow,bflow,excess_flow,
-                excessTotal,numNodes,numEdges,source,to
+                offsets,        roffsets,
+                destinations,   rdestinations,
+                capacities,     rcapacities,
+                flow_index,     heights,
+                fflow,bflow,    excess_flow,
+                excessTotal,
+                numNodes,       numEdges,
+                source,         to
             );
 
             // gpu structure
             int * gpu_offsets;
             int * gpu_roffsets;
-
             int * gpu_destinations;
             int * gpu_rdestinations;
-
             int * gpu_capacities;
-
             int * gpu_flow_index;
             int * gpu_height;
-
             int * gpu_fflows;
             int * gpu_bflows;
             int * gpu_excess_flow;
 
             // gpu malloc
-            (cudaMalloc((void**)&gpu_offsets, (V+1)*sizeof(int)));
-            (cudaMalloc((void**)&gpu_roffsets, (V+1)*sizeof(int)));
-
-            (cudaMalloc((void**)&gpu_destinations,E*sizeof(int)));
-            (cudaMalloc((void**)&gpu_rdestinations,E*sizeof(int)));
-
-            (cudaMalloc((void**)&gpu_capacities, E*sizeof(int)));
-
-            (cudaMalloc((void**)&gpu_flow_index, E*sizeof(int)));
-            (cudaMalloc((void**)&gpu_height, V*sizeof(int)));
-
-            (cudaMalloc((void**)&gpu_fflows, E*sizeof(int)));
-            (cudaMalloc((void**)&gpu_bflows, E*sizeof(int)));
-
-            (cudaMalloc((void**)&gpu_excess_flow, V*sizeof(int)));
+            (cudaMalloc((void**)&gpu_offsets,       (V+1)*sizeof(int)));
+            (cudaMalloc((void**)&gpu_roffsets,      (V+1)*sizeof(int)));
+            (cudaMalloc((void**)&gpu_destinations,  E*sizeof(int)));
+            (cudaMalloc((void**)&gpu_rdestinations, E*sizeof(int)));
+            (cudaMalloc((void**)&gpu_capacities,    E*sizeof(int)));
+            (cudaMalloc((void**)&gpu_flow_index,    E*sizeof(int)));
+            (cudaMalloc((void**)&gpu_height,        V*sizeof(int)));
+            (cudaMalloc((void**)&gpu_fflows,        E*sizeof(int)));
+            (cudaMalloc((void**)&gpu_bflows,        E*sizeof(int)));
+            (cudaMalloc((void**)&gpu_excess_flow,   V*sizeof(int)));
 
             // mem copy
-            (cudaMemcpy(gpu_height, heights, V*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_excess_flow, excess_flow, V*sizeof(int),cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_offsets, offsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_destinations, destinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_capacities, capacities, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_fflows, fflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_roffsets, roffsets, (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_rdestinations, rdestinations, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_bflows, bflow, numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            (cudaMemcpy(gpu_flow_index, flow_index, numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_height,         heights,        V*sizeof(int),        cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_excess_flow,    excess_flow,    V*sizeof(int),        cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_offsets,        offsets,        (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_destinations,   destinations,   numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_capacities,     capacities,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_fflows,         fflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_roffsets,       roffsets,       (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_rdestinations,  rdestinations,  numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_bflows,         bflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
+            (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
-            int active = findActiveNode(
-                offsets,roffsets,
-                destinations,rdestinations,
-                capacities,rcapacities,
-                flow_index,heights,
-                fflow,bflow,excess_flow, 
-                excessTotal,numNodes,numEdges,source,to
-            );
+            while((excess_flow[source] + excess_flow[sink]) < *excesstTotal){
+                CHECK(cudaMemcpy(gpu_height,        cpu_height,         V*sizeof(int), cudaMemcpyHostToDevice));
+                CHECK(cudaMemcpy(gpu_excess_flow,   cpu_excess_flow,    V*sizeof(int), cudaMemcpyHostToDevice));
+                CHECK(cudaMemcpy(gpu_fflows,        cpu_fflows,         E*sizeof(int), cudaMemcpyHostToDevice));
+                CHECK(cudaMemcpy(gpu_bflows,        cpu_bflows,         E*sizeof(int), cudaMemcpyHostToDevice));
+                CHECK(cudaMemset(gpu_cycle,         V,                  sizeof(int))); // Reset the gpu_cycle to V
 
-            while(active != -1){
-                // for each node
-                bool p = push(
-                    offsets,roffsets,
-                    destinations,rdestinations,
-                    capacities,rcapacities,
-                    flow_index,heights,
-                    fflow,bflow,excess_flow,
+                // gpu call
+                cudaLaunchCooperativeKernel((void*)push_relabel_kernel, num_blocks, block_size, original_kernel_args, sharedMemSize, 0);
+                cudaDeviceSynchronize();
 
-                    excessTotal,
-                    numNodes,
-                    numEdges,
-                    source,
-                    to,
-                    active,
-                    ret
-                );
-
-                if(!p){
-                    relabel(heights, active);
-                }
-
-                active = findActiveNode(
-                    offsets,roffsets,
-                    destinations,rdestinations,
-                    capacities,rcapacities,
-                    flow_index,heights,
-                    fflow,bflow,excess_flow,
-
-                    excessTotal,
-                    numNodes,
-                    numEdges,
-                    source,
-                    to
-                );
-
+                CHECK(cudaMemcpy(cpu_height,        gpu_height,         V*sizeof(int), cudaMemcpyDeviceToHost));
+                CHECK(cudaMemcpy(cpu_excess_flow,   gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
+                CHECK(cudaMemcpy(cpu_fflows,        gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
+                CHECK(cudaMemcpy(cpu_bflows,        gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
             }
-        printf("\n\n");
-        print(
-            offsets,roffsets,
-            destinations,rdestinations,
-            capacities,rcapacities,
-            flow_index,heights,
-            fflow,bflow,excess_flow,
-
-            excessTotal,
-            numNodes,
-            numEdges,
-            source,
-            to
-        );
-
         }
     };
 };
+
+
+// while(active != -1){
+//                 // for each node
+//                 bool p = push(
+//                     offsets,roffsets,
+//                     destinations,rdestinations,
+//                     capacities,rcapacities,
+//                     flow_index,heights,
+//                     fflow,bflow,excess_flow,
+
+//                     excessTotal,
+//                     numNodes,
+//                     numEdges,
+//                     source,
+//                     to,
+//                     active,
+//                     ret
+//                 );
+
+//                 if(!p){
+//                     relabel(heights, active);
+//                 }
+
+//                 active = findActiveNode(
+//                     offsets,roffsets,
+//                     destinations,rdestinations,
+//                     capacities,rcapacities,
+//                     flow_index,heights,
+//                     fflow,bflow,excess_flow,
+
+//                     excessTotal,
+//                     numNodes,
+//                     numEdges,
+//                     source,
+//                     to
+//                 );
+
+//             }
+//         printf("\n\n");
+//         print(
+//             offsets,roffsets,
+//             destinations,rdestinations,
+//             capacities,rcapacities,
+//             flow_index,heights,
+//             fflow,bflow,excess_flow,
+
+//             excessTotal,
+//             numNodes,
+//             numEdges,
+//             source,
+//             to
+//         );

@@ -24,13 +24,13 @@ void print(
             int source,
             int to
         ){
-            std::cout << std::setw(30) << std::left << ("int offsets[numNodes+1]{");
+            std::cout << std::setw(30) << std::left << "int offsets[numNodes+1]{";
             for (int i=0; i < numNodes + 1; i++) {
                 printf("%d, ", offsets[i]);
             }
             printf("};\n");
 
-            std::cout << std::setw(30) << std::left << ("int rOffsets[numNodes+1]{");
+            std::cout << std::setw(30) << std::left << "int rOffsets[numNodes+1]{";
             for (int i=0; i < numNodes + 1; i++) {
                 printf("%d, ", Roffsets[i]);
             }
