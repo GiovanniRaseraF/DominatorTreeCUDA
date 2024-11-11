@@ -137,12 +137,20 @@ namespace parallel {
                 (cudaMemcpy(excess_flow,    gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(fflow,          gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
-
+                std::cout << "Before globlal:" << std::endl;
                 print(
-                    V, E, source, sink, heights, excess_flow,
-                    offsets, destinations, capacities, fflow, bflow,
-                    roffsets, rdestinations, flow_index
-                    );
+                    offsets,roffsets,
+                    destinations,rdestinations,
+                    capacities,rcapacities,
+                    flow_index,heights,
+                    fflow,bflow,excess_flow,
+
+                    excessTotal,
+                    numNodes,
+                    numEdges,
+                    source,
+                    to
+                );
 
                 global_relabel(
                     V, E, source, sink, heights, excess_flow,
@@ -151,11 +159,20 @@ namespace parallel {
                     excessTotal, 
                     mark, scanned);
 
+                std::cout << "After globlal:" << std::endl;
                 print(
-                    V, E, source, sink, heights, excess_flow,
-                    offsets, destinations, capacities, fflow, bflow,
-                    roffsets, rdestinations, flow_index
-                    );
+                    offsets,roffsets,
+                    destinations,rdestinations,
+                    capacities,rcapacities,
+                    flow_index,heights,
+                    fflow,bflow,excess_flow,
+
+                    excessTotal,
+                    numNodes,
+                    numEdges,
+                    source,
+                    to
+                );
             }
         }
     };
