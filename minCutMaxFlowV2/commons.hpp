@@ -15,8 +15,6 @@
 #include <limits.h>
 #include <iomanip>
 
-
-
 #include "printer.hpp"
 
 typedef std::vector<std::vector<int>> Graph;

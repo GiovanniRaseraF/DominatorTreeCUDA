@@ -122,6 +122,18 @@ namespace parallel {
             int excessTotal[1]{0};
             bool ret[1]{false};
 
+            // prefase
+            // Configure the GPU
+            int device = -1;
+            cudaGetDevice(&device);
+            cudaDeviceProp deviceProp;
+            cudaGetDeviceProperties(&deviceProp, device);
+            dim3 num_blocks(deviceProp.multiProcessorCount * numBlocksPerSM);
+            dim3 block_size(numThreadsPerBlock);
+            size_t sharedMemSize = 3 * block_size.x * sizeof(int);
+
+            
+
             preflow(
                 offsets,        roffsets,
                 destinations,   rdestinations,
@@ -144,6 +156,11 @@ namespace parallel {
             int * gpu_fflows;
             int * gpu_bflows;
             int * gpu_excess_flow;
+
+            void* original_kernel_args[] = {
+                &V, &source, &sink, &gpu_height, &gpu_excess_flow, 
+                &gpu_offsets, &gpu_destinations, &gpu_capacities, &gpu_fflows, &gpu_bflows, 
+                &gpu_roffsets, &gpu_rdestinations, &gpu_flow_index};
 
             // gpu malloc
             (cudaMalloc((void**)&gpu_offsets,       (V+1)*sizeof(int)));
