@@ -132,18 +132,6 @@ namespace parallel {
                 // gpu call
                 cudaLaunchCooperativeKernel((void*)push_relabel_kernel, num_blocks, block_size, original_kernel_args, sharedMemSize, 0);
                 cudaDeviceSynchronize();
-                //std::cout << "hello" << std::endl;
-                // std::cin.ignore();
-                // print(
-                //     offsets,        roffsets,
-                //     destinations,   rdestinations,
-                //     capacities,     rcapacities,
-                //     flow_index,     heights,
-                //     fflow,bflow,    excess_flow,
-                //     excessTotal,
-                //     numNodes,       numEdges,
-                //     source,         to
-                // );
 
                 (cudaMemcpy(heights,        gpu_height,         V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(excess_flow,    gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
