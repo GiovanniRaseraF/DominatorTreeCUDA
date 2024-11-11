@@ -186,8 +186,6 @@ namespace parallel {
             x = Queue.front();
             Queue.pop_front();
 
-            PRINTF("Global relabel: Dequeued: %d\n", x);
-
             // capture value of current level
             current = cpu_height[x];
         
