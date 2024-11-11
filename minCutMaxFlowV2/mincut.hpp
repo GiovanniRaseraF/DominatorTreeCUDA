@@ -8,53 +8,7 @@
 // Help From: https://www.geeksforgeeks.org/push-relabel-algorithm-set-2-implementation/
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <stdio.h>
-#include <limits>
-#include <limits.h>
-#include <iomanip>
-
-#include "printer.hpp"
-
-typedef std::vector<std::vector<int>> Graph;
-
-// GPU data
-typedef int* GPUOffsets;
-typedef int* GPUrOffsets;
-typedef int* GPUDestinations;
-typedef int* GPUrDestinations;
-typedef int* GPUCapacities;
-typedef int* GPUrCapacities;
-
-typedef int* GPUFlowIndex;
-
-typedef int* GPUHeights;
-
-typedef int* GPUForwardFlow;
-typedef int* GPUBackwardFlow;
-
-typedef int* GPUExcesses;
-
-typedef int* GPUExcessTotal;
-
-# define PARAMPASS \
-    GPUOffsets offsets, \
-    GPUrOffsets Roffsets, \
-    GPUDestinations destinations, \
-    GPUrDestinations Rdestinations, \
-    GPUCapacities capacities, \
-    GPUrCapacities Rcapacities, \
-    GPUFlowIndex flowIndex, \
-    GPUHeights heights, \
-    GPUForwardFlow forwardFlows, \
-    GPUBackwardFlow backwardFlows, \
-    GPUExcesses excesses, \
-    GPUExcessTotal excessTotal, \
-    int numNodes, \
-    int numEdges, \
-    int source, \
-    int to 
+#include "commons.hpp"
 
 // implementation
 namespace parallel {
@@ -112,6 +66,7 @@ namespace parallel {
                     backwardFlows[i] += flow;
                     excesses[v] -= flow;
                     excesses[w] += flow;
+
                     printf("->Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
                     //*ret = true;
                     return true;
@@ -131,6 +86,7 @@ namespace parallel {
                     forwardFlows[push_index] += flow;
                     excesses[v] -= flow;
                     excesses[w] += flow;
+
                     printf("<-Pushing flow %d from %d(%d) to %d(%d)\n", flow, v, excesses[v], w, excesses[w]);
                     //*ret = true;
                     return true;
@@ -170,125 +126,73 @@ namespace parallel {
        
 
         void minCutMaxFlow(Graph &G, int source, int to,
-            int *offsets,
-            int *rOffsets,
-
-            int *destinations,
-            int *rDestinations,
-
-            int *capacities,
-            int *rCapacities,
-
-            int *flowIndex,
-            int *heights,
-
-            int *forwardFlow,
-            int *backwardFlows,
-            int *excesses,
-            int numNodes,
-            int numEdges
+            int *offsets,int *rOffsets,
+            int *destinations,int *rDestinations,
+            int *capacities,int *rCapacities,
+            int *flowIndex,int *heights,
+            int *forwardFlow,int *backwardFlows,int *excesses,int numNodes,int numEdges
         ){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
 
             int excessTotal[1]{0};
             bool ret[1]{false};
 
-            print(
-                offsets,
-                rOffsets,
+            // print(
+            //     offsets,rOffsets,
+            //     destinations,rDestinations,
+            //     capacities,rCapacities,
+            //     flowIndex,heights,
+            //     forwardFlow,backwardFlows,excesses,
+            //     excessTotal,numNodes,numEdges,source,to
+            // );
 
-                destinations,
-                rDestinations,
-
-                capacities,
-                rCapacities,
-
-                flowIndex,
-                heights,
-
-                forwardFlow,
-                backwardFlows,
-                excesses,
-
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
-            );
-            printf("Preflow: \n");
+            //printf("Preflow: \n");
             preflow(
-                offsets,
-                rOffsets,
-
-                destinations,
-                rDestinations,
-
-                capacities,
-                rCapacities,
-
-                flowIndex,
-                heights,
-
-                forwardFlow,
-                backwardFlows,
-                excesses,
-
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
+                offsets,rOffsets,
+                destinations,rDestinations,
+                capacities,rCapacities,
+                flowIndex,heights,
+                forwardFlow,backwardFlows,excesses,
+                excessTotal,numNodes,numEdges,source,to
             );
 
-            printf("\n\n");
-            print(
-                offsets,
-                rOffsets,
+            // gpu structure
+            int * gpu_offsets;
+            int * gpu_rOffsets;
 
-                destinations,
-                rDestinations,
+            int * gpu_destinations;
+            int * gpu_rDestinations;
 
-                capacities,
-                rCapacities,
+            int * gpu_capacities;
+            int * gpu_rCapacities;
 
-                flowIndex,
-                heights,
+            int * gpu_flowIndex;
+            int * gpu_heights;
 
-                forwardFlow,
-                backwardFlows,
-                excesses,
+            int * gpu_forwardFlow;
+            int * gpu_backwardFlows;
+            int * gpu_excesses;
 
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
-            );
+            int * gpu_excessTotal;
+            int * gpu_numNodes;
+            int * gpu_numEdges;
+            int * gpu_source;
+            int * gpu_to;
+            int * gpu_active;
+            int * gpu_re;
+
+            // gpu malloc
+            
 
             int active = findActiveNode(
-                offsets,
-                rOffsets,
-
-                destinations,
-                rDestinations,
-
-                capacities,
-                rCapacities,
-
-                flowIndex,
-                heights,
-
-                forwardFlow,
-                backwardFlows,
-                excesses,
-
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
+                offsets,rOffsets,
+                destinations,rDestinations,
+                capacities,rCapacities,
+                flowIndex,heights,
+                forwardFlow,backwardFlows,excesses,
+                excessTotal,numNodes,numEdges,source,to
             );
+
             while(active != -1){
                 // for each node
                 bool p = push(
