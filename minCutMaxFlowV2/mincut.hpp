@@ -181,27 +181,27 @@ namespace parallel {
                     to
                 );
 
-                global_relabel(
-                    V, E, source, sink, heights, excess_flow,
-                    offsets, destinations, capacities, fflow, bflow,
-                    roffsets, rdestinations, flow_index,
-                    excessTotal, 
-                    mark, scanned);
+                // global_relabel(
+                //     V, E, source, sink, heights, excess_flow,
+                //     offsets, destinations, capacities, fflow, bflow,
+                //     roffsets, rdestinations, flow_index,
+                //     excessTotal, 
+                //     mark, scanned);
 
-                std::cout << "After globlal:" << std::endl;
-                print(
-                    offsets,roffsets,
-                    destinations,rdestinations,
-                    capacities,rcapacities,
-                    flow_index,heights,
-                    fflow,bflow,excess_flow,
+                // std::cout << "After globlal:" << std::endl;
+                // print(
+                //     offsets,roffsets,
+                //     destinations,rdestinations,
+                //     capacities,rcapacities,
+                //     flow_index,heights,
+                //     fflow,bflow,excess_flow,
 
-                    excessTotal,
-                    numNodes,
-                    numEdges,
-                    source,
-                    to
-                );
+                //     excessTotal,
+                //     numNodes,
+                //     numEdges,
+                //     source,
+                //     to
+                // );
                 std::cout << "excessTotal:" << *excessTotal << std::endl;
                 std::cin.ignore();
             }
