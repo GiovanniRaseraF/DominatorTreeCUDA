@@ -68,9 +68,8 @@ namespace parallel {
             cudaDeviceProp deviceProp;
             cudaGetDeviceProperties(&deviceProp, device);
 
-            //dim3 num_blocks(deviceProp.multiProcessorCount * numBlocksPerSM);
-            dim3 num_blocks(numBlocksPerSM);
-            dim3 block_size(V);///numThreadsPerBlock);
+            dim3 num_blocks(deviceProp.multiProcessorCount * numBlocksPerSM);
+            dim3 block_size(numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
 
             // print(
