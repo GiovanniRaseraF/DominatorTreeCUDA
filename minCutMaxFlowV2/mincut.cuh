@@ -28,8 +28,8 @@ namespace cg = cooperative_groups;
 // #define number_of_nodes V
 // #define number_of_edges E
 // #define threads_per_block 256
-// #define numBlocksPerSM 1
-// #define numThreadsPerBlock 1024
+#define numBlocksPerSM 1
+#define numThreadsPerBlock 1024
 // #define number_of_blocks_nodes ((number_of_nodes/threads_per_block) + 1)
 // #define number_of_blocks_edges ((number_of_edges/threads_per_block) + 1)
 #define INF INT_MAX
