@@ -8,7 +8,7 @@
 constexpr int V = 7;
 
 void test1(){
-    std::string filename = "./test_graph_unitary.txt";
+    std::string filename = "./edgelist.txt";
     int num_nodes{0};
     int num_edges{0};
     int num_edges_processed{0};
