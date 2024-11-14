@@ -66,7 +66,8 @@ void test1(){
         heights,excesses
     );
 
-    parallel::GoldbergTarjan::minCutMaxFlow(G, from, to,
+    parallel::GoldbergTarjan::minCutMaxFlow(
+        from, to,
         offsets,roffsets,
         destinations,rdestinations,
         capacities,rcapacities,

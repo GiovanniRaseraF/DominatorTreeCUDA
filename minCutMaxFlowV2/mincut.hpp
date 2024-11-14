@@ -46,12 +46,14 @@ namespace parallel {
         }
        
 
-        void minCutMaxFlow(Graph &G, int source, int to,
+        void minCutMaxFlow(
+            int source, int to,
             int *offsets,int *roffsets,
             int *destinations,int *rdestinations,
             int *capacities,int *rcapacities,
             int *flow_index,int *heights,
-            int *fflow,int *bflow,int *excess_flow,int numNodes,int numEdges
+            int *fflow,int *bflow,int *excess_flow,
+            int numNodes,int numEdges
         ){
             std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int V = numNodes;
