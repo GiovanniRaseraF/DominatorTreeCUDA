@@ -1,28 +1,18 @@
+// Author: Giovanni Rasera
+// Use: just for debugging info
+
+#pragma once
+
 #include <iostream>
 #include <iomanip>
 
 void print(
-            int * offsets,
-            int * Roffsets,
-
-            int *destinations,
-            int *Rdestinations,
-
-            int *capacities,
-            int *Rcapacities,
-
-            int *flowIndex,
-            int * heights,
-
-            int *forwardFlows,
-            int *backwardFlows,
-
-            int *excesses,
-            int *excessTotal,
-            int numNodes,
-            int numEdges,
-            int source,
-            int to
+            int * offsets,int * Roffsets,
+            int *destinations,int *Rdestinations,
+            int *capacities,int *Rcapacities,
+            int *flowIndex,int * heights,
+            int *forwardFlows,int *backwardFlows,
+            int *excesses,int *excessTotal,int numNodes,int numEdges,int source,int to
         ){
             std::cout << std::setw(30) << std::left << "int offsets[numNodes+1]{";
             for (int i=0; i < numNodes + 1; i++) {

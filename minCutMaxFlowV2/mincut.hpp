@@ -6,6 +6,7 @@
 // Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
 // Help From: https://www.adrian-haarbach.de/idp-graph-algorithms/implementation/maxflow-push-relabel/index_en.html
 // Help From: https://www.geeksforgeeks.org/push-relabel-algorithm-set-2-implementation/
+
 #pragma once
 
 #include "commons.hpp"

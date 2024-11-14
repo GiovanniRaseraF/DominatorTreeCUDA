@@ -1,4 +1,8 @@
+// Author: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda/graph.cpp
+// Modified by: GiovanniRaseraF
+
 #pragma once
+
 #include <string>
 #include <iostream>
 #include <vector>
@@ -8,8 +12,16 @@
 #include <algorithm>
 #include <sstream>
 
-namespace loader
-{
+namespace loader{
+    /*  This function loads a graph from a txt file
+        formatted in this form:
+            # Nodes: %num_nodes Edges: %num_edges
+            u v c
+        
+        this meas:
+            My graphs has num_nodes nodes and num_edges edges
+            u -- c --> v
+    */
     void buildFromTxtFile(
         const std::string &filename,
         int &num_nodes,
@@ -64,6 +76,9 @@ namespace loader
         num_edges_processed = cnt;
     }
 
+    /*  This function create the CSR representation of the graph
+        this is useful when using the graph in the GPU
+    */
     void buildFromCSRGraph(
         int num_nodes,
         int num_edges,
@@ -88,17 +103,17 @@ namespace loader
     ){
 
         /* Allocate offsets, destinations, capacities, flows, roffsets, rdestinations, rflows */
-        offsets = (int *)malloc(sizeof(int) * (num_nodes + 1));
-        destinations = (int *)malloc(sizeof(int) * num_edges);
-        capacities = (int *)malloc(sizeof(int) * num_edges);
-        rcapacities = (int *)malloc(sizeof(int) * num_edges);
-        forward_flows = (int *)malloc(sizeof(int) * num_edges);
-        roffsets = (int *)malloc(sizeof(int) * (num_nodes + 1));
-        rdestinations = (int *)malloc(sizeof(int) * num_edges);
-        backward_flows = (int *)malloc(sizeof(int) * num_edges);
-        flow_index = (int *)malloc(sizeof(int) * num_edges);
-        heights = (int *)malloc(sizeof(int) * num_nodes);
-        excesses = (int *)malloc(sizeof(int) * num_nodes);
+        offsets =           (int *)malloc(sizeof(int) * (num_nodes + 1));
+        destinations =      (int *)malloc(sizeof(int) * num_edges);
+        capacities =        (int *)malloc(sizeof(int) * num_edges);
+        rcapacities =       (int *)malloc(sizeof(int) * num_edges);
+        forward_flows =     (int *)malloc(sizeof(int) * num_edges);
+        roffsets =          (int *)malloc(sizeof(int) * (num_nodes + 1));
+        rdestinations =     (int *)malloc(sizeof(int) * num_edges);
+        backward_flows =    (int *)malloc(sizeof(int) * num_edges);
+        flow_index =        (int *)malloc(sizeof(int) * num_edges);
+        heights =           (int *)malloc(sizeof(int) * num_nodes);
+        excesses =          (int *)malloc(sizeof(int) * num_nodes);
 
         for (int i = 0; i < num_nodes; i++){
             heights[i] = 0;
@@ -163,11 +178,5 @@ namespace loader
                 }
             }
         }
-
-        // printf("int offsets[numNodes+1]{");
-        // for (int i=0; i < num_nodes+1; i++) {
-        //     printf("%d, ", offsets[i]);
-        // }
-        // printf("};\n");
     }
 };
