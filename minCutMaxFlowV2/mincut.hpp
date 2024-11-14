@@ -22,15 +22,13 @@ namespace parallel {
             int *roffsets, int* rdestinations, int* flow_idx, int *Excess_total)
         {
             // initialising height values and excess flow, Excess_total values
-            for(int i = 0; i < V; i++)
-            {
+            for(int i = 0; i < V; i++){
                 cpu_height[i] = 0; 
                 cpu_excess_flow[i] = 0;
             }
     
             cpu_height[source] = V;
             *Excess_total = 0;
-            //cpu_excess_flow[source] = V;
 
             // pushing flow in all edges going out from the source node
             for(int i = offsets[source];  i < offsets[source + 1]; i++) {
