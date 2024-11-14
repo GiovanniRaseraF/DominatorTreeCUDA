@@ -73,38 +73,38 @@ namespace parallel {
             dim3 block_size(V);///numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
 
-            print(
-                offsets,roffsets,
-                destinations,rdestinations,
-                capacities,rcapacities,
-                flow_index,heights,
-                fflow,bflow,excess_flow,
+            // print(
+            //     offsets,roffsets,
+            //     destinations,rdestinations,
+            //     capacities,rcapacities,
+            //     flow_index,heights,
+            //     fflow,bflow,excess_flow,
 
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
-            );
+            //     excessTotal,
+            //     numNodes,
+            //     numEdges,
+            //     source,
+            //     to
+            // );
 
             preflow(
                 V, source, sink, heights, excess_flow, 
                 (offsets), (destinations), (capacities), (fflow), (bflow),
                 (roffsets), (rdestinations), (flow_index), excessTotal);
 
-            print(
-                offsets,roffsets,
-                destinations,rdestinations,
-                capacities,rcapacities,
-                flow_index,heights,
-                fflow,bflow,excess_flow,
+            // print(
+            //     offsets,roffsets,
+            //     destinations,rdestinations,
+            //     capacities,rcapacities,
+            //     flow_index,heights,
+            //     fflow,bflow,excess_flow,
 
-                excessTotal,
-                numNodes,
-                numEdges,
-                source,
-                to
-            );
+            //     excessTotal,
+            //     numNodes,
+            //     numEdges,
+            //     source,
+            //     to
+            // );
 
             // gpu structure
             int * gpu_offsets;
