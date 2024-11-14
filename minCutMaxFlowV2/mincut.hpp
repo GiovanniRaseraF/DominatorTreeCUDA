@@ -152,7 +152,7 @@ namespace parallel {
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
             // algo start
-            while((excess_flow[source+1] + excess_flow[sink]) < *excessTotal){
+            while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 (cudaMemcpy(gpu_height,        heights,         V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_excess_flow,   excess_flow,     V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_fflows,        fflow,           E*sizeof(int), cudaMemcpyHostToDevice));
@@ -182,12 +182,12 @@ namespace parallel {
                     to
                 );
 
-                // global_relabel(
-                //     V, E, source, sink, heights, excess_flow,
-                //     offsets, destinations, capacities, fflow, bflow,
-                //     roffsets, rdestinations, flow_index,
-                //     excessTotal, 
-                //     mark, scanned);
+                global_relabel(
+                    V, E, source, sink, heights, excess_flow,
+                    offsets, destinations, capacities, fflow, bflow,
+                    roffsets, rdestinations, flow_index,
+                    excessTotal, 
+                    mark, scanned);
 
                 // std::cout << "After globlal:" << std::endl;
                 // print(
