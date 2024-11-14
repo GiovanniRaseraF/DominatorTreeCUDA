@@ -8,7 +8,9 @@
 constexpr int V = 7;
 
 void test1(){
-    std::string filename = "./edgelist1.txt";
+    std::string filename;
+    std::cout << "filename>>"; std::cin >> filename;
+
     int num_nodes{0};
     int num_edges{0};
     int num_edges_processed{0};

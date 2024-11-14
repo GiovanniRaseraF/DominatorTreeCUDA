@@ -235,20 +235,8 @@ namespace parallel {
                 if( !( (scanned[i] == true) || (mark[i] == true) ) ){
                     mark[i] = true;
                     *Excess_total = *Excess_total - cpu_excess_flow[i];
-                    std::cout << "ExcessTotal = " << *Excess_total << std::endl;
                 }
             }
         }
-    }
-
-    bool checkEnd(int V, int E, int source, int sink, int* cpu_excess_flow) {
-        for (int u = 0; u < V; u++) {
-            if (u != source && u != sink) {
-                if (cpu_excess_flow[u] > 0) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }

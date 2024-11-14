@@ -72,38 +72,10 @@ namespace parallel {
             dim3 block_size(numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
 
-            // print(
-            //     offsets,roffsets,
-            //     destinations,rdestinations,
-            //     capacities,rcapacities,
-            //     flow_index,heights,
-            //     fflow,bflow,excess_flow,
-
-            //     excessTotal,
-            //     numNodes,
-            //     numEdges,
-            //     source,
-            //     to
-            // );
-
             preflow(
                 V, source, sink, heights, excess_flow, 
                 (offsets), (destinations), (capacities), (fflow), (bflow),
                 (roffsets), (rdestinations), (flow_index), excessTotal);
-
-            // print(
-            //     offsets,roffsets,
-            //     destinations,rdestinations,
-            //     capacities,rcapacities,
-            //     flow_index,heights,
-            //     fflow,bflow,excess_flow,
-
-            //     excessTotal,
-            //     numNodes,
-            //     numEdges,
-            //     source,
-            //     to
-            // );
 
             // gpu structure
             int * gpu_offsets;
@@ -117,6 +89,7 @@ namespace parallel {
             int * gpu_bflows;
             int * gpu_excess_flow;
 
+            // for parameters passing
             void* original_kernel_args[] = {
                 &V, &source, &sink, &gpu_height, &gpu_excess_flow, 
                 &gpu_offsets, &gpu_destinations, &gpu_capacities, &gpu_fflows, &gpu_bflows, 
@@ -157,7 +130,6 @@ namespace parallel {
                 (cudaMemcpy(gpu_excess_flow,   excess_flow,     V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_fflows,        fflow,           E*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_bflows,        bflow,           E*sizeof(int), cudaMemcpyHostToDevice));
-                // (cudaMemset(gpu_cycle,         V,               sizeof(int))); // Reset the gpu_cycle to V
 
                 // gpu call
                 cudaLaunchCooperativeKernel((void*)push_relabel_kernel, num_blocks, block_size, original_kernel_args, sharedMemSize, 0);
@@ -167,20 +139,6 @@ namespace parallel {
                 (cudaMemcpy(excess_flow,    gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(fflow,          gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
-                std::cout << "Before globlal:" << std::endl;
-                print(
-                    offsets,roffsets,
-                    destinations,rdestinations,
-                    capacities,rcapacities,
-                    flow_index,heights,
-                    fflow,bflow,excess_flow,
-
-                    excessTotal,
-                    numNodes,
-                    numEdges,
-                    source,
-                    to
-                );
 
                 global_relabel(
                     V, E, source, sink, heights, excess_flow,
@@ -188,77 +146,7 @@ namespace parallel {
                     roffsets, rdestinations, flow_index,
                     excessTotal, 
                     mark, scanned);
-
-                // std::cout << "After globlal:" << std::endl;
-                // print(
-                //     offsets,roffsets,
-                //     destinations,rdestinations,
-                //     capacities,rcapacities,
-                //     flow_index,heights,
-                //     fflow,bflow,excess_flow,
-
-                //     excessTotal,
-                //     numNodes,
-                //     numEdges,
-                //     source,
-                //     to
-                // );
-                std::cout << "excessTotal:" << *excessTotal << std::endl;
-                std::cin.ignore();
             }
         }
     };
 };
-
-
-// while(active != -1){
-//                 // for each node
-//                 bool p = push(
-//                     offsets,roffsets,
-//                     destinations,rdestinations,
-//                     capacities,rcapacities,
-//                     flow_index,heights,
-//                     fflow,bflow,excess_flow,
-
-//                     excessTotal,
-//                     numNodes,
-//                     numEdges,
-//                     source,
-//                     to,
-//                     active,
-//                     ret
-//                 );
-
-//                 if(!p){
-//                     relabel(heights, active);
-//                 }
-
-//                 active = findActiveNode(
-//                     offsets,roffsets,
-//                     destinations,rdestinations,
-//                     capacities,rcapacities,
-//                     flow_index,heights,
-//                     fflow,bflow,excess_flow,
-
-//                     excessTotal,
-//                     numNodes,
-//                     numEdges,
-//                     source,
-//                     to
-//                 );
-
-//             }
-//         printf("\n\n");
-//         print(
-//             offsets,roffsets,
-//             destinations,rdestinations,
-//             capacities,rcapacities,
-//             flow_index,heights,
-//             fflow,bflow,excess_flow,
-
-//             excessTotal,
-//             numNodes,
-//             numEdges,
-//             source,
-//             to
-//         );
