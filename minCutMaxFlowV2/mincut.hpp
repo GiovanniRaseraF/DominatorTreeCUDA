@@ -147,6 +147,8 @@ namespace parallel {
                     excessTotal, 
                     mark, scanned);
             }
+
+            std::cout << "MaxFlow: " << excess_flow[sink] << std::endl;
         }
     };
 };
