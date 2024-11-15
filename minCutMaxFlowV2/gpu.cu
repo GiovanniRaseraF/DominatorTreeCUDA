@@ -25,5 +25,5 @@ int main(int argc, char **argv){
 
     std::cout << filename << " source: " << source << " sink: " << sink;
 
-    test();
+    run(filename, source, sink);
 }

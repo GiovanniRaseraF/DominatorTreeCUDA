@@ -5,10 +5,7 @@
 #include "mincut.hpp"
 #include "loader.hpp"
 
-void test(){
-    std::string filename;
-    std::cout << "filename>>"; std::cin >> filename;
-
+void run(std::string filename, int from, int to){
     int num_nodes{0};
     int num_edges{0};
     int num_edges_processed{0};
@@ -18,6 +15,7 @@ void test(){
     std::vector<int> graph_offsets{};
     std::vector<int> graph_capacities{};
 
+    // Load from specified file
     loader::buildFromTxtFile(
         filename, 
         num_nodes,
@@ -30,17 +28,7 @@ void test(){
         graph_capacities
     );
 
-    std::cout << num_nodes << std::endl;
-    std::cout << num_edges << std::endl;
-    std::cout << num_edges_processed << std::endl;
-    std::cout << source_node << std::endl;
-    std::cout << sink_node << std::endl;
-
-    int from = 0;
-    int to = 0;
-    std::cout << "source>>"; std::cin >> from;
-    std::cout << "to>>"; std::cin >> to;
-
+    // Preparing all pointer for cpu graph
     int *offsets = nullptr;
     int *roffsets = nullptr;
     int *destinations = nullptr;
@@ -53,6 +41,7 @@ void test(){
     int *heights = nullptr;
     int *excesses = nullptr;
 
+    // Loading the data from file to a CSR representation
     loader::buildFromCSRGraph(
         num_nodes,num_edges,
         num_edges_processed,
@@ -66,6 +55,7 @@ void test(){
         heights,excesses
     );
 
+    // Find MinCut
     parallel::GoldbergTarjan::minCutMaxFlow(
         from, to,
         offsets,roffsets,
@@ -75,4 +65,17 @@ void test(){
         forward_flows,backward_flows,
         excesses,num_nodes,num_edges
     );
+
+    // Clear
+    free(offsets);
+    free(roffsets);
+    free(destinations);
+    free(rdestinations);
+    free(capacities);
+    free(rcapacities);
+    free(forward_flows);
+    free(backward_flows);
+    free(flow_index);
+    free(heights);
+    free(excesses);
 }
