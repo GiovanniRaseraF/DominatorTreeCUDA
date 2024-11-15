@@ -46,7 +46,7 @@ namespace parallel {
         }
        
 
-        void minCutMaxFlow(
+        int minCutMaxFlow(
             int source, int to,
             int *offsets,int *roffsets,
             int *destinations,int *rdestinations,
@@ -62,7 +62,6 @@ namespace parallel {
             int excessTotal[1]{0};
             bool ret[1]{false};
 
-            // prefase
             // Configure the GPU
             int device = -1;
             cudaGetDevice(&device);
@@ -72,13 +71,14 @@ namespace parallel {
             dim3 num_blocks(deviceProp.multiProcessorCount * numBlocksPerSM);
             dim3 block_size(numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
-
+            
+            // Initilize the flow
             preflow(
                 V, source, sink, heights, excess_flow, 
                 (offsets), (destinations), (capacities), (fflow), (bflow),
                 (roffsets), (rdestinations), (flow_index), excessTotal);
 
-            // gpu structure
+            // GPU structure
             int * gpu_offsets;
             int * gpu_roffsets;
             int * gpu_destinations;
@@ -90,7 +90,7 @@ namespace parallel {
             int * gpu_bflows;
             int * gpu_excess_flow;
 
-            // for parameters passing
+            // For parameters passing
             void* original_kernel_args[] = {
                 &V, &source, &sink, &gpu_height, &gpu_excess_flow, 
                 &gpu_offsets, &gpu_destinations, &gpu_capacities, &gpu_fflows, &gpu_bflows, 
@@ -101,7 +101,7 @@ namespace parallel {
             scanned =   (bool*)malloc(V*sizeof(bool));
             for(int i = 0; i < V; i++) mark[i] = false;
 
-            // gpu malloc
+            // Allocate data for GPU
             (cudaMalloc((void**)&gpu_offsets,       (V+1)*sizeof(int)));
             (cudaMalloc((void**)&gpu_roffsets,      (V+1)*sizeof(int)));
             (cudaMalloc((void**)&gpu_destinations,  E*sizeof(int)));
@@ -113,7 +113,7 @@ namespace parallel {
             (cudaMalloc((void**)&gpu_bflows,        E*sizeof(int)));
             (cudaMalloc((void**)&gpu_excess_flow,   V*sizeof(int)));
 
-            // mem copy
+            // Copy to GPU
             (cudaMemcpy(gpu_height,         heights,        V*sizeof(int),        cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_excess_flow,    excess_flow,    V*sizeof(int),        cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_offsets,        offsets,        (numNodes + 1)*sizeof(int), cudaMemcpyHostToDevice));
@@ -127,20 +127,23 @@ namespace parallel {
 
             // algo start
             while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
+                // Update GPU values
                 (cudaMemcpy(gpu_height,        heights,         V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_excess_flow,   excess_flow,     V*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_fflows,        fflow,           E*sizeof(int), cudaMemcpyHostToDevice));
                 (cudaMemcpy(gpu_bflows,        bflow,           E*sizeof(int), cudaMemcpyHostToDevice));
 
-                // gpu call
+                // Gpu Call
                 cudaLaunchCooperativeKernel((void*)push_relabel_kernel, num_blocks, block_size, original_kernel_args, sharedMemSize, 0);
                 cudaDeviceSynchronize();
-
+                
+                // Get results
                 (cudaMemcpy(heights,        gpu_height,         V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(excess_flow,    gpu_excess_flow,    V*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(fflow,          gpu_fflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
-
+                
+                // Relable the graph
                 global_relabel(
                     V, E, source, sink, heights, excess_flow,
                     offsets, destinations, capacities, fflow, bflow,
@@ -149,7 +152,19 @@ namespace parallel {
                     mark, scanned);
             }
 
-            std::cout << "MaxFlow: " << excess_flow[sink] << std::endl;
+            // Clear
+            (cudaFree(gpu_height));
+            (cudaFree(gpu_excess_flow));
+            (cudaFree(gpu_offsets));
+            (cudaFree(gpu_destinations));
+            (cudaFree(gpu_capacities));
+            (cudaFree(gpu_fflows));
+            (cudaFree(gpu_roffsets));
+            (cudaFree(gpu_rdestinations));
+            (cudaFree(gpu_bflows));
+            (cudaFree(gpu_flow_index));
+
+            return excess_flow[sink];
         }
     };
 };
