@@ -5,7 +5,7 @@
 #include "mincut.hpp"
 #include "loader.hpp"
 
-void test1(){
+void test(){
     std::string filename;
     std::cout << "filename>>"; std::cin >> filename;
 
