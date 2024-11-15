@@ -126,7 +126,7 @@ namespace parallel {
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
 
             using namespace std::chrono; 
-            auto start = steady_clock::now();
+            auto start = high_resolution_clock::now();
             // algo start
             while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 // Update GPU values
@@ -156,7 +156,7 @@ namespace parallel {
                     excessTotal, 
                     mark,       scanned);
             }
-            auto end = steady_clock::now();
+            auto end = high_resolution_clock::now();
             std::cout << "### " << (end-start).count() << " -" << std::endl;
 
             // Clear
