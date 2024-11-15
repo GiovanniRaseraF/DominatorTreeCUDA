@@ -38,3 +38,15 @@
 546999440 , 546999 , 546 , 16400, 1600000, 1, 16344, 86
 2059451259 , 2059451 , 2059 , 32800, 3200000, 1, 32688, 93
 ```
+@online{cite1,  url = {https://web.stanford.edu/class/archive/cs/cs161/cs161.1172/CS161Lecture16.pdf}, title = {cite1}, label = {}}
+@online{cite2,  url = {https://www.tutorialspoint.com/data_structures_algorithms/dsa_kargers_minimum_cut_algorithm.htm}, title = {cite1}, label = {}}
+@online{cite3,  url = {https://www.baeldung.com/cs/minimum-cut-graphs}, title = {cite1}, label = {}}
+@online{cite4,  url = {https://it.wikipedia.org/wiki/Algoritmo_di_Ford-Fulkerson}, title = {cite1}, label = {}}
+@online{cite5,  url = {https://www.nvidia.com/content/GTC/documents/1060_GTC09.pdf}, title = {cite1}, label = {}}
+@online{cite6,  url = {https://en.wikipedia.org/wiki/Push%E2%80%93relabel_maximum_flow_algorithm}, title = {cite1}, label = {}}
+@online{cite7,  url = {https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4563095}, title = {cite1}, label = {}}
+@online{cite8,  url = {https://arxiv.org/pdf/2404.00270}, title = {cite1}, label = {}}
+@online{cite9,  url = {https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda}, title = {cite1}, label = {}}
+@online{cite10, url  = {https://www.adrian-haarbach.de/idp-graph-algorithms/implementation/maxflow-push-relabel/index_en.html}, title = {cite1}, label = {}}
+@online{cite11, url  = {https://www.geeksforgeeks.org/push-relabel-algorithm-set-2-implementation/}, title = {cite1}, label = {}}
+

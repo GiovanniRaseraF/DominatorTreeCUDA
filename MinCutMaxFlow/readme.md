@@ -11,6 +11,7 @@
 - Help From: https://arxiv.org/pdf/2404.00270
 - Help From: https://github.com/NTUDDSNLab/WBPR/tree/master/maxflow-cuda
 - Help From: https://www.adrian-haarbach.de/idp-graph-algorithms/implementation/maxflow-push-relabel/index_en.html
+- Help From: https://www.geeksforgeeks.org/push-relabel-algorithm-set-2-implementation/
 
 ## Problem Description
 - Write a program that, given a node x in V (different from s), determines a subset D of nodes such that: 
