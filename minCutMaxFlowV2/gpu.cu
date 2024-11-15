@@ -25,9 +25,9 @@ int main(int argc, char **argv){
         return EXIT_FAILURE;
     }
 
-#ifndef TIMING
-    std::cout << filename << " source: " << source << " sink: " << sink;
-#endif
+// #ifndef TIMING
+//     std::cout << filename << " source: " << source << " sink: " << sink;
+// #endif
 
     run(filename, source, sink);
 }

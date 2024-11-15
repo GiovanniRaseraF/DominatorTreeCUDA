@@ -157,7 +157,7 @@ namespace parallel {
                     mark,       scanned);
             }
             auto end = high_resolution_clock::now();
-            std::cout << "### " << (end-start).count() << " -" << std::endl;
+            std::cout << "### " << (end-start).count() << ", " << V << ", " << E << ", " << source << ", " << sink << std::endl;
 
             // Clear
             (cudaFree(gpu_height));
