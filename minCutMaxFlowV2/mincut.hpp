@@ -11,6 +11,11 @@
 
 #include "commons.hpp"
 #include "mincut.cuh"
+#include <thread>
+#include <chrono>
+
+// Just for timing
+using namespace std::chrono_literals;
 
 // implementation
 namespace parallel {
@@ -55,12 +60,10 @@ namespace parallel {
             int *fflow,int *bflow,int *excess_flow,
             int numNodes,int numEdges
         ){
-            std::cout << "TODO: MinCutFaxFlow" << std::endl;
             int V = numNodes;
             int E = numEdges;
             int sink = to;
             int excessTotal[1]{0};
-            bool ret[1]{false};
 
             // Configure the GPU
             int device = -1;
@@ -145,11 +148,14 @@ namespace parallel {
                 
                 // Relable the graph
                 global_relabel(
-                    V, E, source, sink, heights, excess_flow,
-                    offsets, destinations, capacities, fflow, bflow,
-                    roffsets, rdestinations, flow_index,
+                    V, E, 
+                    source,     sink, 
+                    heights,    excess_flow,
+                    offsets,    destinations, capacities, 
+                    fflow,      bflow,
+                    roffsets,   rdestinations, flow_index,
                     excessTotal, 
-                    mark, scanned);
+                    mark,       scanned);
             }
 
             // Clear

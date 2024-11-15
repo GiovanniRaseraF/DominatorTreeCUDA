@@ -56,7 +56,7 @@ void run(std::string filename, int from, int to){
     );
 
     // Find MinCut
-    parallel::GoldbergTarjan::minCutMaxFlow(
+    auto micCutValue = parallel::GoldbergTarjan::minCutMaxFlow(
         from, to,
         offsets,roffsets,
         destinations,rdestinations,
