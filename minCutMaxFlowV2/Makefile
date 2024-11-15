@@ -5,16 +5,16 @@ gpu:
 
 test:
 	@ make gpu
-	@ ./build/gpu_paraller.out ./graphs/basic1.txt   1 64
-	@ ./build/gpu_paraller.out ./graphs/basic2.txt   1 128
-	@ ./build/gpu_paraller.out ./graphs/basic3.txt   1 256
-	@ ./build/gpu_paraller.out ./graphs/basic4.txt   1 512
-	@ ./build/gpu_paraller.out ./graphs/basic5.txt   1 1024
-	@ ./build/gpu_paraller.out ./graphs/nanoone.txt  1 2048
-	@ ./build/gpu_paraller.out ./graphs/microone.tx  1 4096
-	@ ./build/gpu_paraller.out ./graphs/minione.txt  1 8172
-	@ ./build/gpu_paraller.out ./graphs/midone.txt   1 16344
-	@ ./build/gpu_paraller.out ./graphs/bigone.txt   1 32688
+	@ ./build/gpu_parallel.out ./graphs/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ./graphs/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ./graphs/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ./graphs/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ./graphs/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ./graphs/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ./graphs/microone.tx  1 4096
+	@ ./build/gpu_parallel.out ./graphs/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ./graphs/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ./graphs/bigone.txt   1 32688
 
 create:
 	@ python3 graph_generator.py --nodes    70 --edges    6000 --output ./graphs/basic1.txt --weight-range 1
