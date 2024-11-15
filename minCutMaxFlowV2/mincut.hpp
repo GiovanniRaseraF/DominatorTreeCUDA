@@ -14,9 +14,6 @@
 #include <thread>
 #include <chrono>
 
-// Just for timing
-using namespace std::chrono_literals;
-
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
@@ -127,8 +124,9 @@ namespace parallel {
             (cudaMemcpy(gpu_rdestinations,  rdestinations,  numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_bflows,         bflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
-            
-            //auto start = std::chrono::ti
+
+            using namespace std::chrono; 
+            auto start = steady_clock::now();
             // algo start
             while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 // Update GPU values
@@ -158,6 +156,8 @@ namespace parallel {
                     excessTotal, 
                     mark,       scanned);
             }
+            auto end = steady_clock::now();
+            std::cout << "### " << (end-start).count() << " -" << std::endl;
 
             // Clear
             (cudaFree(gpu_height));
