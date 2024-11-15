@@ -1,3 +1,5 @@
+// Author: Giovanni Rasera
+
 #include <iostream>
 #include <string>
 #include <sstream>

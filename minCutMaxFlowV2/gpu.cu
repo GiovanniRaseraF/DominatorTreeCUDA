@@ -1,3 +1,5 @@
+// Author: Giovanni Rasera
+
 #include "mincut.hpp"
 #include <stdarg.h>
 #include "tests.hpp"

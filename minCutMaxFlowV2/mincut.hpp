@@ -127,7 +127,8 @@ namespace parallel {
             (cudaMemcpy(gpu_rdestinations,  rdestinations,  numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_bflows,         bflow,          numEdges*sizeof(int), cudaMemcpyHostToDevice));
             (cudaMemcpy(gpu_flow_index,     flow_index,     numEdges*sizeof(int), cudaMemcpyHostToDevice));
-
+            
+            //auto start = std::chrono::ti
             // algo start
             while((excess_flow[source] + excess_flow[sink]) < *excessTotal){
                 // Update GPU values
