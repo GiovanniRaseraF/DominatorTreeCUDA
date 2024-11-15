@@ -162,12 +162,10 @@ namespace parallel {
             auto nanos      = duration_cast<nanoseconds>(end-start).count();
             auto micros     = duration_cast<microseconds>(end-start).count();
             auto millis     = duration_cast<milliseconds>(end-start).count();
-            auto seconds    = duration_cast<seconds>(end-start).count();
             std::cout << "### " 
                 << nanos    << " nanos, " 
                 << micros   << " micros, " 
                 << millis   << " millis, " 
-                << seconds  << " seconds, " 
                 << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
 
             // Clear
