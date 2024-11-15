@@ -11,7 +11,7 @@ test:
 	@ ./build/gpu_parallel.out ./graphs/basic4.txt   1 512
 	@ ./build/gpu_parallel.out ./graphs/basic5.txt   1 1024
 	@ ./build/gpu_parallel.out ./graphs/nanoone.txt  1 2048
-	@ ./build/gpu_parallel.out ./graphs/microone.tx  1 4096
+	@ ./build/gpu_parallel.out ./graphs/microone.txt  1 4096
 	@ ./build/gpu_parallel.out ./graphs/minione.txt  1 8172
 	@ ./build/gpu_parallel.out ./graphs/midone.txt   1 16344
 	@ ./build/gpu_parallel.out ./graphs/bigone.txt   1 32688
