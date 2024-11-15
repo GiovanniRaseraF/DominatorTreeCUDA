@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     try{
         source = atoi(argv[2]);
         sink = atoi(argv[3]);
-    }catch(auto &e){
+    }catch(...){
         std::cout << "./" << argv[0] << " ./path_to_graph/graph.txt source sink" << std::endl;
         return EXIT_FAILURE;
     }
