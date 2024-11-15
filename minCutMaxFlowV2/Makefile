@@ -5,7 +5,7 @@ gpu:
 
 test:
 	@ make gpu
-	@ ./build/gpu_parallel.out ./graphs/bigone.txt 1 50
+	@ ./build/gpu_parallel.out ./graphs/bigone.txt 1 2
 
 p:
 	git add . && git commit -m "automatic: data exchange" && git push
