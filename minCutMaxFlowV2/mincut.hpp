@@ -157,6 +157,30 @@ namespace parallel {
             }
             auto end = high_resolution_clock::now();
 
+            printf("h: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", heights[i]);
+            }
+            printf("};\n");
+
+            printf("e: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", excess_flow[i]);
+            }
+            printf("};\n");
+
+            printf("ff: {");
+            for (int i=0; i < E; i++) {
+                printf("%d, ", fflow[i]);
+            }
+            printf("};\n");
+
+            printf("bf: {");
+            for (int i=0; i < E; i++) {
+                printf("%d, ", bflow[i]);
+            }
+            printf("};\n");
+
             // Info Print
             auto nanos      = duration_cast<nanoseconds>(end-start).count();
             auto micros     = duration_cast<microseconds>(end-start).count();
@@ -164,14 +188,6 @@ namespace parallel {
             std::cout << "### " 
                 << nanos    << ", " << micros   << ", " << millis   << ", " 
                 << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
-
-            std::cout << "\n\n\n";
-            // Print excess flow
-            for(int i = 0; i < V; i++){
-                std::cout << mark[i] << ", ";
-            }
-            std::cout << "\n\n\n";
-
 
             // Clear
             (cudaFree(gpu_height));
