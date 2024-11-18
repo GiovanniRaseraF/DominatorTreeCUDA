@@ -56,7 +56,7 @@ namespace loader{
             ss >> from >> to >> cap;
             // basic one 
             adjacency_list[from*2+1].push_back(to*2);
-            cap_list[from*2+1].push_back(num_nodes*2);
+            cap_list[from*2+1].push_back((num_edges+num_nodes)*2);
             cnt++;
         }
 
