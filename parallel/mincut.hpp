@@ -197,7 +197,7 @@ namespace parallel {
 
             printf("bf: {");
             for (int i=0; i < E; i++) {
-                if(bflow[i] == fflow[i] ){//&& fflow[i] != 0 && bflow[i] != 0){
+                if(bflow[i] == 1 ){//&& fflow[i] != 0 && bflow[i] != 0){
                     printf("%d, ", i/2);
                 }
             }
