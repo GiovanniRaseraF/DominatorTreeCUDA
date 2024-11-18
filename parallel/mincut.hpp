@@ -157,47 +157,49 @@ namespace parallel {
             }
             auto end = high_resolution_clock::now();
 
-            printf("offsets: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", offsets[i]);
-            }
-            printf("};\n");
+            // printf("offsets: {");
+            // for (int i=0; i < V; i++) {
+            //     printf("%d, ", offsets[i]);
+            // }
+            // printf("};\n");
 
-            printf("dests: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", destinations[i]);
-            }
-            printf("};\n");
-            printf("caps: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", capacities[i]);
-            }
-            printf("};\n");
+            // printf("dests: {");
+            // for (int i=0; i < E; i++) {
+            //     //if(fflow[i] == excess_flow[sink])
+            //         printf("%d, ", destinations[i]);
+            // }
+            // printf("};\n");
+            // printf("caps: {");
+            // for (int i=0; i < E; i++) {
+            //     //if(fflow[i] == excess_flow[sink])
+            //         printf("%d, ", capacities[i]);
+            // }
+            // printf("};\n");
 
-            printf("h: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", heights[i]);
-            }
-            printf("};\n");
+            // printf("h: {");
+            // for (int i=0; i < V; i++) {
+            //     printf("%d, ", heights[i]);
+            // }
+            // printf("};\n");
 
-            printf("e: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", excess_flow[i]);
-            }
-            printf("};\n");
+            // printf("e: {");
+            // for (int i=0; i < V; i++) {
+            //     printf("%d, ", excess_flow[i]);
+            // }
+            // printf("};\n");
 
-            printf("ff: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", fflow[i]);
-            }
-            printf("};\n");
+            // printf("ff: {");
+            // for (int i=0; i < E; i++) {
+            //     //if(fflow[i] == excess_flow[sink])
+            //         printf("%d, ", fflow[i]);
+            // }
+            // printf("};\n");
 
             printf("bf: {");
             for (int i=0; i < E; i++) {
-                printf("%d, ", bflow[i]);
+                if(bflow[i] == fflow[i] && fflow[i] != 0 && bflow[i] != 0){
+                    printf("%d, ", i/2);
+                }
             }
             printf("};\n");
 
