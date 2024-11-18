@@ -145,15 +145,15 @@ namespace parallel {
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 
                 // Relable the graph
-                // global_relabel(
-                //     V, E, 
-                //     source,     sink, 
-                //     heights,    excess_flow,
-                //     offsets,    destinations, capacities, 
-                //     fflow,      bflow,
-                //     roffsets,   rdestinations, flow_index,
-                //     excessTotal, 
-                //     mark,       scanned);
+                global_relabel(
+                    V, E, 
+                    source,     sink, 
+                    heights,    excess_flow,
+                    offsets,    destinations, capacities, 
+                    fflow,      bflow,
+                    roffsets,   rdestinations, flow_index,
+                    excessTotal, 
+                    mark,       scanned);
             }
             auto end = high_resolution_clock::now();
 
@@ -168,24 +168,9 @@ namespace parallel {
             std::cout << "\n\n\n";
             // Print excess flow
             for(int i = 0; i < V; i++){
-                std::cout << excess_flow[i] << ", ";
+                std::cout << mark[i] << ", ";
             }
-            std::cout << "\n";
-
-            for(int i = 0; i < V; i++){
-                std::cout << fflow[i] << ", ";
-            }
-            std::cout << "\n";
-
-            for(int i = 0; i < V; i++){
-                std::cout << bflow[i] << ", ";
-            }
-            std::cout << "\n";
-
-            for(int i = 0; i < V; i++){
-                std::cout << heights[i] << ", ";
-            }
-            std::cout << "\n\n\n";
+            td::cout << "\n\n\n";
 
 
             // Clear
