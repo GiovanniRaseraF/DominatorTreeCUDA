@@ -123,7 +123,7 @@ namespace parallel {
                                     // Here we can add the information on the node selected for de deletion
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
                                     atomicSub(&gpu_excess_flow[u], d);
-                                    print("%d -> %d\n", u_to_cut, v_to_cut);
+                                    printf("%d -> %d\n", u_to_cut, v_to_cut);
                                 }else{
                                     if (e_dash > gpu_bflows[v_index]){
                                         d = gpu_bflows[v_index];
@@ -138,7 +138,7 @@ namespace parallel {
                                     /* Update Excess Flow */
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
                                     atomicSub(&gpu_excess_flow[u], d);
-                                    print("%d -> %d\n", u_to_cut, v_to_cut);
+                                    printf("%d -> %d\n", u_to_cut, v_to_cut);
                                 }
                             }else{
                                 gpu_height[u] = h_dash + 1;
