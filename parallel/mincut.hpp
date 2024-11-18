@@ -157,30 +157,30 @@ namespace parallel {
             }
             auto end = high_resolution_clock::now();
 
-            // printf("h: {");
-            // for (int i=0; i < V; i++) {
-            //     printf("%d, ", heights[i]);
-            // }
-            // printf("};\n");
+            printf("h: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", heights[i]);
+            }
+            printf("};\n");
 
-            // // printf("e: {");
-            // // for (int i=0; i < V; i++) {
-            // //     printf("%d, ", excess_flow[i]);
-            // // }
-            // // printf("};\n");
+            printf("e: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", excess_flow[i]);
+            }
+            printf("};\n");
 
-            // printf("ff: {");
-            // for (int i=0; i < E; i++) {
-            //     if(fflow[i] == excess_flow[sink])
-            //         printf("%d, ", fflow[i]);
-            // }
-            // printf("};\n");
+            printf("ff: {");
+            for (int i=0; i < E; i++) {
+                if(fflow[i] == excess_flow[sink])
+                    printf("%d, ", fflow[i]);
+            }
+            printf("};\n");
 
-            // // printf("bf: {");
-            // // for (int i=0; i < E; i++) {
-            // //     printf("%d, ", bflow[i]);
-            // // }
-            // // printf("};\n");
+            printf("bf: {");
+            for (int i=0; i < E; i++) {
+                printf("%d, ", bflow[i]);
+            }
+            printf("};\n");
 
             // Info Print
             auto nanos      = duration_cast<nanoseconds>(end-start).count();
