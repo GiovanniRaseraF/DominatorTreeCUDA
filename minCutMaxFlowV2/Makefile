@@ -8,7 +8,21 @@ custom_params:
 	@ g++ -o  ./build/$@_parallel.out ./build/nvcc_$@.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
 test:
+	# BLS=2 THS=512
 	@ make gpu
+	@ ./build/gpu_parallel.out ./graphs/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ./graphs/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ./graphs/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ./graphs/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ./graphs/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ./graphs/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ./graphs/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ./graphs/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ./graphs/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ./graphs/bigone.txt   1 32688
+
+	# BLS=4 THS=256
+	@ make custom_params BLS=4 THS=256
 	@ ./build/gpu_parallel.out ./graphs/basic1.txt   1 64
 	@ ./build/gpu_parallel.out ./graphs/basic2.txt   1 128
 	@ ./build/gpu_parallel.out ./graphs/basic3.txt   1 256
