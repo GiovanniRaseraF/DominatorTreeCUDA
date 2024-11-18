@@ -169,6 +169,7 @@ namespace parallel {
             for(int i = 0; i < V; i++){
                 std::cout << excess_flow[i] << ", ";
             }
+            std::cout << "\n";
 
             // Clear
             (cudaFree(gpu_height));
