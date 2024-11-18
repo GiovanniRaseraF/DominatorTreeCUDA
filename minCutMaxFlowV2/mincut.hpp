@@ -170,7 +170,7 @@ namespace parallel {
             for(int i = 0; i < V; i++){
                 std::cout << mark[i] << ", ";
             }
-            td::cout << "\n\n\n";
+            std::cout << "\n\n\n";
 
 
             // Clear
