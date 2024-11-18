@@ -67,11 +67,17 @@ namespace parallel {
             cudaGetDevice(&device);
             cudaDeviceProp deviceProp;
             cudaGetDeviceProperties(&deviceProp, device);
-
             dim3 num_blocks(deviceProp.multiProcessorCount * numBlocksPerSM);
             dim3 block_size(numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
-            
+
+            // header 
+            std::cout << "### " 
+                << " nanos, " 
+                << " micros, " 
+                << " millis, " 
+                << "V" << ", " << "E" << ", " << "source" << ", " << "sink" << ", " << "maxFlow" << std::endl;
+
             // Initilize the flow
             preflow(
                 V, source, sink, heights, excess_flow, 
@@ -163,9 +169,7 @@ namespace parallel {
             auto micros     = duration_cast<microseconds>(end-start).count();
             auto millis     = duration_cast<milliseconds>(end-start).count();
             std::cout << "### " 
-                << nanos    << " nanos, " 
-                << micros   << " micros, " 
-                << millis   << " millis, " 
+                << nanos    << ", " << micros   << ", " << millis   << ", " 
                 << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
 
             // Clear
