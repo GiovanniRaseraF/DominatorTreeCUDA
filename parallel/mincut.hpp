@@ -201,6 +201,17 @@ namespace parallel {
             }
             printf("};\n");
 
+            printf("bf: {");
+            int count = 0;
+            for (int i=0; i < E; i++) {
+                if(bflow[i] == 1 && fflow[i] == 0){
+                    print("")
+                    count++;
+                }
+                //printf("%d, ", bflow[i]);
+            }
+            printf("%d\n", count);
+
             // Info Print
             auto nanos      = duration_cast<nanoseconds>(end-start).count();
             auto micros     = duration_cast<microseconds>(end-start).count();
