@@ -191,13 +191,13 @@ namespace parallel {
 
             printf("ff: {");
             for (int i=0; i < E; i++) {
-                printf("%d, ", fflow[i]);
+                std::cout << std::setw(3) << fflow[i];
             }
             printf("};\n");
 
             printf("bf: {");
             for (int i=0; i < E; i++) {
-                printf("%d, ", bflow[i]);
+                std::cout << std::setw(3) << bflow[i];
             }
             printf("};\n");
 
