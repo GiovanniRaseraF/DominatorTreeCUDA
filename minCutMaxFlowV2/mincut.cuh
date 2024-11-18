@@ -25,10 +25,6 @@ using namespace cooperative_groups;
 namespace cg = cooperative_groups;
 
 // macros declared
-// #define numBlocksPerSM 1
-// #define numThreadsPerBlock 1024
-// #define numBlocksPerSM 2
-// #define numThreadsPerBlock 512
 #define numBlocksPerSM BLS
 #define numThreadsPerBlock THS
 #define INF V
