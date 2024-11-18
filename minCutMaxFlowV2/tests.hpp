@@ -29,41 +29,41 @@ void run(std::string filename, int from, int to){
     );
 
     // Preparing all pointer for cpu graph
-    int *offsets = nullptr;
-    int *roffsets = nullptr;
-    int *destinations = nullptr;
-    int *rdestinations = nullptr;
-    int *capacities = nullptr;
-    int *rcapacities = nullptr;
-    int *forward_flows = nullptr;
+    int *offsets        = nullptr;
+    int *roffsets       = nullptr;
+    int *destinations   = nullptr;
+    int *rdestinations  = nullptr;
+    int *capacities     = nullptr;
+    int *rcapacities    = nullptr;
+    int *forward_flows  = nullptr;
     int *backward_flows = nullptr;
-    int *flow_index = nullptr;
-    int *heights = nullptr;
-    int *excesses = nullptr;
+    int *flow_index     = nullptr;
+    int *heights        = nullptr;
+    int *excesses       = nullptr;
 
     // Loading the data from file to a CSR representation
     loader::buildFromCSRGraph(
-        num_nodes,num_edges,
+        num_nodes,          num_edges,
         num_edges_processed,
-        source_node,sink_node,
-        graph_destinations,graph_offsets,
-        graph_capacities,offsets,
-        destinations,capacities,
-        rcapacities,forward_flows,
-        roffsets,rdestinations,
-        backward_flows,flow_index,
-        heights,excesses
+        source_node,    sink_node,
+        graph_destinations, graph_offsets,
+        graph_capacities,   offsets,
+        destinations,       capacities,
+        rcapacities,        forward_flows,
+        roffsets,           rdestinations,
+        backward_flows,     flow_index,
+        heights,            excesses
     );
 
     // Find MinCut
     auto micCutValue = parallel::GoldbergTarjan::minCutMaxFlow(
-        from, to,
-        offsets,roffsets,
-        destinations,rdestinations,
-        capacities,rcapacities,
-        flow_index,heights,
-        forward_flows,backward_flows,
-        excesses,num_nodes,num_edges
+        from,               to,
+        offsets,            roffsets,
+        destinations,       rdestinations,
+        capacities,         rcapacities,
+        flow_index,         heights,
+        forward_flows,      backward_flows,
+        excesses,num_nodes, num_edges
     );
 
     // Clear

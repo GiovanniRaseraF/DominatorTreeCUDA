@@ -37,14 +37,18 @@ namespace cg = cooperative_groups;
 // implementation
 namespace parallel {
     namespace GoldbergTarjan {
-        __global__ void push_relabel_kernel(int V, int source, int sink, int *gpu_height, int *gpu_excess_flow,
-                                            int *gpu_offsets, int *gpu_destinations, int *gpu_capacities, int *gpu_fflows, int *gpu_bflows,
-                                            int *gpu_roffsets, int *gpu_rdestinations, int *gpu_flow_idx){
-            // u'th node is operated on by the u'th thread
+        __global__ void push_relabel_kernel(
+            int V, 
+            int source,             int sink, 
+            int *gpu_height,        int *gpu_excess_flow,
+            int *gpu_offsets,       int *gpu_destinations, 
+            int *gpu_capacities,    
+            int *gpu_fflows,        int *gpu_bflows,
+            int *gpu_roffsets,      int *gpu_rdestinations, 
+            int *gpu_flow_idx
+        ){
             grid_group grid = this_grid();
             unsigned int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-
-            // cycle value is set to KERNEL_CYCLES as required
             int cycle = (KERNEL_CYCLES);
 
             while (cycle > 0){
@@ -53,8 +57,14 @@ namespace parallel {
                     int v_index = -1; // The index of the edge of u to v_dash
                     bool vinReverse = false;
 
+                    // To find node cut !!
+                    // This will give us the information on the edge to cut
+                    int u_to_cut = -1;
+                    int v_to_cut = -1;
+
                     //  Find the activate nodes
                     if (gpu_excess_flow[u] > 0 && gpu_height[u] < V && u != source && u != sink){
+                        u_to_cut = u;
                         e_dash = gpu_excess_flow[u];
                         h_dash = INF;
                         v_dash = -1; // Modify from NULL to -1
@@ -63,9 +73,11 @@ namespace parallel {
                         // Find (u, v) in both CSR format and revesred CSR format
                         for (int i = gpu_offsets[u]; i < gpu_offsets[u + 1]; i++){
                             v = gpu_destinations[i];
+
                             if (gpu_fflows[i] > 0){
                                 h_double_dash = gpu_height[v];
                                 if (h_double_dash < h_dash){
+                                    v_to_cut = v;
                                     v_dash = v;
                                     h_dash = h_double_dash;
                                     v_index = i;
@@ -81,6 +93,7 @@ namespace parallel {
                             if (gpu_bflows[flow_idx] > 0){
                                 h_double_dash = gpu_height[v];
                                 if (h_double_dash < h_dash){
+                                    v_to_cut = v;
                                     v_dash = v;
                                     h_dash = h_double_dash;
                                     v_index = flow_idx; // Find the bug here!!!
@@ -103,13 +116,14 @@ namespace parallel {
                                         d = e_dash;
                                     }
 
-                                    /* Push flow to residual graph */
+                                    // Push flow to residual graph
                                     atomicAdd(&gpu_bflows[v_index], d);
                                     atomicSub(&gpu_fflows[v_index], d);
 
-                                    /* Update Excess Flow */
+                                    // Here we can add the information on the node selected for de deletion
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
                                     atomicSub(&gpu_excess_flow[u], d);
+                                    print("%d -> %d\n", u_to_cut, v_to_cut);
                                 }else{
                                     if (e_dash > gpu_bflows[v_index]){
                                         d = gpu_bflows[v_index];
@@ -124,6 +138,7 @@ namespace parallel {
                                     /* Update Excess Flow */
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
                                     atomicSub(&gpu_excess_flow[u], d);
+                                    print("%d -> %d\n", u_to_cut, v_to_cut);
                                 }
                             }else{
                                 gpu_height[u] = h_dash + 1;
