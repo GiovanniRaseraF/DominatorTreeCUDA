@@ -4,8 +4,8 @@ gpu:
 	@ g++ -o  ./build/$@_parallel.out ./build/nvcc_$@.o -std=c++23 -DBLS=2 -DTHS=512 -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
 custom_params:
-	@ nvcc -c -I/usr/local/cuda/include $@.cu -std=c++17 -DBLS=${BLS} -DTHS=${THS} -o ./build/nvcc_$@.o
-	@ g++ -o  ./build/$@_parallel.out ./build/nvcc_$@.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -L/usr/local/cuda/lib64 -lcusparse -lcudart
+	@ nvcc -c -I/usr/local/cuda/include gpu.cu -std=c++17 -DBLS=${BLS} -DTHS=${THS} -o ./build/nvcc_gpu.o
+	@ g++ -o  ./build/gpu_parallel.out ./build/nvcc_gpu.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
 test:
 	# BLS=2 THS=512
