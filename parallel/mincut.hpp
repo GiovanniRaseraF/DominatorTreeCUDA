@@ -171,7 +171,7 @@ namespace parallel {
 
             printf("ff: {");
             for (int i=0; i < E; i++) {
-                if(fflow[i] == excess_flow[sink])
+                //if(fflow[i] == excess_flow[sink])
                     printf("%d, ", fflow[i]);
             }
             printf("};\n");
