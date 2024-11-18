@@ -40,19 +40,29 @@ namespace loader{
         std::string line;
         std::unordered_map<int, std::vector<int>> adjacency_list;
         std::unordered_map<int, std::vector<int>> cap_list;
+
         int cnt = 0;
         while (std::getline(file, line)){
             std::stringstream ss(line);
-            if (line.find("# Nodes:") != std::string::npos)
+            if (line.find("# Nodes:") != std::string::npos){
                 sscanf(line.c_str(), "# Nodes: %d Edges: %d", &num_nodes, &num_edges);
+                num_edges += num_nodes;
+                num_nodes *= 2;
+            }
 
             if (ss.str()[0] == '#')
                 continue;
             int from, to, cap;
             ss >> from >> to >> cap;
-            adjacency_list[from].push_back(to);
-            cap_list[from].push_back(cap);
+            // basic one 
+            adjacency_list[from*2+1].push_back(to*2);
+            cap_list[from*2+1].push_back(num_nodes*2);
             cnt++;
+        }
+
+        for(int i = 0; i < num_nodes/2; i++){
+            adjacency_list[from*2].push_back(from*2+1);
+            cap_list[from*2].push_back(1);
         }
 
         // num_nodes = adjacency_list.size();
