@@ -157,6 +157,25 @@ namespace parallel {
             }
             auto end = high_resolution_clock::now();
 
+            printf("offsets: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", offsetof[i]);
+            }
+            printf("};\n");
+            
+            printf("dests: {");
+            for (int i=0; i < E; i++) {
+                //if(fflow[i] == excess_flow[sink])
+                    printf("%d, ", destinations[i]);
+            }
+            printf("};\n");
+            printf("caps: {");
+            for (int i=0; i < E; i++) {
+                //if(fflow[i] == excess_flow[sink])
+                    printf("%d, ", capacities[i]);
+            }
+            printf("};\n");
+
             printf("h: {");
             for (int i=0; i < V; i++) {
                 printf("%d, ", heights[i]);
