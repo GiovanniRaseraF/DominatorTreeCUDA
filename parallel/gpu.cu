@@ -25,5 +25,5 @@ int main(int argc, char **argv){
         return EXIT_FAILURE;
     }
 
-    run(filename, source, sink);
+    run(filename, source*2, sink*2);
 }
