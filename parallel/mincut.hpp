@@ -159,10 +159,10 @@ namespace parallel {
 
             printf("offsets: {");
             for (int i=0; i < V; i++) {
-                printf("%d, ", offsetof[i]);
+                printf("%d, ", offsets[i]);
             }
             printf("};\n");
-            
+
             printf("dests: {");
             for (int i=0; i < E; i++) {
                 //if(fflow[i] == excess_flow[sink])
