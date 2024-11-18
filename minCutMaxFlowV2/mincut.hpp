@@ -180,6 +180,11 @@ namespace parallel {
             for(int i = 0; i < V; i++){
                 std::cout << bflow[i] << ", ";
             }
+            std::cout << "\n";
+
+            for(int i = 0; i < V; i++){
+                std::cout << heights[i] << ", ";
+            }
             std::cout << "\n\n\n";
 
 
