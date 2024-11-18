@@ -55,8 +55,8 @@ namespace parallel {
 
                     // To find node cut !!
                     // This will give us the information on the edge to cut
-                    int u_to_cut = -1;
-                    int v_to_cut = -1;
+                    // int u_to_cut = -1;
+                    // int v_to_cut = -1;
 
                     //  Find the activate nodes
                     if (gpu_excess_flow[u] > 0 && gpu_height[u] < V && u != source && u != sink){
@@ -73,7 +73,7 @@ namespace parallel {
                             if (gpu_fflows[i] > 0){
                                 h_double_dash = gpu_height[v];
                                 if (h_double_dash < h_dash){
-                                    v_to_cut = v;
+                                    // v_to_cut = v;
                                     v_dash = v;
                                     h_dash = h_double_dash;
                                     v_index = i;
@@ -89,7 +89,7 @@ namespace parallel {
                             if (gpu_bflows[flow_idx] > 0){
                                 h_double_dash = gpu_height[v];
                                 if (h_double_dash < h_dash){
-                                    v_to_cut = v;
+                                    // v_to_cut = v;
                                     v_dash = v;
                                     h_dash = h_double_dash;
                                     v_index = flow_idx; // Find the bug here!!!
