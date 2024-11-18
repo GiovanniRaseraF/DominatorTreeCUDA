@@ -165,11 +165,23 @@ namespace parallel {
                 << nanos    << ", " << micros   << ", " << millis   << ", " 
                 << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
 
+            std::cout << "\n\n\n";
             // Print excess flow
             for(int i = 0; i < V; i++){
                 std::cout << excess_flow[i] << ", ";
             }
             std::cout << "\n";
+
+            for(int i = 0; i < V; i++){
+                std::cout << fflow[i] << ", ";
+            }
+            std::cout << "\n";
+
+            for(int i = 0; i < V; i++){
+                std::cout << bflow[i] << ", ";
+            }
+            std::cout << "\n\n\n";
+
 
             // Clear
             (cudaFree(gpu_height));
