@@ -161,21 +161,21 @@ namespace parallel {
             for (int i=0; i < V; i++) {
                 printf("%d, ", offsets[i]);
             }
-            printf("};\n");
+            printf("};\n\n\n");
 
             printf("dests: {");
             for (int i=0; i < E; i++) {
                 //if(fflow[i] == excess_flow[sink])
                     printf("%d, ", destinations[i]);
             }
-            printf("};\n");
+            printf("};\n\n\n");
 
             printf("caps: {");
             for (int i=0; i < E; i++) {
                 //if(fflow[i] == excess_flow[sink])
                     printf("%d, ", capacities[i]);
             }
-            printf("};\n");
+            printf("};\n\n\n");
 
             printf("h: {");
             for (int i=0; i < V; i++) {
