@@ -169,6 +169,7 @@ namespace parallel {
             //         printf("%d, ", destinations[i]);
             // }
             // printf("};\n");
+            
             // printf("caps: {");
             // for (int i=0; i < E; i++) {
             //     //if(fflow[i] == excess_flow[sink])
@@ -176,30 +177,27 @@ namespace parallel {
             // }
             // printf("};\n");
 
-            // printf("h: {");
-            // for (int i=0; i < V; i++) {
-            //     printf("%d, ", heights[i]);
-            // }
-            // printf("};\n");
+            printf("h: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", heights[i]);
+            }
+            printf("};\n");
 
-            // printf("e: {");
-            // for (int i=0; i < V; i++) {
-            //     printf("%d, ", excess_flow[i]);
-            // }
-            // printf("};\n");
+            printf("e: {");
+            for (int i=0; i < V; i++) {
+                printf("%d, ", excess_flow[i]);
+            }
+            printf("};\n");
 
-            // printf("ff: {");
-            // for (int i=0; i < E; i++) {
-            //     //if(fflow[i] == excess_flow[sink])
-            //         printf("%d, ", fflow[i]);
-            // }
-            // printf("};\n");
+            printf("ff: {");
+            for (int i=0; i < E; i++) {
+                printf("%d, ", fflow[i]);
+            }
+            printf("};\n");
 
             printf("bf: {");
             for (int i=0; i < E; i++) {
-                if(bflow[i] == 1 ){//&& fflow[i] != 0 && bflow[i] != 0){
-                    printf("%d, ", i/2);
-                }
+                printf("%d, ", bflow[i]);
             }
             printf("};\n");
 
