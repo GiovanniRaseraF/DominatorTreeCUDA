@@ -60,7 +60,7 @@ namespace parallel {
 
                     //  Find the activate nodes
                     if (gpu_excess_flow[u] > 0 && gpu_height[u] < V && u != source && u != sink){
-                        u_to_cut = u;
+                        //u_to_cut = u;
                         e_dash = gpu_excess_flow[u];
                         h_dash = INF;
                         v_dash = -1; // Modify from NULL to -1
@@ -118,7 +118,6 @@ namespace parallel {
 
                                     // Here we can add the information on the node selected for de deletion
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
-                                    
                                     atomicSub(&gpu_excess_flow[u], d);
                                 }else{
                                     if (e_dash > gpu_bflows[v_index]){
