@@ -71,13 +71,6 @@ namespace parallel {
             dim3 block_size(numThreadsPerBlock);
             size_t sharedMemSize = 3 * block_size.x * sizeof(int);
 
-            // header 
-            std::cout << "### " 
-                << " nanos, " 
-                << " micros, " 
-                << " millis, " 
-                << "V" << ", " << "E" << ", " << "source" << ", " << "sink" << ", " << "maxFlow" << std::endl;
-
             // Initilize the flow
             preflow(
                 V, source, sink, heights, excess_flow, 
