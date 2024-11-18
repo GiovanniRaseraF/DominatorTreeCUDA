@@ -61,8 +61,8 @@ namespace loader{
         }
 
         for(int i = 0; i < num_nodes/2; i++){
-            adjacency_list[from*2].push_back(from*2+1);
-            cap_list[from*2].push_back(1);
+            adjacency_list[i*2].push_back(i*2+1);
+            cap_list[i*2].push_back(1);
         }
 
         // num_nodes = adjacency_list.size();
