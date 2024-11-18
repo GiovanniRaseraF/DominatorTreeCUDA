@@ -27,6 +27,62 @@ void generateFromStartToFinish(Graph &graph){
     }
 }
 
+
+
+void testFile(std::string filename, int source, int to){
+    std::cout << "\nTest from file" << std::endl;
+    int VNodes = 0;
+    int Eedges = 0;
+
+    std::ifstream file(filename);
+    if (file.fail()){
+        fprintf(stderr, "\"%s\" does not exist!\n", filename.c_str());
+        exit(1);
+    }
+
+    std::string line;
+    std::getline(file, line);
+    std::stringstream ss(line);
+    if (line.find("# Nodes:") != std::string::npos)
+        sscanf(line.c_str(), "# Nodes: %d Edges: %d", &VNodes, &Eedges);
+
+    Graph rGraph(VNodes);
+    Graph graph(VNodes);
+
+    justInitGraph(graph, rGraph);
+
+    while (std::getline(file, line)){
+        std::stringstream ss(line);
+        int from, to, cap;
+        ss >> from >> to >> cap;
+        graph[from][to] = cap;
+    }
+
+    Graph rGraphPrime(VNodes*2);
+    Graph graphPrime(VNodes*2);   
+
+    justInitGraph(graphPrime, rGraphPrime);
+
+    int sourcePrime = source; 
+    int toPrime = to*2;
+
+    // build G'
+    sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
+    // we need to pay attention to the start, because the cut must start form v'odd
+    auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
+    //auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
+
+    // print result
+    // std::cout << "Nodes to remove in G are: " << std::endl;
+    // for(auto r : result){
+    //     int from = std::get<0>(r);
+    //     int to = std::get<1>(r);
+
+    //     std::cout << from / 2 << std::endl; 
+    // }
+    std::cout << "maxFlow: " << result.size() << std::endl;
+}
+
 void test1(){
     std::cout << "\nTest with V elements and a connection from 0 to V-1" << std::endl;
     Graph rGraph(V);
@@ -302,61 +358,5 @@ void test7(){
         int to = std::get<1>(r);
 
         std::cout << from << " --> " << to << std::endl;
-    }
-}
-
-void testFile(std::string filename, int source, int to){
-    std::cout << "\nTest from file" << std::endl;
-    int VNodes = 0;
-    int Eedges = 0;
-
-    std::ifstream file(filename);
-    if (file.fail()){
-        fprintf(stderr, "\"%s\" does not exist!\n", filename.c_str());
-        exit(1);
-    }
-
-    std::string line;
-    std::getline(file, line);
-    std::stringstream ss(line);
-    if (line.find("# Nodes:") != std::string::npos)
-        sscanf(line.c_str(), "# Nodes: %d Edges: %d", &VNodes, &Eedges);
-
-    Graph rGraph(VNodes);
-    Graph graph(VNodes);
-
-
-    int cnt = 0;
-    while (std::getline(file, line)){
-        std::stringstream ss(line);
-        int from, to, cap;
-        ss >> from >> to >> cap;
-        graph[from][to] = cap;
-        //std::cout << graph[from][to] << std::endl;
-        cnt++;
-    }
-
-    justInitGraph(graph, rGraph);
-    Graph rGraphPrime(VNodes*2);
-    Graph graphPrime(VNodes*2);   
-
-    justInitGraph(graphPrime, rGraphPrime);
-
-    int sourcePrime = source; 
-    int toPrime = to*2;
-    
-
-    // build G'
-    sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
-    // we need to pay attention to the start, because the cut must start form v'odd
-    auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
-
-    // print result
-    std::cout << "Nodes to remove in G are: " << std::endl;
-    for(auto r : result){
-        int from = std::get<0>(r);
-        int to = std::get<1>(r);
-
-        std::cout << from / 2 << std::endl; 
     }
 }
