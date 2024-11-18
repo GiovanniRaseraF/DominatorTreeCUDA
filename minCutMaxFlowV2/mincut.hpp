@@ -146,15 +146,15 @@ namespace parallel {
                 (cudaMemcpy(bflow,          gpu_bflows,         E*sizeof(int), cudaMemcpyDeviceToHost));
                 
                 // Relable the graph
-                // global_relabel(
-                //     V, E, 
-                //     source,     sink, 
-                //     heights,    excess_flow,
-                //     offsets,    destinations, capacities, 
-                //     fflow,      bflow,
-                //     roffsets,   rdestinations, flow_index,
-                //     excessTotal, 
-                //     mark,       scanned);
+                global_relabel(
+                    V, E, 
+                    source,     sink, 
+                    heights,    excess_flow,
+                    offsets,    destinations, capacities, 
+                    fflow,      bflow,
+                    roffsets,   rdestinations, flow_index,
+                    excessTotal, 
+                    mark,       scanned);
             }
             auto end = high_resolution_clock::now();
 
