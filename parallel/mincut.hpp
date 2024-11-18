@@ -157,59 +157,59 @@ namespace parallel {
             }
             auto end = high_resolution_clock::now();
 
-            printf("offsets: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", offsets[i]);
-            }
-            printf("};\n\n\n");
+            // printf("offsets: {");
+            // for (int i=0; i < V; i++) {
+            //     printf("%d, ", offsets[i]);
+            // }
+            // printf("};\n\n\n");
 
-            printf("dests: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", destinations[i]);
-            }
-            printf("};\n\n\n");
+            // printf("dests: {");
+            // for (int i=0; i < E; i++) {
+            //     //if(fflow[i] == excess_flow[sink])
+            //         printf("%d, ", destinations[i]);
+            // }
+            // printf("};\n\n\n");
 
-            printf("caps: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", capacities[i]);
-            }
-            printf("};\n\n\n");
+            // printf("caps: {");
+            // for (int i=0; i < E; i++) {
+            //     //if(fflow[i] == excess_flow[sink])
+            //         printf("%d, ", capacities[i]);
+            // }
+            // printf("};\n\n\n");
 
-            printf("h: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", heights[i]);
-            }
-            printf("};\n");
+            // printf("h: {");
+            // for (int i=0; i < V; i++) {
+            //     printf("%d, ", heights[i]);
+            // }
+            // printf("};\n");
 
-            printf("e: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", excess_flow[i]);
-            }
-            printf("};\n");
+            // printf("e: {");
+            // for (int i=0; i < V; i++) {
+            //     printf("%d, ", excess_flow[i]);
+            // }
+            // printf("};\n");
 
-            printf("ff: {");
-            for (int i=0; i < E; i++) {
-                std::cout << std::setw(5) << fflow[i];
-            }
-            printf("};\n");
+            // printf("ff: {");
+            // for (int i=0; i < E; i++) {
+            //     std::cout << std::setw(5) << fflow[i];
+            // }
+            // printf("};\n");
 
-            printf("bf: {");
-            for (int i=0; i < E; i++) {
-                std::cout << std::setw(5) << bflow[i];
-            }
-            printf("};\n");
+            // printf("bf: {");
+            // for (int i=0; i < E; i++) {
+            //     std::cout << std::setw(5) << bflow[i];
+            // }
+            // printf("};\n");
 
-            printf("bf: {");
-            int count = 0;
-            for (int i=0; i < E; i++) {
-                if(capacities[i] == 1 && bflow[i] == 1 && fflow[i] == 0 && i != source && i != sink){
-                    count++;
-                }
-                //printf("%d, ", bflow[i]);
-            }
-            printf("%d\n", count);
+            // printf("bf: {");
+            // int count = 0;
+            // for (int i=0; i < E; i++) {
+            //     if(capacities[i] == 1 && bflow[i] == 1 && fflow[i] == 0 && i != source && i != sink){
+            //         count++;
+            //     }
+            //     //printf("%d, ", bflow[i]);
+            // }
+            // printf("%d\n", count);
 
             // Info Print
             auto nanos      = duration_cast<nanoseconds>(end-start).count();
