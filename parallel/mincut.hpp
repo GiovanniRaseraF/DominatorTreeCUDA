@@ -205,7 +205,6 @@ namespace parallel {
             int count = 0;
             for (int i=0; i < E; i++) {
                 if(bflow[i] == 1 && fflow[i] == 0){
-                    print("")
                     count++;
                 }
                 //printf("%d, ", bflow[i]);
