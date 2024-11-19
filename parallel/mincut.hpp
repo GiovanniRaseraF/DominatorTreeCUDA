@@ -262,12 +262,14 @@ namespace parallel {
             for(int i = 0; i < V; i++){
                 for(int j = offsets[i]; j < offsets[i+1]; j++){
                     int y = destinations[j];
+                    std::cout << "vis: "<< i << ", " << visited[i] << std::endl;
                     if(visited[i] && !visited[y] && capacities[j]){
                         ret.push_back({i, y});
                     }
                 }
             }
             
+            std::cout << std::endl;
             // print result
             std::cout << "Nodes to remove in G are: " << std::endl;
             for(auto r : ret){
