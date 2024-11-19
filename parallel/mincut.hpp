@@ -176,9 +176,9 @@ namespace parallel {
             }
 
             // dfs
-            std::cout << "dfs run: " << std::endl;
-            dfs(visited, V, source, roffsets, rdestinations, bflow);
-            std::cout << "dfs done: " << std::endl;
+            // std::cout << "dfs run: " << std::endl;
+            // dfs(visited, V, source, roffsets, rdestinations, bflow);
+            // std::cout << "dfs done: " << std::endl;
             
             // time ends
             auto end = high_resolution_clock::now();
@@ -208,10 +208,9 @@ namespace parallel {
 
             // checking if there is connection in the residual graph
             for(int i = 0; i < V; i++){
-                std::cout << "vis: "<< i << ", " << visited[i] << std::endl;
                 for(int j = offsets[i]; j < offsets[i+1]; j++){
                     int y = destinations[j];
-                    if(visited[i] && !visited[y] && capacities[j]){
+                    if(capacities[j] == 1 && bflow[j]){
                         ret.push_back({i, y});
                     }
                 }
