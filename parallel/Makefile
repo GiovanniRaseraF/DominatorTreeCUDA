@@ -7,7 +7,18 @@ custom_params:
 	@ nvcc -c -I/usr/local/cuda/include gpu.cu -std=c++17 -DBLS=${BLS} -DTHS=${THS} -o ./build/nvcc_gpu.o
 	@ g++ -o  ./build/gpu_parallel.out ./build/nvcc_gpu.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
+custom_params_node_cut:
+	@ nvcc -c -I/usr/local/cuda/include gpu.cu -std=c++17 -DBLS=${BLS} -DTHS=${THS} -DNODECUT -o ./build/nvcc_gpu.o
+	@ g++ -o  ./build/gpu_parallel.out ./build/nvcc_gpu.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -DNODECUT -L/usr/local/cuda/lib64 -lcusparse -lcudart
+
+custom_params_node_cut_print:
+	@ nvcc -c -I/usr/local/cuda/include gpu.cu -std=c++17 -DBLS=${BLS} -DTHS=${THS} -DNODECUT -DPRINTNODECUT -o ./build/nvcc_gpu.o
+	@ g++ -o  ./build/gpu_parallel.out ./build/nvcc_gpu.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -DPRINTNODECUT -L/usr/local/cuda/lib64 -lcusparse -lcudart
+
 test:
+	@ make custom_params_node_cut_print BLS=1 THS=1024
+	@ ./build/gpu_parallel.out ./graphs/example1.txt  0 6
+
 	# BLS=1 THS=1024
 	@ make custom_params BLS=1 THS=1024
     ### nanos, micros, millis, V, E, source, sink, maxFlow
