@@ -268,6 +268,15 @@ namespace parallel {
                 }
             }
             
+            // print result
+            std::cout << "Nodes to remove in G are: " << std::endl;
+            for(auto r : ret){
+                int from = std::get<0>(r);
+                int to = std::get<1>(r);
+
+                std::cout << from / 2 << std::endl; 
+            }
+
             return excess_flow[sink];
         }
     };
