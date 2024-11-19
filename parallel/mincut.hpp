@@ -30,7 +30,7 @@ namespace parallel {
             for(int i = roffsets[source]; i < roffsets[source+1]; ++i){
                 int y = rdestinations[i];
                 if(!visited[y] && bflow[y] > 0){
-                    dfs(visited, V, y, roffsets, rdestinations);
+                    dfs(visited, V, y, roffsets, rdestinations, bflow);
                 }
             }
         }
