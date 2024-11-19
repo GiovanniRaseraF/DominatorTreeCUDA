@@ -17,6 +17,22 @@
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
+        // Used to find the minCut nodes to cut
+        void dfs(
+            int *visited, 
+            int V,
+            int source,
+            int *roffsets, int* rdestinations
+        ){
+            visited[source] = true;
+            for(int i = roffsets[source], i < roffsets[source+1]; ++i){
+                y = rdestinations[i];
+                if(!visited[y]){
+                    dfs(visited, V, y, roffsets, rdestinations);
+                }
+            }
+        }
+
         // Initialize the flow
         void preflow(
             int V, int source, int sink, int *cpu_height, int *cpu_excess_flow, 
@@ -95,10 +111,11 @@ namespace parallel {
                 &gpu_offsets, &gpu_destinations, &gpu_capacities, &gpu_fflows, &gpu_bflows, 
                 &gpu_roffsets, &gpu_rdestinations, &gpu_flow_index};
 
-            bool *mark,*scanned;
+            bool *mark, *scanned, *visited;
             mark =      (bool*)malloc(V*sizeof(bool));
             scanned =   (bool*)malloc(V*sizeof(bool));
-            for(int i = 0; i < V; i++) mark[i] = false;
+            visited =   (bool*)malloc(V*sizeof(bool));
+            for(int i = 0; i < V; i++){ mark[i] = false; visited = false;}
 
             // Allocate data for GPU
             (cudaMalloc((void**)&gpu_offsets,       (V+1)*sizeof(int)));
@@ -155,6 +172,10 @@ namespace parallel {
                     excessTotal, 
                     mark,       scanned);
             }
+
+            // dfs
+            dfs(visited, V, source, roffsets, rdestinations);
+
             auto end = high_resolution_clock::now();
 
             // printf("offsets: {");
