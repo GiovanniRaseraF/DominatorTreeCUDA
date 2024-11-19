@@ -210,7 +210,7 @@ namespace parallel {
             for(int i = 0; i < V; i++){
                 for(int j = offsets[i]; j < offsets[i+1]; j++){
                     int y = destinations[j];
-                    if(capacities[j] == 1 && bflow[j]){
+                    if(capacities[j] == 1 && bflow[j] == 0){
                         ret.push_back({i, y});
                     }
                 }
