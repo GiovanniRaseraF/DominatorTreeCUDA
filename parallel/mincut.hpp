@@ -24,12 +24,12 @@ namespace parallel {
             bool *visited, 
             int V,
             int source,
-            int *roffsets, int* rdestinations
+            int *roffsets, int* rdestinations, int *bflow
         ){
             visited[source] = true;
             for(int i = roffsets[source]; i < roffsets[source+1]; ++i){
                 int y = rdestinations[i];
-                if(!visited[y]){
+                if(!visited[y] && bflow[y] > 0){
                     dfs(visited, V, y, roffsets, rdestinations);
                 }
             }
@@ -176,7 +176,7 @@ namespace parallel {
             }
 
             // dfs
-            dfs(visited, V, source, roffsets, rdestinations);
+            dfs(visited, V, source, roffsets, rdestinations, bflow);
 
             auto end = high_resolution_clock::now();
 
