@@ -63,12 +63,16 @@ void run(std::string filename, int from, int to){
         num_nodes,          num_edges
     );
 
-    // find what to cut
+    // Find what to cut
     std::vector<std::tuple<int, int>> ret;
     for(int i = 0; i < num_nodes; ++i){
       for(int j = offsets[i]; j < offsets[i+1]; j++){
         int dest = destinations[j];
-        if(excesses[i] == num_nodes*2-1 && forward_flows[j] == 0 && backward_flows[j] == 1){
+        if( // Cut node condition
+            excesses[i] == num_nodes*2-1 && 
+            forward_flows[j] == 0 && 
+            backward_flows[j] == 1
+        ){
             ret.push_back({i, dest});
         }
       }
