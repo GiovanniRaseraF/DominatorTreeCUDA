@@ -15,6 +15,7 @@
 #include <vector>
 #include <limits.h>
 #include <chrono>
+#include <deque>
 #include <cuda_runtime.h>
 #include <iomanip> // put_time
 #include <iostream>
@@ -167,7 +168,8 @@ namespace parallel {
             }
         }
 
-        std::list<int> Queue;
+        //std::list<int> Queue;
+        std::deque<int> Queue;
         int x,y,current;
     
         for(int i = 0; i < V; i++){
