@@ -118,9 +118,6 @@ namespace parallel {
 
                                     // Here we can add the information on the node selected for de deletion
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
-                                    if(v_dash == sink){
-                                        printf("Added: %d to sink\n", d);
-                                    }
                                     atomicSub(&gpu_excess_flow[u], d);
                                 }else{
                                     if (e_dash > gpu_bflows[v_index]){
@@ -135,9 +132,6 @@ namespace parallel {
 
                                     /* Update Excess Flow */
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
-                                    if(v_dash == sink){
-                                        printf("Added: %d to sink\n", d);
-                                    }
                                     atomicSub(&gpu_excess_flow[u], d);
                                 }
                             }else{

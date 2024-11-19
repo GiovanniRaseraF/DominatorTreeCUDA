@@ -46,8 +46,8 @@ namespace loader{
             std::stringstream ss(line);
             if (line.find("# Nodes:") != std::string::npos){
                 sscanf(line.c_str(), "# Nodes: %d Edges: %d", &num_nodes, &num_edges);
-                num_edges += num_nodes;
-                num_nodes *= 2;
+                // num_edges += num_nodes;
+                // num_nodes *= 2;
             }
 
             if (ss.str()[0] == '#')
@@ -55,15 +55,17 @@ namespace loader{
             int from, to, cap;
             ss >> from >> to >> cap;
             // basic one 
-            adjacency_list[from*2+1].push_back(to*2);
-            cap_list[from*2+1].push_back((num_edges+num_nodes)*2);
+            // adjacency_list[from*2+1].push_back(to*2);
+            // cap_list[from*2+1].push_back((num_edges+num_nodes)*2);
+            adjacency_list[from].push_back(to);
+            cap_list[from].push_back(cap);
             cnt++;
         }
 
-        for(int i = 0; i < num_nodes/2; i++){
-            adjacency_list[i*2].push_back(i*2+1);
-            cap_list[i*2].push_back(1);
-        }
+        // for(int i = 0; i < num_nodes/2; i++){
+        //     adjacency_list[i*2].push_back(i*2+1);
+        //     cap_list[i*2].push_back(1);
+        // }
 
         // num_nodes = adjacency_list.size();
         offsets.push_back(0);

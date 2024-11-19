@@ -175,11 +175,6 @@ namespace parallel {
                     mark,       scanned);
             }
 
-            // dfs
-            // std::cout << "dfs run: " << std::endl;
-            // dfs(visited, V, source, roffsets, rdestinations, bflow);
-            // std::cout << "dfs done: " << std::endl;
-            
             // time ends
             auto end = high_resolution_clock::now();
 
@@ -206,25 +201,6 @@ namespace parallel {
             // Find node cuts
             std::vector<std::tuple<int, int>> ret;
 
-            // checking if there is connection in the residual graph
-            for(int i = 0; i < V; i++){
-                for(int j = offsets[i]; j < offsets[i+1]; j++){
-                    int y = destinations[j];
-                    if(capacities[j] == 1 && bflow[j] == 0){
-                        ret.push_back({i, y});
-                    }
-                }
-            }
-            
-            std::cout << std::endl;
-            // print result
-            std::cout << "Nodes to remove in G are: " << std::endl;
-            for(auto r : ret){
-                int from = std::get<0>(r);
-                int to = std::get<1>(r);
-
-                std::cout << from / 2 << std::endl; 
-            }
 
             return excess_flow[sink];
         }
