@@ -176,7 +176,9 @@ namespace parallel {
             }
 
             // dfs
+            std::cout << "dfs run: " << std::endl;
             dfs(visited, V, source, roffsets, rdestinations, bflow);
+            std::cout << "dfs done " << std::endl;
 
             auto end = high_resolution_clock::now();
 
