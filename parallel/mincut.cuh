@@ -103,7 +103,7 @@ namespace parallel {
                             gpu_height[u] = V;
                         }
                         else{
-                            if (gpu_height[u] > h_dash){
+                            if (gpu_height[u] == h_dash + 1){
 
                                 if (!vinReverse){
                                     if (e_dash > gpu_fflows[v_index]){
