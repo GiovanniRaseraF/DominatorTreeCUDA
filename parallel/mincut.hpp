@@ -13,6 +13,8 @@
 #include "mincut.cuh"
 #include <thread>
 #include <chrono>
+#include <vector>
+#include <tuple>
 
 // implementation
 namespace parallel {
@@ -178,6 +180,7 @@ namespace parallel {
 
             auto end = high_resolution_clock::now();
 
+
             // printf("offsets: {");
             // for (int i=0; i < V; i++) {
             //     printf("%d, ", offsets[i]);
@@ -252,6 +255,19 @@ namespace parallel {
             (cudaFree(gpu_bflows));
             (cudaFree(gpu_flow_index));
 
+            // Find node cuts
+            std::vector<std::tuple<int, int>> ret;
+
+            // checking if there is connection in the residual graph
+            for(int i = 0; i < V; i++){
+                for(int j = offsets[i]; j < offsets[i+1]; j++){
+                    int y = destinations[j];
+                    if(visited[i] && !visited[y] && capacities[j]){
+                        ret.push_back({i, y});
+                    }
+                }
+            }
+            
             return excess_flow[sink];
         }
     };
