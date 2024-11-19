@@ -190,52 +190,16 @@ namespace parallel {
                 << nanos    << ", " << micros   << ", " << millis   << ", " 
                 << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
 
-
-            printf("offsets: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", offsets[i]);
+            // Select nodes to cut
+            for(int i = 0; i < V; ++i){
+                for(int j = offsets[i]; j < offsets[i+1]; j++){
+                    int cap = capacities[j];
+                    int dest = destinations[j];
+                    if(excess_flow[i] == V*2-1 && fflow[j] == 0 && bflow[j] == 1){
+                        std::cout << i << " -/-> " << dest << std::endl;
+                    }
+                }
             }
-            printf("};\n\n\n");
-
-            printf("dests: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", destinations[i]);
-            }
-            printf("};\n\n\n");
-
-            printf("caps: {");
-            for (int i=0; i < E; i++) {
-                //if(fflow[i] == excess_flow[sink])
-                    printf("%d, ", capacities[i]);
-            }
-            printf("};\n\n\n");
-
-            printf("h: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", heights[i]);
-            }
-            printf("};\n");
-
-            printf("e: {");
-            for (int i=0; i < V; i++) {
-                printf("%d, ", excess_flow[i]);
-            }
-            printf("};\n");
-
-            printf("ff: {");
-            for (int i=0; i < E; i++) {
-                std::cout << std::setw(5) << fflow[i];
-            }
-            printf("};\n");
-
-            printf("bf: {");
-            for (int i=0; i < E; i++) {
-                std::cout << std::setw(5) << bflow[i];
-            }
-            printf("};\n");
-
-
 
             // Clear
             (cudaFree(gpu_height));
