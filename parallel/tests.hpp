@@ -18,14 +18,10 @@ void run(std::string filename, int from, int to){
     // Load from specified file
     loader::buildFromTxtFile(
         filename, 
-        num_nodes,
-        num_edges,
+        num_nodes,      num_edges,
         num_edges_processed,
-        source_node,
-        sink_node,
-        graph_destinations,
-        graph_offsets,
-        graph_capacities
+        source_node,    sink_node,
+        graph_destinations, graph_offsets, graph_capacities
     );
 
     // Preparing all pointer for cpu graph
@@ -45,7 +41,7 @@ void run(std::string filename, int from, int to){
     loader::buildFromCSRGraph(
         num_nodes,          num_edges,
         num_edges_processed,
-        source_node,    sink_node,
+        source_node,        sink_node,
         graph_destinations, graph_offsets,
         graph_capacities,   offsets,
         destinations,       capacities,
@@ -63,7 +59,8 @@ void run(std::string filename, int from, int to){
         capacities,         rcapacities,
         flow_index,         heights,
         forward_flows,      backward_flows,
-        excesses,num_nodes, num_edges
+        excesses,
+        num_nodes,          num_edges
     );
 
     // Clear
