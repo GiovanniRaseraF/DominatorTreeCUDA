@@ -115,7 +115,7 @@ namespace parallel {
             mark =      (bool*)malloc(V*sizeof(bool));
             scanned =   (bool*)malloc(V*sizeof(bool));
             visited =   (bool*)malloc(V*sizeof(bool));
-            for(int i = 0; i < V; i++){ mark[i] = false; visited = false;}
+            for(int i = 0; i < V; i++){ mark[i] = false; visited[i] = false;}
 
             // Allocate data for GPU
             (cudaMalloc((void**)&gpu_offsets,       (V+1)*sizeof(int)));
