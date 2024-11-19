@@ -65,7 +65,6 @@ namespace parallel {
             }
         }
        
-
         int minCutMaxFlow(
             int source, int to,
             int *offsets,int *roffsets,
@@ -200,7 +199,6 @@ namespace parallel {
 
             // Find node cuts
             std::vector<std::tuple<int, int>> ret;
-
 
             return excess_flow[sink];
         }

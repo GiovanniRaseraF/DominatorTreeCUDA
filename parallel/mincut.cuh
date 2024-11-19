@@ -53,27 +53,19 @@ namespace parallel {
                     int v_index = -1; // The index of the edge of u to v_dash
                     bool vinReverse = false;
 
-                    // To find node cut !!
-                    // This will give us the information on the edge to cut
-                    // int u_to_cut = -1;
-                    // int v_to_cut = -1;
-
                     //  Find the activate nodes
                     if (gpu_excess_flow[u] > 0 && gpu_height[u] < V && u != source && u != sink){
-                        //u_to_cut = u;
                         e_dash = gpu_excess_flow[u];
                         h_dash = INF;
-                        v_dash = -1; // Modify from NULL to -1
+                        v_dash = -1; 
 
-                        // For all (u, v) belonging to E_f (residual graph edgelist)
-                        // Find (u, v) in both CSR format and revesred CSR format
+                        // Find (u, v) in both CSR format
                         for (int i = gpu_offsets[u]; i < gpu_offsets[u + 1]; i++){
                             v = gpu_destinations[i];
 
                             if (gpu_fflows[i] > 0){
                                 h_double_dash = gpu_height[v];
                                 if (h_double_dash < h_dash){
-                                    // v_to_cut = v;
                                     v_dash = v;
                                     h_dash = h_double_dash;
                                     v_index = i;
@@ -81,7 +73,7 @@ namespace parallel {
                                 }
                             }
                         }
-                        // Find (u, v) in reversed CSR format
+                        // Find (u, v) in reversed CSR 
                         for (int i = gpu_roffsets[u]; i < gpu_roffsets[u + 1]; i++){
                             v = gpu_rdestinations[i];
                             int flow_idx = gpu_flow_idx[i];
@@ -89,10 +81,9 @@ namespace parallel {
                             if (gpu_bflows[flow_idx] > 0){
                                 h_double_dash = gpu_height[v];
                                 if (h_double_dash < h_dash){
-                                    // v_to_cut = v;
                                     v_dash = v;
                                     h_dash = h_double_dash;
-                                    v_index = flow_idx; // Find the bug here!!!
+                                    v_index = flow_idx; 
                                     vinReverse = true;
                                 }
                             }
@@ -103,7 +94,7 @@ namespace parallel {
                             gpu_height[u] = V;
                         }
                         else{
-                            if (gpu_height[u] == h_dash + 1){
+                            if (gpu_height[u] > h_dash){
 
                                 if (!vinReverse){
                                     if (e_dash > gpu_fflows[v_index]){
@@ -112,11 +103,9 @@ namespace parallel {
                                         d = e_dash;
                                     }
 
-                                    // Push flow to residual graph
+                                    // Push flow to reverse graph
                                     atomicAdd(&gpu_bflows[v_index], d);
                                     atomicSub(&gpu_fflows[v_index], d);
-
-                                    // Here we can add the information on the node selected for de deletion
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
                                     atomicSub(&gpu_excess_flow[u], d);
                                 }else{
@@ -126,11 +115,9 @@ namespace parallel {
                                         d = e_dash;
                                     }
 
-                                    /* Push flow to residual graph */
+                                    // Push flow to graph
                                     atomicAdd(&gpu_fflows[v_index], d);
                                     atomicSub(&gpu_bflows[v_index], d);
-
-                                    /* Update Excess Flow */
                                     atomicAdd(&gpu_excess_flow[v_dash], d);
                                     atomicSub(&gpu_excess_flow[u], d);
                                 }
@@ -141,7 +128,6 @@ namespace parallel {
                     }
                 }
 
-                // cycle value is decreased
                 cycle = cycle - 1;
                 grid.sync();
             }
@@ -149,26 +135,34 @@ namespace parallel {
 
     }
 
-    void global_relabel(int V, int E, int source, int sink, int *cpu_height, int *cpu_excess_flow, 
-                int *cpu_offsets, int *cpu_destinations, int* cpu_capacities, int* cpu_fflows, int* cpu_bflows, 
-                int* cpu_roffsets, int* cpu_rdestinations, int* cpu_flow_idx,
-                int *Excess_total, bool *mark, bool *scanned
+    // This function allows to decrease the Excess_total in
+    // order to let the algoritm terminate
+    void global_relabel(
+            int V,          int E, 
+            int source,     int sink, 
+            int *height,    int *excess_flow, 
+            int *offsets,   int *destinations, int* capacities, 
+            int* fflows,    int* bflows, 
+            int* roffsets,  int* rdestinations, 
+            int* flow_idx,
+            int *Excess_total, 
+            bool *mark,     bool *scanned
         ){
         for (int u = 0; u < V; u++) {
-            for (int i = cpu_offsets[u]; i < cpu_offsets[u + 1]; i++) {
-                int v = cpu_destinations[i];
-                if (cpu_height[u] > cpu_height[v] + 1) {
+            for (int i = offsets[u]; i < offsets[u + 1]; i++) {
+                int v = destinations[i];
+                if (height[u] > height[v] + 1) {
                     int flow;
-                    if (cpu_excess_flow[u] < cpu_fflows[i]) {
-                        flow = cpu_excess_flow[u];
+                    if (excess_flow[u] < fflows[i]) {
+                        flow = excess_flow[u];
                     } else {
-                        flow = cpu_fflows[i];
+                        flow = fflows[i];
                     }
 
-                    cpu_excess_flow[u] -= flow;
-                    cpu_excess_flow[v] += flow;
-                    cpu_bflows[i] += flow;
-                    cpu_fflows[i] -= flow;
+                    excess_flow[u] -= flow;
+                    excess_flow[v] += flow;
+                    bflows[i] += flow;
+                    fflows[i] -= flow;
                 }
             }
         }
@@ -183,7 +177,7 @@ namespace parallel {
         // Enqueueing the sink and set scan(sink) to true 
         Queue.push_back(sink);
         scanned[sink] = true;
-        cpu_height[sink] = 0;
+        height[sink] = 0;
 
         // bfs routine and assigning of height values with tree level values
         while(!Queue.empty()){
@@ -192,18 +186,18 @@ namespace parallel {
             Queue.pop_front();
 
             // capture value of current level
-            current = cpu_height[x];
+            current = height[x];
         
             // increment current value
             current = current + 1;
 
-            for(int i = cpu_roffsets[x]; i < cpu_roffsets[x + 1]; i++){
-                y = cpu_rdestinations[i];
-                int flow_index = cpu_flow_idx[i];
+            for(int i = roffsets[x]; i < roffsets[x + 1]; i++){
+                y = rdestinations[i];
+                int flow_index = flow_idx[i];
             
-                if (cpu_fflows[flow_index] > 0) {
+                if (fflows[flow_index] > 0) {
                     if(scanned[y] == false){
-                        cpu_height[y] = current;
+                        height[y] = current;
                         scanned[y] = true;
                         Queue.push_back(y);
                     }
@@ -211,13 +205,13 @@ namespace parallel {
 
             }
 
-            for (int i = cpu_offsets[x]; i < cpu_offsets[x + 1]; i++) {
-                y = cpu_destinations[i];
+            for (int i = offsets[x]; i < offsets[x + 1]; i++) {
+                y = destinations[i];
                 int flow_index = i;
             
-                if (cpu_bflows[flow_index] > 0) {
+                if (bflows[flow_index] > 0) {
                     if(scanned[y] == false){
-                        cpu_height[y] = current;
+                        height[y] = current;
                         scanned[y] = true;
                         Queue.push_back(y);
                     }
@@ -239,7 +233,7 @@ namespace parallel {
             for(int i = 0; i < V; i++){
                 if( !( (scanned[i] == true) || (mark[i] == true) ) ){
                     mark[i] = true;
-                    *Excess_total = *Excess_total - cpu_excess_flow[i];
+                    *Excess_total = *Excess_total - excess_flow[i];
                 }
             }
         }
