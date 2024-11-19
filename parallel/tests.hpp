@@ -5,6 +5,10 @@
 #include "mincut.hpp"
 #include "loader.hpp"
 
+// defines 
+// NODECUT          will create the graph to cut nodes
+// PRINTNODECUT     will print the nodes to cut
+
 void run(std::string filename, int from, int to){
     int num_nodes{0};
     int num_edges{0};
@@ -24,6 +28,9 @@ void run(std::string filename, int from, int to){
         source_node,    sink_node,
         graph_destinations, graph_offsets, graph_capacities
     );
+    // This is important because the nodes will change
+    from = from * 2 + 1;
+    to = to * 2;
     #else
     // Load from specified file
     loader::buildFromTxtFile(
