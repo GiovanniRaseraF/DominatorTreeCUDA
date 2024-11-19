@@ -63,6 +63,26 @@ void run(std::string filename, int from, int to){
         num_nodes,          num_edges
     );
 
+    // find what to cut
+    std::vector<std::tuple<int, int>> ret;
+    for(int i = 0; i < V; ++i){
+      for(int j = offsets[i]; j < offsets[i+1]; j++){
+        int dest = destinations[j];
+        if(excesses[i] == V*2-1 && forward_flows[j] == 0 && backward_flows[j] == 1){
+            ret.push_back({i, dest});
+        }
+      }
+    }            
+
+    // Cuts
+    std::cout << "Nodes to remove in G are: " << std::endl;
+    for(auto r : ret){
+        int from = std::get<0>(r);
+        int to = std::get<1>(r);
+
+        std::cout << "(" << from / 2 << ") : " << from << " -/-> " << to << std::endl; 
+    }
+
     // Clear
     free(offsets);
     free(roffsets);
