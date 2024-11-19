@@ -139,16 +139,16 @@ namespace parallel {
     // This function allows to decrease the Excess_total in
     // order to let the algoritm terminate
     void global_relabel(
-            int V,          int E, 
-            int source,     int sink, 
-            int *height,    int *excess_flow, 
-            int *offsets,   int *destinations, int* capacities, 
-            int* fflows,    int* bflows, 
-            int* roffsets,  int* rdestinations, 
-            int* flow_idx,
-            int *Excess_total, 
-            bool *mark,     bool *scanned
-        ){
+        int V,          int E, 
+        int source,     int sink, 
+        int *height,    int *excess_flow, 
+        int *offsets,   int *destinations, int* capacities, 
+        int* fflows,    int* bflows, 
+        int* roffsets,  int* rdestinations, 
+        int* flow_idx,
+        int *Excess_total, 
+        bool *mark,     bool *scanned
+    ){
         for (int u = 0; u < V; u++) {
             for (int i = offsets[u]; i < offsets[u + 1]; i++) {
                 int v = destinations[i];
@@ -168,7 +168,6 @@ namespace parallel {
             }
         }
 
-        //std::list<int> Queue;
         std::deque<int> Queue;
         int x,y,current;
     
