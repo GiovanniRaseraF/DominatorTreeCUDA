@@ -15,6 +15,16 @@ void run(std::string filename, int from, int to){
     std::vector<int> graph_offsets{};
     std::vector<int> graph_capacities{};
 
+    #ifdef NODECUT
+    // Load from specified file for Node Cut
+    loader::buildFromTxtFile(
+        filename, 
+        num_nodes,      num_edges,
+        num_edges_processed,
+        source_node,    sink_node,
+        graph_destinations, graph_offsets, graph_capacities
+    );
+    #else
     // Load from specified file
     loader::buildFromTxtFile(
         filename, 
@@ -23,6 +33,7 @@ void run(std::string filename, int from, int to){
         source_node,    sink_node,
         graph_destinations, graph_offsets, graph_capacities
     );
+    #endif
 
     // Preparing all pointer for cpu graph
     int *offsets        = nullptr;
@@ -63,6 +74,7 @@ void run(std::string filename, int from, int to){
         num_nodes,          num_edges
     );
 
+    #ifdef NODECUT
     // Find what to cut
     std::vector<std::tuple<int, int>> ret;
     for(int i = 0; i < num_nodes; ++i){
@@ -77,7 +89,9 @@ void run(std::string filename, int from, int to){
         }
       }
     }            
+    #endif
 
+    #ifdef PRINTNODECUT
     // Cuts
     std::cout << "Nodes to remove in G are: " << std::endl;
     for(auto r : ret){
@@ -86,6 +100,7 @@ void run(std::string filename, int from, int to){
 
         std::cout << "(" << from / 2 << ") : " << from << " -/-> " << to << std::endl; 
     }
+    #endif
 
     // Clear
     free(offsets);
