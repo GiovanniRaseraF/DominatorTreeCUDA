@@ -19,22 +19,6 @@
 // implementation
 namespace parallel {
     namespace GoldbergTarjan{
-        // Used to find the minCut nodes to cut
-        void dfs(
-            bool *visited, 
-            int V,
-            int source,
-            int *roffsets, int* rdestinations, int *bflow
-        ){
-            visited[source] = true;
-            for(int i = roffsets[source]; i < roffsets[source+1]; ++i){
-                int y = rdestinations[i];
-                if(!visited[y] && bflow[y] > 0){
-                    dfs(visited, V, y, roffsets, rdestinations, bflow);
-                }
-            }
-        }
-
         // Initialize the flow
         void preflow(
             int V, 
