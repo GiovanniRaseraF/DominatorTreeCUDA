@@ -19,7 +19,7 @@ namespace parallel {
     namespace GoldbergTarjan{
         // Used to find the minCut nodes to cut
         void dfs(
-            int *visited, 
+            bool *visited, 
             int V,
             int source,
             int *roffsets, int* rdestinations
