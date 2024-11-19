@@ -260,9 +260,9 @@ namespace parallel {
 
             // checking if there is connection in the residual graph
             for(int i = 0; i < V; i++){
+                std::cout << "vis: "<< i << ", " << visited[i] << std::endl;
                 for(int j = offsets[i]; j < offsets[i+1]; j++){
                     int y = destinations[j];
-                    std::cout << "vis: "<< i << ", " << visited[i] << std::endl;
                     if(visited[i] && !visited[y] && capacities[j]){
                         ret.push_back({i, y});
                     }
