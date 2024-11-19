@@ -37,9 +37,13 @@ namespace parallel {
 
         // Initialize the flow
         void preflow(
-            int V, int source, int sink, int *cpu_height, int *cpu_excess_flow, 
-            int *offsets, int *destinations, int* capacities, int* forward_flows, int* backward_flows,
-            int *roffsets, int* rdestinations, int* flow_idx, int *Excess_total)
+            int V, 
+            int source,         int sink, 
+            int *cpu_height,    int *cpu_excess_flow, 
+            int *offsets,       int *destinations, int* capacities, 
+            int* forward_flows, int* backward_flows,
+            int *roffsets,      int* rdestinations, 
+            int* flow_idx,      int *Excess_total)
         {
             // initialising height values and excess flow, Excess_total values
             for(int i = 0; i < V; i++){
@@ -66,13 +70,14 @@ namespace parallel {
         }
        
         int minCutMaxFlow(
-            int source, int to,
-            int *offsets,int *roffsets,
-            int *destinations,int *rdestinations,
-            int *capacities,int *rcapacities,
-            int *flow_index,int *heights,
-            int *fflow,int *bflow,int *excess_flow,
-            int numNodes,int numEdges
+            int source,         int to,
+            int *offsets,       int *roffsets,
+            int *destinations,  int *rdestinations,
+            int *capacities,    int *rcapacities,
+            int *flow_index,    int *heights,
+            int *fflow,         int *bflow,
+            int *excess_flow,
+            int numNodes,       int numEdges
         ){
             int V = numNodes;
             int E = numEdges;
