@@ -178,9 +178,59 @@ namespace parallel {
             // dfs
             std::cout << "dfs run: " << std::endl;
             dfs(visited, V, source, roffsets, rdestinations, bflow);
-            std::cout << "dfs done " << std::endl;
-
+            std::cout << "dfs done: " << std::endl;
+            
+            // time ends
             auto end = high_resolution_clock::now();
+
+            // Info Print
+            auto nanos      = duration_cast<nanoseconds>(end-start).count();
+            auto micros     = duration_cast<microseconds>(end-start).count();
+            auto millis     = duration_cast<milliseconds>(end-start).count();
+            std::cout << "### " 
+                << nanos    << ", " << micros   << ", " << millis   << ", " 
+                << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
+
+            // Clear
+            (cudaFree(gpu_height));
+            (cudaFree(gpu_excess_flow));
+            (cudaFree(gpu_offsets));
+            (cudaFree(gpu_destinations));
+            (cudaFree(gpu_capacities));
+            (cudaFree(gpu_fflows));
+            (cudaFree(gpu_roffsets));
+            (cudaFree(gpu_rdestinations));
+            (cudaFree(gpu_bflows));
+            (cudaFree(gpu_flow_index));
+
+            // Find node cuts
+            std::vector<std::tuple<int, int>> ret;
+
+            // checking if there is connection in the residual graph
+            for(int i = 0; i < V; i++){
+                std::cout << "vis: "<< i << ", " << visited[i] << std::endl;
+                for(int j = offsets[i]; j < offsets[i+1]; j++){
+                    int y = destinations[j];
+                    if(visited[i] && !visited[y] && capacities[j]){
+                        ret.push_back({i, y});
+                    }
+                }
+            }
+            
+            std::cout << std::endl;
+            // print result
+            std::cout << "Nodes to remove in G are: " << std::endl;
+            for(auto r : ret){
+                int from = std::get<0>(r);
+                int to = std::get<1>(r);
+
+                std::cout << from / 2 << std::endl; 
+            }
+
+            return excess_flow[sink];
+        }
+    };
+};
 
 
             // printf("offsets: {");
@@ -236,52 +286,3 @@ namespace parallel {
             //     //printf("%d, ", bflow[i]);
             // }
             // printf("%d\n", count);
-
-            // Info Print
-            auto nanos      = duration_cast<nanoseconds>(end-start).count();
-            auto micros     = duration_cast<microseconds>(end-start).count();
-            auto millis     = duration_cast<milliseconds>(end-start).count();
-            std::cout << "### " 
-                << nanos    << ", " << micros   << ", " << millis   << ", " 
-                << V << ", " << E << ", " << source << ", " << sink << ", " << excess_flow[sink] << std::endl;
-
-            // Clear
-            (cudaFree(gpu_height));
-            (cudaFree(gpu_excess_flow));
-            (cudaFree(gpu_offsets));
-            (cudaFree(gpu_destinations));
-            (cudaFree(gpu_capacities));
-            (cudaFree(gpu_fflows));
-            (cudaFree(gpu_roffsets));
-            (cudaFree(gpu_rdestinations));
-            (cudaFree(gpu_bflows));
-            (cudaFree(gpu_flow_index));
-
-            // Find node cuts
-            std::vector<std::tuple<int, int>> ret;
-
-            // checking if there is connection in the residual graph
-            for(int i = 0; i < V; i++){
-                std::cout << "vis: "<< i << ", " << visited[i] << std::endl;
-                for(int j = offsets[i]; j < offsets[i+1]; j++){
-                    int y = destinations[j];
-                    if(visited[i] && !visited[y] && capacities[j]){
-                        ret.push_back({i, y});
-                    }
-                }
-            }
-            
-            std::cout << std::endl;
-            // print result
-            std::cout << "Nodes to remove in G are: " << std::endl;
-            for(auto r : ret){
-                int from = std::get<0>(r);
-                int to = std::get<1>(r);
-
-                std::cout << from / 2 << std::endl; 
-            }
-
-            return excess_flow[sink];
-        }
-    };
-};
