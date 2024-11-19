@@ -7,7 +7,7 @@
 
 // defines 
 // NODECUT          will create the graph to cut nodes
-// PRINTNODECUT     will print the nodes to cut
+// PRINTNODECUT
 
 void run(std::string filename, int from, int to){
     int num_nodes{0};
@@ -21,7 +21,7 @@ void run(std::string filename, int from, int to){
 
     #ifdef NODECUT
     // Load from specified file for Node Cut
-    loader::buildFromTxtFile(
+    loader::buildFromTxtFileForNodeCut(
         filename, 
         num_nodes,      num_edges,
         num_edges_processed,
