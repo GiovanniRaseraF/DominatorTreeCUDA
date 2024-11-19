@@ -25,8 +25,8 @@ namespace parallel {
             int *roffsets, int* rdestinations
         ){
             visited[source] = true;
-            for(int i = roffsets[source], i < roffsets[source+1]; ++i){
-                y = rdestinations[i];
+            for(int i = roffsets[source]; i < roffsets[source+1]; ++i){
+                int y = rdestinations[i];
                 if(!visited[y]){
                     dfs(visited, V, y, roffsets, rdestinations);
                 }
