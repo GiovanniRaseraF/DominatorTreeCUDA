@@ -21,7 +21,7 @@ test:
 
 	# BLS=1 THS=1024
 	@ make custom_params BLS=1 THS=1024
-    ### nanos, micros, millis, V, E, source, sink, maxFlow
+    # nanos, micros, millis, V, E, source, sink, maxFlow
 	@ ./build/gpu_parallel.out ../graphs/basic1.txt   1 64
 	@ ./build/gpu_parallel.out ../graphs/basic2.txt   1 128
 	@ ./build/gpu_parallel.out ../graphs/basic3.txt   1 256
@@ -35,7 +35,7 @@ test:
 
 	# BLS=2 THS=512
 	@ make custom_params BLS=2 THS=512
-    ### nanos, micros, millis, V, E, source, sink, maxFlow
+    # nanos, micros, millis, V, E, source, sink, maxFlow
 	@ ./build/gpu_parallel.out ../graphs/basic1.txt   1 64
 	@ ./build/gpu_parallel.out ../graphs/basic2.txt   1 128
 	@ ./build/gpu_parallel.out ../graphs/basic3.txt   1 256
@@ -49,7 +49,7 @@ test:
 
 	# BLS=4 THS=256
 	@ make custom_params BLS=4 THS=256
-    ### nanos, micros, millis, V, E, source, sink, maxFlow
+    # nanos, micros, millis, V, E, source, sink, maxFlow
 	@ ./build/gpu_parallel.out ../graphs/basic1.txt   1 64
 	@ ./build/gpu_parallel.out ../graphs/basic2.txt   1 128
 	@ ./build/gpu_parallel.out ../graphs/basic3.txt   1 256
@@ -63,7 +63,7 @@ test:
 
 	# BLS=8 THS=128
 	@ make custom_params BLS=8 THS=128
-    ### nanos, micros, millis, V, E, source, sink, maxFlow
+    # nanos, micros, millis, V, E, source, sink, maxFlow
 	@ ./build/gpu_parallel.out ../graphs/basic1.txt   1 64
 	@ ./build/gpu_parallel.out ../graphs/basic2.txt   1 128
 	@ ./build/gpu_parallel.out ../graphs/basic3.txt   1 256
@@ -77,7 +77,7 @@ test:
 
 	# BLS=16 THS=64
 	@ make custom_params BLS=16 THS=64
-    ### nanos, micros, millis, V, E, source, sink, maxFlow
+    # nanos, micros, millis, V, E, source, sink, maxFlow
 	@ ./build/gpu_parallel.out ../graphs/basic1.txt   1 64
 	@ ./build/gpu_parallel.out ../graphs/basic2.txt   1 128
 	@ ./build/gpu_parallel.out ../graphs/basic3.txt   1 256
