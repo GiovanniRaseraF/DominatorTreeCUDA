@@ -100,13 +100,15 @@ void run(std::string filename, int from, int to){
 
     #ifdef PRINTNODECUT
     // Cuts
-    std::cout << "Nodes to remove in G are: " << std::endl;
+    std::cout << "Nodes in D are: " << std::endl;
     for(auto r : ret){
         int from = std::get<0>(r);
         int to = std::get<1>(r);
 
         std::cout << "(" << from / 2 << ") : " << from << " -/-> " << to << std::endl; 
     }
+
+    std::cout << "|D|: " << ret.size() << std::endl;
     #endif
 
     // Clear
