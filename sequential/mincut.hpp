@@ -17,6 +17,7 @@
 #include <random>
 #include <unordered_set>
 #include <tuple>
+#include <chrono>
 
 // CPU data
 typedef std::vector<std::vector<int>> Graph;
@@ -119,6 +120,9 @@ namespace sequential{
  
             int v, u;
 
+            using namespace std::chrono; 
+            auto start = high_resolution_clock::now();
+            // Actual Algorithm
             while(bfs(rGraph, parent, source, to)){
                 int path_flow = INT_MAX;
                 // a path from to -> source
@@ -135,14 +139,27 @@ namespace sequential{
                 }
             }
 
-            // run dfs on the residual graph
+            // time ends
+            auto end = high_resolution_clock::now();
+            
+            // Run dfs on the residual graph
             dfs(rGraph, visited, source);
 
-            // checking if there is connection in the residual graph
+            // Checking if there is connection in the residual graph
             for(int i = 0; i < graph.size(); i++)
                 for(int j = 0; j < graph.size(); j++)
                     if(visited[i] && ! visited[j] && graph[i][j])
                     ret.push_back({i, j});
+
+            // Info Print
+            int V = graph.size();
+            int E = V * V;
+            auto nanos      = duration_cast<nanoseconds>(end-start).count();
+            auto micros     = duration_cast<microseconds>(end-start).count();
+            auto millis     = duration_cast<milliseconds>(end-start).count();
+            std::cout << "### " 
+                << nanos    << ", " << micros   << ", " << millis   << ", " 
+                << V << ", " << E << ", " << source << ", " << to << ", " << ret.size() << std::endl;
             
             return ret;
         }
