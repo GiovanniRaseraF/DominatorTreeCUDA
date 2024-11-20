@@ -64,11 +64,12 @@ void testFile(std::string filename, int source, int to){
     int toPrime = to*2;
     #endif
 
+    
+
+    #ifdef NODECUT
     // build G'
     sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
     // we need to pay attention to the start, because the cut must start form v'odd
-
-    #ifdef NODECUT
     std::cout << "on G': ";
     auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
     #else
