@@ -7,7 +7,7 @@
 #include "mincut.hpp"
 
 void justInitGraph(Graph &graph, Graph &rGraph) {
-    std::cout << "Init G and rG with V: " << graph.size() << std::endl;
+    //std::cout << "Init G and rG with V: " << graph.size() << std::endl;
     for(int i = 0; i < graph.size(); i ++){
         for(int j = 0; j < graph.size(); j++){
             graph[i].push_back(0);
@@ -26,7 +26,7 @@ void generateFromStartToFinish(Graph &graph){
 
 
 void testFile(std::string filename, int source, int to){
-    std::cout << "\nTest from file" << std::endl;
+    //std::cout << "\nTest from file" << std::endl;
     int VNodes = 0;
     int Eedges = 0;
 
@@ -65,10 +65,17 @@ void testFile(std::string filename, int source, int to){
     // build G'
     sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
     // we need to pay attention to the start, because the cut must start form v'odd
+
+    #ifdef NODECUT
+    std::cout << "on G': ";
     auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
-    //auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
+    #else
+    std::cout << "on G: ";
+    auto result = sequential::FordFulkerson::minCutMaxFlow(graph, rGraph, source, to);
+    #endif
 
     // print result
+    #ifdef PRINTNODECUT
     std::cout << "Nodes D are: " << std::endl;
     for(auto r : result){
         int from = std::get<0>(r);
@@ -78,4 +85,5 @@ void testFile(std::string filename, int source, int to){
     }
 
     std::cout << "|D|: " << result.size() << std::endl;
+    #endif
 }
