@@ -54,6 +54,7 @@ void testFile(std::string filename, int source, int to){
         graph[from][to] = cap;
     }
 
+    #ifdef NODECUT
     Graph rGraphPrime(VNodes*2);
     Graph graphPrime(VNodes*2);   
 
@@ -61,6 +62,7 @@ void testFile(std::string filename, int source, int to){
 
     int sourcePrime = source; 
     int toPrime = to*2;
+    #endif
 
     // build G'
     sequential::FordFulkerson::buildGPrimeFromG(graph, graphPrime);
