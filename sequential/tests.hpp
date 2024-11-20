@@ -69,7 +69,7 @@ void testFile(std::string filename, int source, int to){
     //auto result = sequential::FordFulkerson::minCutMaxFlow(graphPrime, rGraphPrime, sourcePrime+1, toPrime);
 
     // print result
-    std::cout << "Nodes to remove in G are: " << std::endl;
+    std::cout << "Nodes D are: " << std::endl;
     for(auto r : result){
         int from = std::get<0>(r);
         int to = std::get<1>(r);
