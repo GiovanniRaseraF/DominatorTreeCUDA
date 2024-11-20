@@ -89,6 +89,20 @@ namespace loader{
     }
 
     // Build the Graph for Node Cut
+    /*
+    As suggested by: Professor Andrea Formisano 
+    A node v in G becames v' composed of (v'even -> v'odd).
+        - All the original in(v) edges than were coming to v are now 
+        connected to v'even with infinite cost.
+        - All the original out(v) edges than were originating from v are now 
+        originating from v'odd with |V| * 2 cost
+        - The cost from v'odd to v'even is 1
+    example:
+    G
+    0 -> 1 -> 2 -> 3
+    G'
+    (0 -> 1) -> (2 -> 3) -> (4 -> 5) -> (6 -> 7)
+    */
     void buildFromTxtFileForNodeCut(
         const std::string &filename,
         int &num_nodes,
