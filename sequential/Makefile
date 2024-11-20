@@ -4,10 +4,14 @@ cpu:
 	#mkdir build
 	g++ -o ./build/$@_sequential.out ./$@.cpp -std=c++23
 
+node_cut_print:
+	@ g++ -o  ./build/cpu_sequential.out ./cpu.cpp -std=c++23 -DNODECUT -DPRINTNODECUT 
+
 test:
-	@ make 
+	@ make node_cut_print
 	@ ./build/cpu_sequential.out ../graphs/example3.txt  0 6
 
+	@ make
     # nanos, micros, millis, V, E, source, sink, maxFlow
 	@ ./build/cpu_sequential.out ../graphs/basic1.txt   1 64
 	@ ./build/cpu_sequential.out ../graphs/basic2.txt   1 128
