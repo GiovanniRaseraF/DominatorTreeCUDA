@@ -78,10 +78,10 @@ void testFile(std::string filename, int source, int to){
         int from = std::get<0>(r);
         int to = std::get<1>(r);
 
-        std::cout << from / 2 << std::endl; 
+        std::cout << "(" << from / 2 << ") : " << from << " -/-> " << to << std::endl;
     }
-
-    std::cout << "maxFlow: " << result.size() << std::endl;
+    
+    std::cout << "|D|: " << result.size() << std::endl;
 }
 
 void test1(){
