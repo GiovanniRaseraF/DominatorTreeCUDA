@@ -220,8 +220,8 @@ namespace parallel {
 
             }
         }
-        bool if_all_are_relabeled = true;
 
+        bool if_all_are_relabeled = true;
         for(int i = 0; i < V; i++){
             if(scanned[i] == false){
                 if_all_are_relabeled = false;
@@ -232,7 +232,7 @@ namespace parallel {
         // if not all nodes are relabeled
         if(if_all_are_relabeled == false){
             for(int i = 0; i < V; i++){
-                if( !( (scanned[i] == true) || (mark[i] == true) ) ){
+                if(scanned[i] != true && mark[i] != true){
                     mark[i] = true;
                     *Excess_total = *Excess_total - excess_flow[i];
                 }
