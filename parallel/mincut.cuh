@@ -149,24 +149,24 @@ namespace parallel {
         int *Excess_total, 
         bool *mark,     bool *scanned
     ){
-        for (int u = 0; u < V; u++) {
-            for (int i = offsets[u]; i < offsets[u + 1]; i++) {
-                int v = destinations[i];
-                if (height[u] > height[v] + 1) {
-                    int flow;
-                    if (excess_flow[u] < fflows[i]) {
-                        flow = excess_flow[u];
-                    } else {
-                        flow = fflows[i];
-                    }
+        // for (int u = 0; u < V; u++) {
+        //     for (int i = offsets[u]; i < offsets[u + 1]; i++) {
+        //         int v = destinations[i];
+        //         if (height[u] > height[v] + 1) {
+        //             int flow;
+        //             if (excess_flow[u] < fflows[i]) {
+        //                 flow = excess_flow[u];
+        //             } else {
+        //                 flow = fflows[i];
+        //             }
 
-                    excess_flow[u] -= flow;
-                    excess_flow[v] += flow;
-                    bflows[i] += flow;
-                    fflows[i] -= flow;
-                }
-            }
-        }
+        //             excess_flow[u] -= flow;
+        //             excess_flow[v] += flow;
+        //             bflows[i] += flow;
+        //             fflows[i] -= flow;
+        //         }
+        //     }
+        // }
 
         std::deque<int> Queue;
         int x,y,current;
