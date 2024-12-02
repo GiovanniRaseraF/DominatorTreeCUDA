@@ -130,7 +130,9 @@ namespace parallel {
                         }
                     }
                 }
-                printf("countU: %d\n", countU);
+                
+                if(cycle == KERNEL_CYCLES)
+                    printf("countU: %d\n", countU);
                 cycle = cycle - 1;
                 grid.sync();
             }
