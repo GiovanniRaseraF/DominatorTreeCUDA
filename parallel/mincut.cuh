@@ -131,9 +131,9 @@ namespace parallel {
                     }
                 }
 
-                if(countU > 0){
-                    printf("countU: %d\n", countU);
-                }
+                // if(countU > 0){
+                //     printf("countU: %d\n", countU);
+                // }
 
                 cycle = cycle - 1;
                 grid.sync();
