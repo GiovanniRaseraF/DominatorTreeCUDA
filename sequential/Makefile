@@ -2,10 +2,10 @@
 cpu:
 	#if [ -d "./build" ]; then rm -r build; fi
 	#mkdir build
-	g++ -o ./build/$@_sequential.out ./$@.cpp -std=c++23
+	g++ -o ./build/$@_sequential.out ./$@.cpp -std=c++17
 
 node_cut_print:
-	@ g++ -o  ./build/cpu_sequential.out ./cpu.cpp -std=c++23 -DNODECUT -DPRINTNODECUT 
+	@ g++ -o  ./build/cpu_sequential.out ./cpu.cpp -std=c++17 -DNODECUT -DPRINTNODECUT 
 
 test:
 	@ make node_cut_print
