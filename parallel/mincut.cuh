@@ -48,7 +48,7 @@ namespace parallel {
             int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
             int cycle = (KERNEL_CYCLES);
 
-            while (cycle > 0){
+            //while (cycle > 0){
                 int countU = 0;
                 for (int u = idx; u < V; u += blockDim.x * gridDim.x){
                     countU ++;
@@ -134,10 +134,10 @@ namespace parallel {
                 if(countU > 0){
                     printf("countU: %d\n", countU);
                 }
-                
+
                 cycle = cycle - 1;
                 grid.sync();
-            }
+            //}
         }
 
     }
