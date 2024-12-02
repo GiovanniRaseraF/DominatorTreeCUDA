@@ -51,7 +51,8 @@ namespace parallel {
             #ifdef REUSE_THREAD
             while (cycle > 0){
             #endif
-                for (int u = idx; u < V; u += blockDim.x * gridDim.x){
+                //for (int u = idx; u < V; u += blockDim.x * gridDim.x){
+                    int u = idx;
                     int e_dash, h_dash, h_double_dash, v, v_dash, d;
                     int v_index = -1; // The index of the edge of u to v_dash
                     bool vinReverse = false;
@@ -129,7 +130,7 @@ namespace parallel {
                             }
                         }
                     }
-                }
+                //}
 
                 cycle = cycle - 1;
                 grid.sync();
