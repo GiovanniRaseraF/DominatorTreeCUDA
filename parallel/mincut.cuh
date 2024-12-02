@@ -48,10 +48,10 @@ namespace parallel {
             int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
             int cycle = (KERNEL_CYCLES);
 
-            printf("idx: %d\n", idx);
-
             while (cycle > 0){
+                int countU = 0;
                 for (int u = idx; u < V; u += blockDim.x * gridDim.x){
+                    countU ++;
                     int e_dash, h_dash, h_double_dash, v, v_dash, d;
                     int v_index = -1; // The index of the edge of u to v_dash
                     bool vinReverse = false;
@@ -130,7 +130,7 @@ namespace parallel {
                         }
                     }
                 }
-
+                printf("countU: %d\n", countU);
                 cycle = cycle - 1;
                 grid.sync();
             }
