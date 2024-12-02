@@ -48,10 +48,10 @@ namespace parallel {
             int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
             int cycle = (KERNEL_CYCLES);
 
-            //while (cycle > 0){
-                int countU = 0;
+            #ifdef REUSE_THREAD
+            while (cycle > 0){
+            #endif
                 for (int u = idx; u < V; u += blockDim.x * gridDim.x){
-                    countU ++;
                     int e_dash, h_dash, h_double_dash, v, v_dash, d;
                     int v_index = -1; // The index of the edge of u to v_dash
                     bool vinReverse = false;
@@ -131,13 +131,11 @@ namespace parallel {
                     }
                 }
 
-                // if(countU > 0){
-                //     printf("countU: %d\n", countU);
-                // }
-
                 cycle = cycle - 1;
                 grid.sync();
-            //}
+            #ifdef REUSE_THREAD 
+            }
+            #endif
         }
 
     }
@@ -155,25 +153,6 @@ namespace parallel {
         int *Excess_total, 
         bool *mark,     bool *scanned
     ){
-        // for (int u = 0; u < V; u++) {
-        //     for (int i = offsets[u]; i < offsets[u + 1]; i++) {
-        //         int v = destinations[i];
-        //         if (height[u] > height[v] + 1) {
-        //             int flow;
-        //             if (excess_flow[u] < fflows[i]) {
-        //                 flow = excess_flow[u];
-        //             } else {
-        //                 flow = fflows[i];
-        //             }
-
-        //             excess_flow[u] -= flow;
-        //             excess_flow[v] += flow;
-        //             bflows[i] += flow;
-        //             fflows[i] -= flow;
-        //         }
-        //     }
-        // }
-
         std::deque<int> Queue;
         int x,y,current;
     
