@@ -56,6 +56,7 @@ namespace parallel {
                     //int u = idx;
                     int e_dash, h_dash, h_double_dash, v, v_dash, d;
                     int v_index = -1; // The index of the edge of u to v_dash
+                    bool vinReverse = false;
 
                     //  Find the activate nodes
                     if (gpu_excess_flow[u] > 0 && gpu_height[u] < V && u != source && u != sink){
@@ -73,6 +74,22 @@ namespace parallel {
                                     v_dash = v;
                                     h_dash = h_double_dash;
                                     v_index = i;
+                                    vinReverse = false;
+                                }
+                            }
+                        }
+                        // Find (u, v) in reversed CSR 
+                        for (int i = gpu_roffsets[u]; i < gpu_roffsets[u + 1]; i++){
+                            v = gpu_rdestinations[i];
+                            int flow_idx = gpu_flow_idx[i];
+
+                            if (gpu_bflows[flow_idx] > 0){
+                                h_double_dash = gpu_height[v];
+                                if (h_double_dash < h_dash){
+                                    v_dash = v;
+                                    h_dash = h_double_dash;
+                                    v_index = flow_idx; 
+                                    vinReverse = true;
                                 }
                             }
                         }
@@ -83,17 +100,32 @@ namespace parallel {
                         }
                         else{
                             if (gpu_height[u] > h_dash){
-                                if (e_dash > gpu_fflows[v_index]){
-                                    d = gpu_fflows[v_index];
-                                }else{
-                                    d = e_dash;
-                                }
 
-                                // Push flow to reverse graph
-                                atomicAdd(&gpu_bflows[v_index], d);
-                                atomicSub(&gpu_fflows[v_index], d);
-                                atomicAdd(&gpu_excess_flow[v_dash], d);
-                                atomicSub(&gpu_excess_flow[u], d);
+                                if (!vinReverse){
+                                    if (e_dash > gpu_fflows[v_index]){
+                                        d = gpu_fflows[v_index];
+                                    }else{
+                                        d = e_dash;
+                                    }
+
+                                    // Push flow to reverse graph
+                                    atomicAdd(&gpu_bflows[v_index], d);
+                                    atomicSub(&gpu_fflows[v_index], d);
+                                    atomicAdd(&gpu_excess_flow[v_dash], d);
+                                    atomicSub(&gpu_excess_flow[u], d);
+                                }else{
+                                    if (e_dash > gpu_bflows[v_index]){
+                                        d = gpu_bflows[v_index];
+                                    }else{
+                                        d = e_dash;
+                                    }
+
+                                    // Push flow to graph
+                                    atomicAdd(&gpu_fflows[v_index], d);
+                                    atomicSub(&gpu_bflows[v_index], d);
+                                    atomicAdd(&gpu_excess_flow[v_dash], d);
+                                    atomicSub(&gpu_excess_flow[u], d);
+                                }
                             }else{
                                 gpu_height[u] = h_dash + 1;
                             }
