@@ -48,6 +48,7 @@ namespace parallel {
             int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
             int cycle = (KERNEL_CYCLES);
 
+            #define REUSE_THREAD
             #ifdef REUSE_THREAD
             while (cycle > 0){
             #endif
@@ -78,20 +79,20 @@ namespace parallel {
                             }
                         }
                         // Find (u, v) in reversed CSR 
-                        for (int i = gpu_roffsets[u]; i < gpu_roffsets[u + 1]; i++){
-                            v = gpu_rdestinations[i];
-                            int flow_idx = gpu_flow_idx[i];
+                        // for (int i = gpu_roffsets[u]; i < gpu_roffsets[u + 1]; i++){
+                        //     v = gpu_rdestinations[i];
+                        //     int flow_idx = gpu_flow_idx[i];
 
-                            if (gpu_bflows[flow_idx] > 0){
-                                h_double_dash = gpu_height[v];
-                                if (h_double_dash < h_dash){
-                                    v_dash = v;
-                                    h_dash = h_double_dash;
-                                    v_index = flow_idx; 
-                                    vinReverse = true;
-                                }
-                            }
-                        }
+                        //     if (gpu_bflows[flow_idx] > 0){
+                        //         h_double_dash = gpu_height[v];
+                        //         if (h_double_dash < h_dash){
+                        //             v_dash = v;
+                        //             h_dash = h_double_dash;
+                        //             v_index = flow_idx; 
+                        //             vinReverse = true;
+                        //         }
+                        //     }
+                        // }
 
                         /* Push operation */
                         if (v_dash == -1){
