@@ -134,7 +134,20 @@ test_seed_max_2:
 	@ ./build/gpu_parallel.out ../graphs_seed_max_2/midone.txt   1 16344
 	@ ./build/gpu_parallel.out ../graphs_seed_max_2/bigone.txt   1 32688
 
-
+test_seed_max_3:
+	# BLS=1 THS=1024
+	@ make custom_params BLS=1 THS=1024
+    # nanos, micros, millis, V, E, source, sink, maxFlow
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ../graphs_seed_max_3/bigone.txt   1 32688
 
 create_min:
 	@ python3 graph_generator.py --nodes    70 --edges    600 --output ../graphs2/basic1.txt 	--weight-range 1
@@ -183,6 +196,18 @@ create_seed_max_2:
 	@ python3 graph_generator.py --seed 2 --nodes  8200 --edges  800000 --output ../graphs_seed_max_2/minione.txt 	--weight-range 1
 	@ python3 graph_generator.py --seed 2 --nodes 16400 --edges 1600000 --output ../graphs_seed_max_2/midone.txt 	--weight-range 1
 	@ python3 graph_generator.py --seed 2 --nodes 32800 --edges 3200000 --output ../graphs_seed_max_2/bigone.txt 	--weight-range 1
+
+create_seed_max_3:
+	@ python3 graph_generator.py --seed 3 --nodes    70 --edges    6000 --output ../graphs_seed_max_3/basic1.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes   130 --edges   10000 --output ../graphs_seed_max_3/basic2.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes   260 --edges   20000 --output ../graphs_seed_max_3/basic3.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes   520 --edges   50000 --output ../graphs_seed_max_3/basic4.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes  1030 --edges  100000 --output ../graphs_seed_max_3/basic5.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes  2050 --edges  200000 --output ../graphs_seed_max_3/nanoone.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes  4100 --edges  400000 --output ../graphs_seed_max_3/microone.txt   --weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes  8200 --edges  800000 --output ../graphs_seed_max_3/minione.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes 16400 --edges 1600000 --output ../graphs_seed_max_3/midone.txt 	--weight-range 1
+	@ python3 graph_generator.py --seed 3 --nodes 32800 --edges 3200000 --output ../graphs_seed_max_3/bigone.txt 	--weight-range 1
 
 p:
 	git add . && git commit -m "automatic: data exchange" && git push
