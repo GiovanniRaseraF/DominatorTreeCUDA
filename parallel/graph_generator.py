@@ -39,9 +39,11 @@ if __name__ == '__main__':
                         help='Output file to store the generated graph')
     parser.add_argument('--weight-range', type=int, default=10,
                         help='Range of weights for the edges')
-
+    parser.add_argument('--seed', type=int, default=0,
+                        help='Seed for random numbers')
 
     args = parser.parse_args()
+    random.seed(args.seed)
 
     edgelist, source, sink = randomGenerator(args.nodes, args.edges, args.weight_range)
 
