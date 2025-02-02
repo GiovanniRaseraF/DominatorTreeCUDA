@@ -6,7 +6,6 @@
 __global__ void mallocTest(){
     __shared__ int *data;
 
-    printf("blockDim.x: %d\n", blockDim.x);
 
     if(threadIdx.x == 0){
         size_t size = blockDim.x * 64;
@@ -28,6 +27,7 @@ __global__ void mallocTest(){
 
     if(threadIdx.x == 0){
         free(data);
+        printf("blockDim.x: %d\n", blockDim.x);
     }
 }
 
