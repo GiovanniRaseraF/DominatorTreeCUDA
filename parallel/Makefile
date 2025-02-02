@@ -15,6 +15,80 @@ custom_params_node_cut_print:
 	@ nvcc -c -I/usr/local/cuda/include gpu.cu -std=c++17 -DBLS=${BLS} -DTHS=${THS} -DNODECUT -DPRINTNODECUT -o ./build/nvcc_gpu.o
 	@ g++ -o  ./build/gpu_parallel.out ./build/nvcc_gpu.o -std=c++23 -DBLS=${BLS} -DTHS=${THS} -DNODECUT -DPRINTNODECUT -L/usr/local/cuda/lib64 -lcusparse -lcudart
 
+test_seed_max_2_complete:
+	@ make custom_params_node_cut_print BLS=1 THS=1024
+	@ ./build/gpu_parallel.out ../graphs/example3.txt  0 6
+
+	# BLS=1 THS=1024
+	@ make custom_params BLS=1 THS=1024
+    # nanos, micros, millis, V, E, source, sink, maxFlow
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/bigone.txt   1 32688
+
+	# BLS=2 THS=512
+	@ make custom_params BLS=2 THS=512
+    # nanos, micros, millis, V, E, source, sink, maxFlow
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/bigone.txt   1 32688
+
+	# BLS=4 THS=256
+	@ make custom_params BLS=4 THS=256
+    # nanos, micros, millis, V, E, source, sink, maxFlow
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/bigone.txt   1 32688
+
+	# BLS=8 THS=128
+	@ make custom_params BLS=8 THS=128
+    # nanos, micros, millis, V, E, source, sink, maxFlow
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/bigone.txt   1 32688
+
+	# BLS=16 THS=64
+	@ make custom_params BLS=16 THS=64
+    # nanos, micros, millis, V, E, source, sink, maxFlow
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic1.txt   1 64
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic2.txt   1 128
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic3.txt   1 256
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic4.txt   1 512
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/basic5.txt   1 1024
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/nanoone.txt  1 2048
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/microone.txt  1 4096
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/minione.txt  1 8172
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/midone.txt   1 16344
+	@ ./build/gpu_parallel.out ../graphs_seed_max_2/bigone.txt   1 32688
+
 test:
 	@ make custom_params_node_cut_print BLS=1 THS=1024
 	@ ./build/gpu_parallel.out ../graphs/example3.txt  0 6
