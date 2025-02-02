@@ -10,3 +10,6 @@ all:
 
 	echo "\nCompiled\n -- Starting program --"
 	./build/*.out
+
+p:
+	git add . && git commit -m 'test: trasfer' && git push
