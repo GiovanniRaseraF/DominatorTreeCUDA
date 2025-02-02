@@ -3,7 +3,7 @@
 __global__ void mallocTest(){
     __shared__ int *data;
 
-    printf("blockDim.x: %d\n", blockDim.x);
+    // printf("blockDim.x: %d\n", blockDim.x);
 
     if(threadIdx.x == 0){
         size_t size = blockDim.x * 64;
