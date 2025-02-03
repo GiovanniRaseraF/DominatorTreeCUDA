@@ -30,6 +30,11 @@ gather:
 	mpic++ gather.cpp -o gather.out
 	mpirun --oversubscribe -np 40 ./gather.out
 
+scatter:
+	mpic++ scatter.cpp -o scatter.out
+	mpirun --oversubscribe -np 3 ./scatter.out
+
+
 
 p:
 	git add . && git commit -m "test: trasfer" && git push
