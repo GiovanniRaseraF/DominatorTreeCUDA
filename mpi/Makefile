@@ -26,5 +26,10 @@ scan:
 	mpic++ scan.cpp -o scan.out
 	mpirun --oversubscribe -np 3 ./scan.out
 
+gather:
+	mpic++ gather.cpp -o gather.out
+	mpirun --oversubscribe -np 40 ./gather.out
 
 
+p:
+	git add . && git commit -m "test: trasfer" && git push
