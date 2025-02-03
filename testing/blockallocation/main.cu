@@ -6,7 +6,6 @@
 __global__ void mallocTest(){
     __shared__ int *data;
 
-
     if(threadIdx.x == 0){
         size_t size = blockDim.x * 64;
         data = (int *) malloc(sizeof(int) * size);
