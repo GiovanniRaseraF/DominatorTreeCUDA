@@ -34,7 +34,13 @@ scatter:
 	mpic++ scatter.cpp -o scatter.out
 	mpirun --oversubscribe -np 3 ./scatter.out
 
+alltoall:
+	mpic++ alltoall.cpp -o alltoall.out
+	mpirun --oversubscribe -np 3 ./alltoall.out
 
+matmul:
+	mpic++ matmul.cpp -o matmul.out
+	mpirun --oversubscribe -np 3 ./matmul.out
 
 p:
 	git add . && git commit -m "test: trasfer" && git push
